@@ -1,0 +1,61 @@
+codename: caffeine
+
+ooe single core
+
+internally change instruction format to be more core friendly 
+decode into several uops
+	mrd/wrm offset 
+
+features
+	pretty much everything from p16b3x
+
+	configurable wide stages
+	deep pipeline
+		fetch - decode - allocate - execute - writeback
+
+		depending on physical constraints
+
+	internally decode short jumps into predication
+
+	more advanced branch predictor
+		use bigger tests!
+	
+	actually useful nonblocking cache
+	prefetching
+
+	buffers between FE/EX
+
+	instruction merging and elimination
+		mov Rd, Rs1
+		op  Rd, Rs2
+		=>
+		op  Rd, Rs1,Rs2
+
+		wrx UI, xAB
+		op  Rd, xCD
+		=>
+		op  Rd, xABCD
+
+		nop
+		=>
+
+		cmp Ra, Rb
+		jcs CCC dest
+		=>
+		bCCC Ra, Rb, dest
+
+		mrd Rd, Rs
+		add Rs, c
+		=>
+		mrdincrement Rd, Rs, c
+
+		pop Rd
+		xwr LR, Rd
+		=>
+		pop LR (and copy into Rd)
+
+		xrd Rd, LR
+		psh Rd
+		=>
+		psh LR (and copy into Rd)
+

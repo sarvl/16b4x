@@ -1,0 +1,3 @@
+codename: adrenaline
+
+multi core  oooe

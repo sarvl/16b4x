@@ -1,0 +1,7 @@
+codename: helium
+
+single core 
+in order 
+subscalar cpu 
+maximally straightforward implementation, tests correctness, finds ISA bugs and hard to implement features
+developed simultaneously with first ISA version 

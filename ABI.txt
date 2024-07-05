@@ -1,0 +1,7 @@
+arguments
+	R0 to R7
+return value
+	R0 to R7
+
+on error, procedures should set some flag (any that is easily distinguishable)
+this way there can be 2 separate returns value in the same registers that are distinguished based on error
