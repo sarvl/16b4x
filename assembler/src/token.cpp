@@ -190,7 +190,6 @@ void tokenize(
 
 			off++;
 		[[fallthrough]];
-		#pragma GCC diagnostic push
 		#pragma GCC diagnostic ignored "-Wpedantic"
 		case '0'...'9':
 		#pragma GCC diagnostic pop
@@ -261,12 +260,9 @@ void tokenize(
 			break;
 
 	process_string:
-		#pragma GCC diagnostic push
 		#pragma GCC diagnostic ignored "-Wpedantic"
-		case 'a'...'z':
 		//skips R 
-		case 'A'...'Q':
-		case 'S'...'Z':
+		case 'a'...'z': case 'A'...'Q': case 'S'...'Z':
 		#pragma GCC diagnostic pop
 		{
 			//figure out the length

@@ -40,25 +40,3 @@ BEGIN
 		END IF;
 	END PROCESS;
 END ARCHITECTURE arch;
-
-
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
-
-ENTITY reg IS 
-	PORT(
-		clk   : IN  std_ulogic;
-		din   : IN  std_ulogic_vector(15 DOWNTO 0);
-		dout  : OUT std_ulogic_vector(15 DOWNTO 0));
-END ENTITY reg;
-
-ARCHITECTURE arch OF reg IS 
-BEGIN
-	PROCESS(ALL) IS
-	BEGIN
-		IF rising_edge(clk) THEN
-			dout <= din;
-		END IF;
-	END PROCESS;
-END ARCHITECTURE arch;

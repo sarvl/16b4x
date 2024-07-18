@@ -1,0 +1,6955 @@
+;setup page table of OS to physical addr space 
+
+;0x0000
+pt_os:
+	jmp 	init
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0008
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0010
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0018
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+pt_process:
+;0x0020
+//will be overwritten by process page table later
+init:
+	mov 	R0, 31
+loop:
+	mov 	R1, R0
+	xwr 	UI, 0xF0 ; present, all permissions
+	orr 	R1, 0 
+	mwr 	R0, R1
+	sub 	R0, 1
+	jcs 	GZ loop
+	;write PID
+	mov 	R0, 0 
+;0x0028
+	pxw 	0x00, R0 ;R0 = 0 
+	pxw 	0x01, R0 ;set page table address to 0 
+	;setup IHT, for now, only timer, page fault, int 0x80 are mapped
+	;all other map nowhere 
+	xwr 	UI, 0x01
+	xwr 	OF, 0x00 ; OF = 0x0100
+	xwr 	UI, 0x04 
+	mov 	R0, 0x00 ; 0x0400 = timer_passed
+	mwo 	0x00, R0 ; M[0x0100] = 0x0400
+	add 	R0, 8    ; 0x0408 = page_fault
+;0x0030
+	mwo 	0x01, R0 ; M[0x0101] = 0x0408
+	xwr 	UI, 0x04
+	mov 	R0, IHT_sys_exit
+	mwo 	0x80, R0 ; M[0x0180] = IHT_sys_exit
+	nop
+	;all other entries do not matter right now
+	mov 	R0, 0b11010 ; enable interrupts, flush PT, IHT reload
+	pxw 	31, R0
+	jmp 	pt_process_init
+;0x0038
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+pt_process_init:
+;0x0040
+;right now map entry 0 to be OS and nothing else
+;set all else to completely invalid
+	xwr 	UI, 0x80
+	mov 	R0, 0x00
+	mwr 	pt_process, R0
+	mov 	R0, 0
+	mwr 	0x21, R0
+	mwr 	0x22, R0
+	mwr 	0x23, R0
+;set process pid 
+	mov 	R0, 1
+;0x0048
+	pxw 	0x00, R0
+;set PT addres
+	mov 	R0, pt_process
+	pxw 	1, R0
+;absolute jump to prog init
+	mov 	R0, 1
+	xwr 	UI, 0x02
+	mwr 	prog_id, R0
+	xwr 	UI, 0x07
+	xwr 	IP, prog_init
+;0x0050
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0058
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0060
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0068
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0070
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0078
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0080
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0088
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0090
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0098
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x00F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+PID:
+	nop
+;0x0100
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0108
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0110
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0118
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0120
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0128
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0130
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0138
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0140
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0148
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0150
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0158
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0160
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0168
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0170
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0178
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0180
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0188
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0190
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0198
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x01F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0200
+timer_passed:
+	nop
+prog_id:
+	nop
+prog_0_ret:
+	nop
+prog_1_ret:
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0208
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0210
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0218
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0220
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0228
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0230
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0238
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0240
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0248
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0250
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0258
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0260
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0268
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0270
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0278
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0280
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0288
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0290
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0298
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x02F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0300
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0308
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0310
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0318
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0320
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0328
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0330
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0338
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0340
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0348
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0350
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0358
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0360
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0368
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0370
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0378
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0380
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0388
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0390
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0398
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x03F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0400
+IHT_routines:
+IHT_timer:
+	mwr 	0xF0, R0
+	xwr 	UI, 0x02         
+	mrd 	R0, timer_passed
+	add 	R0, 1
+	xwr 	UI, 0x02
+	mwr 	timer_passed, R0
+	mrd 	R0, 0xF0
+	irt
+;0x0408
+;stub, simply insert that entry into PT, make sure everything works
+IHT_page_fault:
+	mwr 	0xF0, R0
+	mwr 	0xF1, R1
+	pxr 	R0, 12
+	shr 	R0, 11
+	mov 	R1, R0 ; where to write
+	xwr 	UI, 0xF0 
+	orr 	R0, 0x00 
+	add 	R1, 0x20
+;0x0410
+	mwr 	R1, R0
+	mrd 	R0, 0xF0
+	mrd 	R1, 0xF1
+	irt
+IHT_sys_exit: ; int 0x80, R0 is return value
+	mov 	R1, 0 ; set PID to 0 
+	pxw 	0x00, R1
+	mov 	R1, 0b10001 ; enable interrupts and change the PID
+	pxw 	31, R1
+;0x0418
+;increment prog id to be run
+	xwr 	UI, 0x02
+	mrd 	R1, prog_id
+	mov 	R2, R1 ; copy to store ret value
+	xwr 	UI, 0x02 
+	add 	R2, prog_id ; yes, first program has offset 1
+	nop
+	mwr 	R2, R0
+	add 	R1, 1
+;0x0420
+	xwr 	UI, 0x02
+	mwr 	prog_id, R1
+	xwr 	UI, 0x07
+	xwr 	IP, prog_init
+	nop
+	nop
+	nop
+	nop
+;0x0428
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0430
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0438
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0440
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0448
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0450
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0458
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0460
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0468
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0470
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0478
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0480
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0488
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0490
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0498
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x04F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0500
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0508
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0510
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0518
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0520
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0528
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0530
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0538
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0540
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0548
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0550
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0558
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0560
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0568
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0570
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0578
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0580
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0588
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0590
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0598
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x05F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0600
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0608
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0610
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0618
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0620
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0628
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0630
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0638
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0640
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0648
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0650
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0658
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0660
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0668
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0670
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0678
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0680
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0688
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0690
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0698
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x06F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0700
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0708
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0710
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0718
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0720
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0728
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0730
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0738
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0740
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0748
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0750
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0758
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0760
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0768
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0770
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0778
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0780
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0788
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0790
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0798
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x07D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+prog_init:
+;0x07E0
+;read program ID and determine what to start
+	xwr 	UI, 0x02
+	mrd 	R0, prog_id
+	pxw 	0x00, R0 ; setup pid
+	mov 	R1, 0b11000 ; enable int, flush pt
+	mov 	R2, 0b00001 ; PID reload
+	cmp 	R0, 2
+	jcs 	E setup_fact
+	cmp 	R0, 3
+;0x07E8
+	jcs 	E fin
+setup_fib:
+	xwr 	UI, 0xF0
+	mov 	R0, 0x01 
+	mwr 	0x21, R0 ; fib maps to exactly the same page
+	pxw 	31, R1
+	pxw 	31, R2
+	xwr 	UI, 0x08 
+	xwr 	IP, 0x00 ; always jump there because VM
+;0x07F0
+setup_fact:
+	xwr 	UI, 0xF0
+	mov 	R0, 0x02 
+	mwr 	0x21, R0 ; fact maps to next page
+	pxw 	31, R1
+	pxw 	31, R2
+	xwr 	UI, 0x08 
+	xwr 	IP, 0x00 ; always jump there because VM
+	nop
+;0x07F8
+fin:
+	xwr 	UI, 0x02
+	mrd 	R0, prog_0_ret
+	xwr 	UI, 0x02
+	mrd 	R1, prog_1_ret
+	hcf
+	nop
+	nop
+	nop
+;x0x0800
+fib_init:
+;lower privilege level
+	mov 	R0, 0b100
+	pxw 	31, R0
+fib:
+	mov 	R0, 0
+	mov 	R1, 1
+	mov 	R7, 7
+	cmp 	R7, 0
+	jcs 	LE fib_end
+	nop
+;0x0808
+fib_loop:
+	mov 	R2, R0
+	mov 	R0, R1
+	add 	R1, R2
+	sub 	R7, 1
+	jcs GZ	fib_loop
+fib_end:
+	nop
+	int 	0x80 ; sys_exit
+	nop
+;0x0810
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0818
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0820
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0828
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0830
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0838
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0840
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0848
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0850
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0858
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0860
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0868
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0870
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0878
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0880
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0888
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0890
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0898
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x08F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0900
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0908
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0910
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0918
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0920
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0928
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0930
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0938
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0940
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0948
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0950
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0958
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0960
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0968
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0970
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0978
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0980
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0988
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0990
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0998
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x09F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A00
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A08
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A18
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A20
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A28
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A30
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A38
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A40
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A48
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A50
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A58
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A60
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A68
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A70
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A78
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A80
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A88
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A90
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0A98
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AA0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AA8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AB0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AB8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AC0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AC8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AD0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AD8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AE0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AE8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AF0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0AF8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B00
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B08
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B18
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B20
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B28
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B30
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B38
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B40
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B48
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B50
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B58
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B60
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B68
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B70
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B78
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B80
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B88
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B90
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0B98
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BA0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BA8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BB0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BB8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BC0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BC8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BD0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BD8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BE0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BE8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BF0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0BF8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C00
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C08
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C18
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C20
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C28
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C30
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C38
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C40
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C48
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C50
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C58
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C60
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C68
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C70
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C78
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C80
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C88
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C90
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0C98
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CA0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CA8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CB0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CB8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CC0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CC8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CD0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CD8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CE0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CE8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CF0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0CF8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D00
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D08
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D18
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D20
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D28
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D30
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D38
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D40
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D48
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D50
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D58
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D60
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D68
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D70
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D78
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D80
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D88
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D90
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0D98
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DA0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DA8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DB0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DB8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DC0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DC8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DD0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DD8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DE0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DE8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DF0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0DF8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E00
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E08
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E18
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E20
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E28
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E30
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E38
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E40
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E48
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E50
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E58
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E60
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E68
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E70
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E78
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E80
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E88
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E90
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0E98
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EA0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EA8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EB0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EB8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EC0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EC8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0ED0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0ED8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EE0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EE8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EF0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0EF8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F00
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F08
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F18
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F20
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F28
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F30
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F38
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F40
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F48
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F50
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F58
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F60
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F68
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F70
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F78
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F80
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F88
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F90
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0F98
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FA0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FA8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FB0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FB8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FC0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FC8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FD0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FD8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FE0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FE8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FF0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x0FF8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1000
+fact_init:
+;lower privilege level
+	mov 	R0, 0b100
+	pxw 	31, R0
+fact:
+	mov 	R1, 7
+	mov 	R0, 1
+fact_loop:
+	mul 	R0, R1
+	sub 	R1, 1
+	jcs 	G fact_loop
+	int 	0x80 ; sys_exit
+;0x1008
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1010
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1018
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1020
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1028
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1030
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1038
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1040
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1048
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1050
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1058
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1060
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1068
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1070
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1078
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1080
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1088
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1090
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1098
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x10F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1100
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1108
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1110
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1118
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1120
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1128
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1130
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1138
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1140
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1148
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1150
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1158
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1160
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1168
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1170
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1178
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1180
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1188
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1190
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1198
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x11F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1200
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1208
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1210
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1218
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1220
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1228
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1230
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1238
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1240
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1248
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1250
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1258
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1260
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1268
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1270
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1278
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1280
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1288
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1290
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1298
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x12F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1300
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1308
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1310
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1318
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1320
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1328
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1330
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1338
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1340
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1348
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1350
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1358
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1360
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1368
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1370
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1378
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1380
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1388
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1390
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1398
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x13F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1400
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1408
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1410
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1418
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1420
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1428
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1430
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1438
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1440
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1448
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1450
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1458
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1460
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1468
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1470
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1478
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1480
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1488
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1490
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1498
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x14F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1500
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1508
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1510
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1518
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1520
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1528
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1530
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1538
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1540
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1548
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1550
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1558
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1560
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1568
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1570
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1578
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1580
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1588
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1590
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1598
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x15F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1600
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1608
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1610
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1618
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1620
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1628
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1630
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1638
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1640
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1648
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1650
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1658
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1660
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1668
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1670
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1678
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1680
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1688
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1690
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1698
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x16F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1700
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1708
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1710
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1718
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1720
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1728
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1730
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1738
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1740
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1748
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1750
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1758
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1760
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1768
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1770
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1778
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1780
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1788
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1790
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1798
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17A0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17A8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17B0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17B8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17C0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17C8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17D0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17D8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17E0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17E8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17F0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x17F8
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+;0x1800

@@ -10,7 +10,7 @@ debug :=
 SAN := $(if ${debug}, -g -fsanitize=undefined -fsanitize=address,                  )
 OPT := $(if ${debug}, -Og                                       , -O3 -march=native)
 LTO := $(if ${debug},                                           , -flto            )
-STD := -std=c++20
+STD := -std=c++23
 WRN := -Wall -Wextra -pedantic
 #consider -Wstrict-overflow=5 but it does not point into actual code
 COMPILE_OPTIONS := ${SAN} ${OPT} ${STD} ${WRN}

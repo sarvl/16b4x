@@ -13,5 +13,6 @@
         <File path="src/register.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/timer.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/helium.cst" type="file.cst" enable="1"/>
+        <File path="src/helium.sdc" type="file.sdc" enable="1"/>
     </FileList>
 </Project>

@@ -5,3 +5,105 @@ in order
 subscalar cpu 
 maximally straightforward implementation, tests correctness, finds ISA bugs and hard to implement features
 developed simultaneously with first ISA version 
+
+
+microcode
+	format:
+		OOOO1RRR IIIIIIII
+		OOOO0RRR 00000RRR
+
+	to perform MOV R R do SAV T R ; RES R T 
+
+	list:
+		0	fin 	      		# return from microcode
+		1	int 	I     		# interrupt I
+		2	sav 	T, R  		# T <-- R
+		3	res 	R, T/I 		# R <-- T/I
+		4	mrd 	R, R/I		# R <-- M[R/I]
+		5	mwr 	R/I, R		# M[R/I] <-- R
+		6	xrd 	R, E  		# R <-- E
+		7	xwr 	E, R/I		# E <-- R/I
+		8	add 	R, R/I		# R <-- R +  R/I
+		9	sub 	R, R/I		# R <-- R -  R/I
+		A	jcs 	CCC R/I		# IF(CCC) IP <-- IP + R/I 
+		B	tst 	R, R/I 		# IF(CCC) IP <-- IP + R/I
+		C	ird 	R, R/I		# R <-- I[R/I]
+		D	iwr 	R/I, R		# I[R/I] <-- R
+		E	pxr 	R, I  		# R <-- PX[I]
+		F	pxw 	I, R  		# PX[I] <-- R
+	
+	internal memory - 512W
+	microcode ROM   - smallest power of 2 that fits code below
+
+
+	;stub to make sure it works
+	Boot code:
+			fin
+
+	;0x100 to 0x1FF
+	IHT update code:
+			sav 	T0, R0 ; addr
+			sav 	T1, R1 ; temporary
+			sav 	T2, R2
+
+			xwr 	UI, 0x01
+			res 	R0, 0xFF
+			res 	R2, 0xFF
+		lp:
+			mrd 	R1, R0
+			iwr 	R0, R1
+
+			sub 	R0, 1
+			sub 	R2, 1
+			jcs 	GE 	lp
+
+			res 	R0, T0
+			res 	R1, T1
+			res 	R2, T2
+			fin
+
+	;TLB at 0x000 to 0x02F
+	;each entry is PT-ENTRY - PID
+	;miss page # at 0x0F0
+	TLB update code
+			sav 	T0, R0
+			sav 	T1, R1
+
+			;fetch PT address 
+			pxr 	R0, 1
+			ird 	R1, 0xFF
+			add 	R0, R1 
+
+			mrd 	R0, R0 ; read PT entry
+			;check if entry is present 
+			;if not, raise interrupt
+			xwr 	UI, 0x80
+			tst 	R0, 0x00
+			jcs 	LG continue ; not set
+
+			int 	0x01
+
+		continue:
+			add 	R1, R1 ; R1 *= 2
+			iwr 	R1, R0 
+			add 	R1, 1 
+			pxr 	R0, 0 ; fetch PID
+			iwr 	R1, R0
+			
+			res 	R0, T0
+			res 	R1, T1
+			fin
+
+	TLB_flush:
+			sav 	T0, R0
+
+			res 	R0, 0x2F
+		lp:
+			iwr 	R0, R0 ; safe because present bit is 0
+			sub 	R0, 2  ; skip pid 
+			jcs 	GE lp
+
+			res 	R0, T0
+			fin
+		
+	

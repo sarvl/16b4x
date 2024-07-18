@@ -133,6 +133,28 @@ uint16_t& extreg_FL = extregs[5];
 uint16_t& extreg_F1 = extregs[6];
 uint16_t& extreg_F2 = extregs[7];
 
+bool paging_mode = false;
+
+uint16_t pid = 0;
+
+struct t_Translation{
+	uint16_t addr;
+	uint8_t  permissions;
+	bool     present;
+
+	t_Translation(){}
+	t_Translation(uint16_t const n_addr, uint8_t const n_permissions, bool const n_present)
+		: addr(n_addr), permissions(n_permissions), present(n_present) {}
+};
+
+uint8_t privilege_level = 1;
+bool interrupts_enabled = true;
+
+uint8_t  int_saved_prev_privilege_level;
+uint16_t int_saved_ui;
+
+uint16_t IHT[256];
+
 struct t_State{
 	uint16_t m_memory[1 << 16];
 	uint16_t m_regs[8];
@@ -154,10 +176,136 @@ struct t_State{
 };
 
 
+enum class t_Interrupt_Type{
+	timer                    ,
+	page_fault               ,
+	privilege_violation      ,
+	permission_violation     ,
+	division_by_0            ,
+	io_interrupt             ,
+	instruction_not_supported
+};
+
+struct t_Violation{
+	//because fuck c++
+	enum type{
+		read,
+		write,
+		execute
+	};
+};
+
 #define F_SIGN ((extreg_FL >> 3) & 0b1)
 #define F_OVER ((extreg_FL >> 2) & 0b1)
 #define F_CARY ((extreg_FL >> 1) & 0b1)
 #define F_ZERO ((extreg_FL >> 0) & 0b1)
+
+
+void raise_interrupt(
+	uint16_t const iid, 
+	uint16_t const addr, 
+	uint16_t const data0, 
+	uint16_t const data1, 
+	uint16_t const data2
+	)
+{
+	int_saved_prev_privilege_level = privilege_level;
+	privilege_level    = 1;
+	interrupts_enabled = false;
+	int_saved_ui       = extreg_UI;
+
+	privilegedextregs[10] = iid;
+	privilegedextregs[11] = addr;
+
+	privilegedextregs[12] = data0;
+	privilegedextregs[13] = data1;
+	privilegedextregs[14] = data2;
+
+	extreg_IP = IHT[iid];
+}
+void raise_interrupt(t_Interrupt_Type const int_type, uint16_t const addr, uint16_t const data0, uint16_t const data1, uint16_t const data2)
+{
+	raise_interrupt(static_cast<uint16_t>(int_type), addr, data0, data1, data2);
+}
+
+
+t_Translation vm_translate(uint16_t const addr)
+{
+	if(!paging_mode)
+		return {addr, 0b111, true};
+
+	uint16_t const entry = memory[privilegedextregs[1] + ((addr >> 11) & 0x1F)];
+
+	//even though more can be used, this simulator supports only 64kiW of memory
+	uint16_t const translated = ((entry & 0x1F) << 11) | (addr & 0x7FF);
+
+	return {
+		translated, 
+		static_cast<uint8_t>((entry >> 12) & 0b111), 
+		static_cast<bool>((entry >> 15) & 0b1)};
+}
+
+int vm_mem_read(uint16_t const rf, uint16_t const addr, bool const back_by_2, int const debug)
+{
+	t_Translation const& translation = vm_translate(addr);
+	if(!translation.present)
+	{
+		if(debug)
+			printf("page fault at 0x%04X by memory read\n", addr);
+
+		if(back_by_2)
+			raise_interrupt(t_Interrupt_Type::page_fault, extreg_IP - 2, addr, 0, 0);
+		else
+			raise_interrupt(t_Interrupt_Type::page_fault, extreg_IP - 1, addr, 0, 0);
+
+		return -1;
+	}
+
+	if(((translation.permissions & 0b100) == 0) && (privilege_level == 0)) //privileged mode bypasses permission check
+	{
+		if(debug)
+			printf("data at 0x%04X is not readable\n", addr);
+
+		raise_interrupt(t_Interrupt_Type::permission_violation, extreg_IP + 1, addr, t_Violation::read, 0);
+		return -2;
+	}
+
+	if(debug) printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, addr, memory[translation.addr], memory[translation.addr]);
+	regs[rf] = memory[translation.addr];
+
+	return 0;
+}
+
+int vm_mem_write(uint16_t const addr, uint16_t const data, bool const back_by_2, int const debug)
+{
+	t_Translation const& translation = vm_translate(addr);
+	if(!translation.present)
+	{
+		if(debug)
+			printf("page fault at 0x%04X by memory write\n", addr);
+
+		if(back_by_2)
+			raise_interrupt(t_Interrupt_Type::page_fault, extreg_IP - 2, addr, 0, 0);
+		else
+			raise_interrupt(t_Interrupt_Type::page_fault, extreg_IP - 1, addr, 0, 0);
+
+		return -1;
+	}
+
+	if(((translation.permissions & 0b010) == 0) && (privilege_level == 0)) //privileged mode bypasses permission check
+	{
+		if(debug)
+			printf("data at 0x%04X is not writeable\n", addr);
+
+		raise_interrupt(t_Interrupt_Type::permission_violation, extreg_IP + 1, addr, t_Violation::write, 0);
+		return -2;
+	}
+
+	if(debug) printf("M[0x%04X] <-- %5d (= 0x%04X)\n", addr, data, data);
+	memory[translation.addr] = data;
+
+	return 0;
+}
 
 int main(int const argc, char const* const argv[])
 {
@@ -168,6 +316,18 @@ int main(int const argc, char const* const argv[])
 		return -1;
 	char const* const data = file.data;
 	int  const        size = file.size;
+
+	int debug = 0;
+	int print = 0;
+
+	//placeholder for better interface
+	for(int i = 2; i < argc; i++)
+	{
+		if(0 == strncmp(argv[i], "-d", 2))
+			debug = 1;
+		else if(0 == strncmp(argv[i], "-p", 2))
+			print = 1;
+	}
 
 	int line_num = 1;
 	int off = 0;
@@ -299,17 +459,18 @@ int main(int const argc, char const* const argv[])
 		File::destroy(symbol_file);
 	}
 
-	int const debug = 0;
-	int const print = 0;
 
 	bool ui_changed = false;
+	bool ui_changed_copy = false;
 	bool running = false;
 	bool const exit_on_error = true;
+
 
 	std::unordered_set<uint16_t> breakpoints;
 	std::unordered_map<int, std::unique_ptr<t_State>> savedstates;
 	while(true)
 	{
+		ui_changed_copy = ui_changed;
 		if(!ui_changed)
 			extreg_UI = 0;
 		else
@@ -324,6 +485,7 @@ int main(int const argc, char const* const argv[])
 			{
 				std::string line;
 				std::getline(std::cin, line);
+
 
 				if(0 == line.size())
 					break;
@@ -687,12 +849,33 @@ int main(int const argc, char const* const argv[])
 
 	next_instruction:
 
+		uint16_t instruction;
+		t_Translation const& translation = vm_translate(extreg_IP);
+		     if(!translation.present)
+		{
+			if(debug)
+				printf("page fault at 0x%04X by instruction fetch\n", extreg_IP);
 
-		uint16_t const instruction = memory[extreg_IP];
+			raise_interrupt(t_Interrupt_Type::page_fault, extreg_IP, extreg_IP, 0, 0);
+			instruction = memory[extreg_IP];
+		}
+		else if(((translation.permissions & 0b001) == 0) && (privilege_level == 0)) //privileged mode bypasses permission check
+		{
+			if(debug)
+				printf("instruction at 0x%04X is not executable\n", extreg_IP);
+
+			raise_interrupt(t_Interrupt_Type::permission_violation, extreg_IP + 1, extreg_IP, t_Violation::execute, 0);
+
+			instruction = memory[extreg_IP];
+		}
+		else
+		{
+			if(debug) printf("translation 0x%04X => 0x%04X\n", extreg_IP, translation.addr);
+			instruction = memory[translation.addr];
+		}
+		if(debug) {printf("0x%04X - 0x%04X - ", extreg_IP, instruction);}
 		extreg_IP++;
 
-		if(debug) {printf("0x%04X - 0x%04X - ", extreg_IP - 1, instruction);}
-		
 		unsigned const opcode_short = (instruction >> 11) & 0x1F;
 		unsigned const opcode_rr    = (instruction      ) & 0x1F;
 		unsigned const opcode_long  = (instruction >>  8) & 0xFF; 
@@ -724,11 +907,23 @@ int main(int const argc, char const* const argv[])
 			| ((instruction & 0x07FE) >>  1)
 			;
 
-		int16_t imm8_long =                    (static_cast<signed>(imm8_long_t << 24) >> 24);
-		int16_t imm5_long =                    (static_cast<signed>(imm5_long_t << 27) >> 27);
-		int16_t imm8      = (extreg_UI << 8) | (static_cast<signed>(imm8_t      << 24) >> 24);
-		int16_t imm8_j    = (extreg_UI << 8) | (static_cast<signed>(imm8_j_t    << 24) >> 24);
-		int16_t imm11     = (extreg_UI << 8) | (static_cast<signed>(imm11_t     << 21) >> 21);
+		//only jumps have sign extended immediate
+		int16_t imm8_long =                     imm8_long_t & 0xFF;
+		int16_t imm5_long =                     imm5_long_t & 0xFF;
+		int16_t imm8      = (extreg_UI << 8) | (imm8_t      & 0xFF);
+
+		int16_t imm8_j;
+		int16_t imm11 ; 
+		if(ui_changed_copy)
+		{
+    		imm8_j = (extreg_UI << 8) | (imm8_j_t & 0xFF);
+    		imm11  = (extreg_UI << 8) | (imm11_t  & 0xFF);
+		}
+		else
+		{
+    		imm8_j = (static_cast<signed>(imm8_j_t << 24) >> 24);
+    		imm11  = (static_cast<signed>(imm11_t  << 21) >> 21);
+		}
 
 		char ccc_str[5];
 		int id = 0;
@@ -774,9 +969,9 @@ int main(int const argc, char const* const argv[])
 			switch(opcode_rr)
 			{
 			//do not warn about range
-			#pragma GCC diagnostic push
 			#pragma GCC diagnostic ignored "-Wpedantic"
 			case 0x00 ... 0x07: 
+			//restore cmd arguments
 			#pragma GCC diagnostic pop
 				printf("INVALID INSTRUCTION\n");
 				
@@ -847,46 +1042,32 @@ int main(int const argc, char const* const argv[])
 				break;
 			//mrd R R
 			case 0x0C: 
-				if(debug) 
-				{
-					printf("mrd R%d, R%d\n", rf, rs); 
-					printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, regs[rs], memory[regs[rs]], memory[regs[rs]]);
-				}
+				if(debug) printf("mrd R%d, R%d\n", rf, rs); 
 
-				regs[rf] = memory[regs[rs]];
+				(void)vm_mem_read(rf, regs[rs], ui_changed_copy, debug);
 
 				break;
 			//mwr R R
 			case 0x0D: 
-				if(debug) 
-				{
-					printf("mwr R%d, R%d\n", rs, rf);
-					printf("M[0x%04X] <-- %5d (= 0x%04X)\n", regs[rs], regs[rf], regs[rf]);
-				}
-
-				memory[regs[rf]] = regs[rs];
+			{
+				if(debug) printf("mwr R%d, R%d\n", rs, rf);
+				
+				(void)vm_mem_write(regs[rs], regs[rf], ui_changed_copy, debug);
 
 				break;
+			}
 			//mro R R 
 			case 0x0E: 
-				if(debug) 
-				{
-					printf("mro R%d, R%d\n", rs, rf);
-					printf("M[0x%04X] <-- %5d (= 0x%04X)\n", regs[rs] + extreg_OF, regs[rf], regs[rf]);
-				}
-
-				regs[rf] = memory[regs[rs] + extreg_OF];
+				if(debug) printf("mro R%d, R%d\n", rs, rf);
+					
+				(void)vm_mem_read(rf, regs[rs] + extreg_OF, ui_changed_copy, debug);
 
 				break;
 			//mwo R R 
 			case 0x0F: 
-				if(debug)
-				{	
-					printf("mwo R%d, R%d\n", rf, rs);
-					printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, regs[rs] + extreg_OF, memory[regs[rs] + extreg_OF], memory[regs[rs]] + extreg_OF);
-				}
+				if(debug) printf("mwo R%d, R%d\n", rf, rs);
 
-				memory[regs[rf] + extreg_OF] = regs[rs];
+				(void)vm_mem_write(regs[rs] + extreg_OF, regs[rf], ui_changed_copy, debug);
 
 				break;
 			//mul R R 
@@ -948,7 +1129,6 @@ int main(int const argc, char const* const argv[])
 
 				regs[rf] = regs[rs];
 				break;
-			#pragma GCC diagnostic push
 			#pragma GCC diagnostic ignored "-Wpedantic"
 			case 0x15 ... 0x17: 
 			#pragma GCC diagnostic pop
@@ -1065,27 +1245,31 @@ int main(int const argc, char const* const argv[])
 			{
 			//int I
 			case 0b000: 
-				if(debug) {printf("int %3d\n", imm8_long);          }
+				if(debug) {printf("int %3d\n", imm8_long); }
+				
+				     if(1 == imm8_long && ui_changed_copy)
+					raise_interrupt(imm8_long, extreg_IP - 2, 0, 0, 0);
+				else if(1 == imm8_long)
+					raise_interrupt(imm8_long, extreg_IP - 1, 0, 0, 0);
+				else
+					raise_interrupt(imm8_long, extreg_IP    , 0, 0, 0);
 
-				printf("INT NOT IMPLEMENTED YET\n");
-
-				if(exit_on_error)
-					goto finish; 
 				break;
 			//irt
 			case 0b001: 
 				if(debug) {printf("irt\n");                        }
+			
+				interrupts_enabled = true;
+				extreg_UI = int_saved_ui;
+				extreg_IP = privilegedextregs[11];
+				privilege_level = int_saved_prev_privilege_level;
 
-				printf("IRT NOT IMPLEMENTED YET\n");
-
-				if(exit_on_error)
-					goto finish; 
 				break;
 			//hlt
 			case 0b010: 
 				if(debug) {printf("hlt\n");                        }
 
-				printf("HLT NOT IMPLEMENTED YET\n");
+				printf("HLT NOT SUPPORTED\n");
 
 				if(exit_on_error)
 					goto finish; 
@@ -1120,7 +1304,52 @@ int main(int const argc, char const* const argv[])
 					printf("pxw %d, R%d\n", imm5_long, rf);
 					printf("PX[0x%04X] <-- %2d (= 0x%04X)\n", imm5_long, regs[rf], regs[rf]);
 				}
+				
+				if(31 == imm5_long)
+				{
+					uint16_t const data = regs[rf];
+					//PID reload
+					if(0b0000'0001 & data) 
+					{
+						pid = memory[0x00FF];
+						paging_mode = true;
+						if(debug) printf("reloaded PID to 0x%04X\n", pid);
+					}
+					//interrupt handler table reload
+					if(0b0000'0010 & data) 
+					{
+						for(int i = 0; i < 256; i++)
+							IHT[i] = memory[0x0100 + i]; 
 
+						if(debug) printf("reloaded IHT\n");
+					}
+					//lower privilege level
+					if(0b0000'0100 & data)
+					{
+						privilege_level = 0;
+						if(debug) printf("lowered privilege level\n");
+					}
+					//flush PT
+					if(0b0000'1000 & data)
+					{
+						//nop, because no cache 
+						if(debug) printf("flushed PT\n");
+					}
+					//enable interrupts
+					if(0b0001'0000 & data)
+					{
+						interrupts_enabled = true;
+						if(debug) printf("enabled interrupts\n");
+					}
+					//disable interrupts
+					if(0b0010'0000 & data)
+					{
+						interrupts_enabled = false;
+						if(debug) printf("disabled interrupts\n");
+					}
+
+
+				}
 				privilegedextregs[imm5_long] = regs[rf];
 
 				break;
@@ -1128,7 +1357,7 @@ int main(int const argc, char const* const argv[])
 			break;
 		case 0x06:
 		case 0x07:
-			printf("PRG NOT IMPLEMENTED YET\n"); 
+			printf("PROGRAMMABLE INSTRUCTIONS NOT IMPLEMENTED YET\n"); 
 
 			if(exit_on_error)
 				goto finish; 
@@ -1138,12 +1367,12 @@ int main(int const argc, char const* const argv[])
 			{
 			//pop R
 			case 0b000: 
-				if(debug) 
-				{
-					printf("pop R%d\n", rf);
-					printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, extreg_SP, regs[rf], regs[rf]);
-					printf("SP <-- 0x%04X\n", static_cast<uint16_t>(extreg_SP + 1));
-				}
+				if(debug) printf("pop R%d\n", rf);
+
+				if(0 != vm_mem_read(rf, extreg_SP, false, debug))
+					break;
+
+				if(debug) printf("SP <-- 0x%04X\n", static_cast<uint16_t>(extreg_SP + 1));
 
 				regs[rf] = memory[extreg_SP];
 				extreg_SP++;
@@ -1155,8 +1384,10 @@ int main(int const argc, char const* const argv[])
 				{
 					printf("psh R%d\n", rf);
 					printf("SP <-- 0x%04X\n", static_cast<uint16_t>(extreg_SP - 1));
-					printf("M[0x%04X] <-- %5d (= 0x%04X)\n", static_cast<uint16_t>(extreg_SP - 1), regs[rf], regs[rf]);
 				}
+
+				if(0 != vm_mem_write(extreg_SP - 1, regs[rf], 0, debug))
+					break;
 
 				extreg_SP--;
 				memory[extreg_SP] = regs[rf];
@@ -1392,7 +1623,7 @@ int main(int const argc, char const* const argv[])
 							printf("IP <-- %s (= 0x%04X)\n", it->second.c_str(), it->first);
 					}
 					else
-						printf("%.2s <-- %5d (= 0x%04X)\n", xwr_xr, regs[rs], regs[rs]);
+						printf("%.2s <-- %5d (= 0x%04X)\n", xwr_xr, imm8, imm8);
 				}
 
 				if(rf == 1)
@@ -1406,46 +1637,30 @@ int main(int const argc, char const* const argv[])
 				break;
 			//mrd R I
 			case 0x0C: 
-				if(debug) 
-				{
-					printf("mrd R%d, %5d\n", rf, imm8);
-					printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, imm8, memory[imm8], memory[imm8]);
-				}
+				if(debug) printf("mrd R%d, %5d\n", rf, imm8);
 
-				regs[rf] = memory[imm8];
+				vm_mem_read(rf, imm8, ui_changed_copy, debug);
 
 				break;
 			//mwr I R
 			case 0x0D: 
-				if(debug) 
-				{
-					printf("mwr %5d, R%d\n", imm8, rf);
-					printf("M[0x%04X] <-- %5d (= 0x%04X)\n", imm8, regs[rf], regs[rf]);
-				}
+				if(debug) printf("mwr %5d, R%d\n", imm8, rf);
 
-				memory[imm8] = regs[rf];
+				vm_mem_write(imm8, regs[rf], ui_changed_copy, debug);
 
 				break;
 			//mro R I
 			case 0x0E: 
-				if(debug) 
-				{
-					printf("mro R%d, %5d\n", rf, imm8);
-					printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, imm8 + extreg_OF, memory[imm8 + extreg_OF], memory[imm8 + extreg_OF]);
-				}
+				if(debug) printf("mro R%d, %5d\n", rf, imm8);
 
-				regs[rf] = memory[imm8 + extreg_OF];
+				vm_mem_read(rf, imm8 + extreg_OF, ui_changed_copy, debug);
 
 				break;
 			//mwo I R
 			case 0x0F: 
-				if(debug) 
-				{
-					printf("mwo %d, R%5d\n", imm8, rf);
-					printf("R%d <-- M[0x%04X] (= %5d 0x%04X)\n", rf, imm8 + extreg_OF, memory[imm8 + extreg_OF], memory[imm8] + extreg_OF);
-				}
+				if(debug) printf("mwo %d, R%5d\n", imm8, rf);
 
-				memory[imm8 + extreg_OF] = regs[rf];
+				vm_mem_write(imm8 + extreg_OF, regs[rf], ui_changed_copy, debug);
 
 				break;
 			//mul R I 
@@ -1712,7 +1927,6 @@ int main(int const argc, char const* const argv[])
 					  | (zero << 0);
 
 			//surpress warning about format
-			#pragma GCC diagnostic push
 			#pragma GCC diagnostic ignored "-Wformat"
 			if(debug) printf("flags set to %04b\n", extreg_FL);
 			#pragma GCC diagnostic pop

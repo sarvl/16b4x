@@ -59,8 +59,8 @@ BEGIN
 	                                          port_bus         => port_bus,
 	                                          port_addr        => port_addr,
 	                                          port_write       => port_write,
-	                                          interrupt        => interrupt,
-	                                          int_id           => int_id);
+	                                          ex_interrupt     => '0',
+	                                          ex_int_id        => (OTHERS => '0'));
 	timer_out <= timer_1ms_passed;
 		
 

@@ -23,6 +23,8 @@ clear:
 test: clear analyse elaborate
 remake: clean refresh test 
 
+trun: test run
+
 run: clear
 	@echo -e ${CR}running simulation${CD}
 	@ghdl -r --workdir=out --std=08 ghdl_stub --wave=wave.ghw --stop-time=${UPPER_LIMIT}

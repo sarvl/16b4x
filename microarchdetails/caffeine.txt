@@ -38,6 +38,7 @@ features
 
 		nop
 		=>
+		---
 
 		cmp Ra, Rb
 		jcs CCC dest
