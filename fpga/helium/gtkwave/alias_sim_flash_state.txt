@@ -1,0 +1,8 @@
+000 cmd
+001 addr
+010 dummy
+011 read
+100 ignore
+101 write
+110 ?red?invalid
+111 ?red?invalid

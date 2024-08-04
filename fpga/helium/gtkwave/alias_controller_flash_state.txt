@@ -1,0 +1,16 @@
+0 idle
+1 read_0
+2 read_1
+3 read_2
+4 read_3
+5 read_4
+6 read_5
+7 read_6
+8 write_en_0
+9 write_en_1
+A write_en_2
+B write_en_3
+C write_0
+D write_1
+E write_2
+F write_3

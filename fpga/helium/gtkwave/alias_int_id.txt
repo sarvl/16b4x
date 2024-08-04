@@ -1,0 +1,8 @@
+00 timer
+01 page_f
+02 priv_v
+03 perm_v
+04 div_0
+05 io
+06 inv_ins
+80 sys_exit

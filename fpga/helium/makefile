@@ -4,9 +4,10 @@ CY := '\033[0;33m' #color yellow
 
 WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Wspecs -Wport-bounds -Wruntime-error -Wunused -Wnowrite -Wothers -Wuseless
 #WARN := 
-FILES := out/arithmetic.o out/decode.o out/register.o out/cpu.o out/memory.o out/timer.o out/main.o out/ghdl_stub.o
+FILES_SYNTH := src/packages.vhdl   src/arithmetic.vhdl src/decode.vhdl src/register.vhdl src/cpu.vhdl src/mem.vhdl src/flash.vhdl src/timer.vhdl src/main.vhdl                 
+FILES_SIM   := out/packages.o out/sim_data.o out/arithmetic.o out/decode.o out/register.o out/cpu.o out/mem.o out/flash.o out/timer.o out/main.o out/ghdl_stub.o
 
-UPPER_LIMIT       :=   4000ns
+UPPER_LIMIT       :=  1000ns
 
 default:
 	@echo -e no option specified
@@ -33,8 +34,11 @@ elaborate:
 	@echo -e ${CR}elaborating${CD}
 	@ghdl -e --workdir=out --std=08 ${WARN} ghdl_stub 
 
-analyse: ${FILES}
+analyse: ${FILES_SIM}
 
-${FILES}: out/%.o: src/%.vhdl
+synth: ${FILES_SYNTH}
+	@ghdl --synth --std=08 --out=verilog ${FILES_SYNTH}-e main arch > synth.v
+
+${FILES_SIM}: out/%.o: src/%.vhdl
 	@echo -e ${CY}analysing $^${CD}
 	@ghdl -a --workdir=out --std=08 ${WARN} $^

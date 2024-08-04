@@ -1,0 +1,472 @@
+[*]
+[*] GTKWave Analyzer v3.3.118 (w)1999-2023 BSI
+[*] Sat Aug  3 21:01:14 2024
+[*]
+[dumpfile] "/home/sarvel/Projects/Computers/16b4x/fpga/helium/wave.ghw"
+[dumpfile_mtime] "Sat Aug  3 20:59:18 2024"
+[dumpfile_size] 8396354
+[savefile] "/home/sarvel/Projects/Computers/16b4x/fpga/helium/gtkwave/default.gtkw"
+[timestart] 0
+[size] 1366 768
+[pos] -1 -1
+*-23.000000 11500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.ghdl_stub.
+[sst_width] 273
+[signals_width] 278
+[sst_expanded] 1
+[sst_vpaned_height] 447
+@28
+top.ghdl_stub.clk
+top.ghdl_stub.dut.nreset
+@200
+-
+@800200
+-ex int
+@28
+top.ghdl_stub.dut.interrupt
+top.ghdl_stub.dut.int
+#{top.ghdl_stub.dut.int_id[1:0]} top.ghdl_stub.dut.int_id[1] top.ghdl_stub.dut.int_id[0]
+top.ghdl_stub.dut.timer_1ms_passed
+@1000200
+-ex int
+@800200
+-IF
+-MEM IF
+@28
+top.ghdl_stub.dut.mem_rdy
+top.ghdl_stub.dut.mem_we
+top.ghdl_stub.dut.mem_re
+@22
+#{top.ghdl_stub.dut.mem_addr[15:0]} top.ghdl_stub.dut.mem_addr[15] top.ghdl_stub.dut.mem_addr[14] top.ghdl_stub.dut.mem_addr[13] top.ghdl_stub.dut.mem_addr[12] top.ghdl_stub.dut.mem_addr[11] top.ghdl_stub.dut.mem_addr[10] top.ghdl_stub.dut.mem_addr[9] top.ghdl_stub.dut.mem_addr[8] top.ghdl_stub.dut.mem_addr[7] top.ghdl_stub.dut.mem_addr[6] top.ghdl_stub.dut.mem_addr[5] top.ghdl_stub.dut.mem_addr[4] top.ghdl_stub.dut.mem_addr[3] top.ghdl_stub.dut.mem_addr[2] top.ghdl_stub.dut.mem_addr[1] top.ghdl_stub.dut.mem_addr[0]
+#{top.ghdl_stub.dut.mem_data[15:0]} top.ghdl_stub.dut.mem_data[15] top.ghdl_stub.dut.mem_data[14] top.ghdl_stub.dut.mem_data[13] top.ghdl_stub.dut.mem_data[12] top.ghdl_stub.dut.mem_data[11] top.ghdl_stub.dut.mem_data[10] top.ghdl_stub.dut.mem_data[9] top.ghdl_stub.dut.mem_data[8] top.ghdl_stub.dut.mem_data[7] top.ghdl_stub.dut.mem_data[6] top.ghdl_stub.dut.mem_data[5] top.ghdl_stub.dut.mem_data[4] top.ghdl_stub.dut.mem_data[3] top.ghdl_stub.dut.mem_data[2] top.ghdl_stub.dut.mem_data[1] top.ghdl_stub.dut.mem_data[0]
+@1000200
+-MEM IF
+@800200
+-PORT IF 
+@28
+top.ghdl_stub.dut.port_rdy
+top.ghdl_stub.dut.port_we
+top.ghdl_stub.dut.port_re
+@c00022
+#{top.ghdl_stub.dut.port_addr[15:0]} top.ghdl_stub.dut.port_addr[15] top.ghdl_stub.dut.port_addr[14] top.ghdl_stub.dut.port_addr[13] top.ghdl_stub.dut.port_addr[12] top.ghdl_stub.dut.port_addr[11] top.ghdl_stub.dut.port_addr[10] top.ghdl_stub.dut.port_addr[9] top.ghdl_stub.dut.port_addr[8] top.ghdl_stub.dut.port_addr[7] top.ghdl_stub.dut.port_addr[6] top.ghdl_stub.dut.port_addr[5] top.ghdl_stub.dut.port_addr[4] top.ghdl_stub.dut.port_addr[3] top.ghdl_stub.dut.port_addr[2] top.ghdl_stub.dut.port_addr[1] top.ghdl_stub.dut.port_addr[0]
+@28
+top.ghdl_stub.dut.port_addr[15]
+top.ghdl_stub.dut.port_addr[14]
+top.ghdl_stub.dut.port_addr[13]
+top.ghdl_stub.dut.port_addr[12]
+top.ghdl_stub.dut.port_addr[11]
+top.ghdl_stub.dut.port_addr[10]
+top.ghdl_stub.dut.port_addr[9]
+top.ghdl_stub.dut.port_addr[8]
+top.ghdl_stub.dut.port_addr[7]
+top.ghdl_stub.dut.port_addr[6]
+top.ghdl_stub.dut.port_addr[5]
+top.ghdl_stub.dut.port_addr[4]
+top.ghdl_stub.dut.port_addr[3]
+top.ghdl_stub.dut.port_addr[2]
+top.ghdl_stub.dut.port_addr[1]
+top.ghdl_stub.dut.port_addr[0]
+@1401200
+-group_end
+@22
+#{top.ghdl_stub.dut.port_data[15:0]} top.ghdl_stub.dut.port_data[15] top.ghdl_stub.dut.port_data[14] top.ghdl_stub.dut.port_data[13] top.ghdl_stub.dut.port_data[12] top.ghdl_stub.dut.port_data[11] top.ghdl_stub.dut.port_data[10] top.ghdl_stub.dut.port_data[9] top.ghdl_stub.dut.port_data[8] top.ghdl_stub.dut.port_data[7] top.ghdl_stub.dut.port_data[6] top.ghdl_stub.dut.port_data[5] top.ghdl_stub.dut.port_data[4] top.ghdl_stub.dut.port_data[3] top.ghdl_stub.dut.port_data[2] top.ghdl_stub.dut.port_data[1] top.ghdl_stub.dut.port_data[0]
+@1000200
+-PORT IF 
+@800200
+-FLASH IF
+@28
+top.ghdl_stub.dut.flash_rdy
+top.ghdl_stub.dut.flash_we
+top.ghdl_stub.dut.flash_re
+@22
+#{top.ghdl_stub.dut.flash_addr[15:0]} top.ghdl_stub.dut.flash_addr[15] top.ghdl_stub.dut.flash_addr[14] top.ghdl_stub.dut.flash_addr[13] top.ghdl_stub.dut.flash_addr[12] top.ghdl_stub.dut.flash_addr[11] top.ghdl_stub.dut.flash_addr[10] top.ghdl_stub.dut.flash_addr[9] top.ghdl_stub.dut.flash_addr[8] top.ghdl_stub.dut.flash_addr[7] top.ghdl_stub.dut.flash_addr[6] top.ghdl_stub.dut.flash_addr[5] top.ghdl_stub.dut.flash_addr[4] top.ghdl_stub.dut.flash_addr[3] top.ghdl_stub.dut.flash_addr[2] top.ghdl_stub.dut.flash_addr[1] top.ghdl_stub.dut.flash_addr[0]
+#{top.ghdl_stub.dut.flash_data_in[15:0]} top.ghdl_stub.dut.flash_data_in[15] top.ghdl_stub.dut.flash_data_in[14] top.ghdl_stub.dut.flash_data_in[13] top.ghdl_stub.dut.flash_data_in[12] top.ghdl_stub.dut.flash_data_in[11] top.ghdl_stub.dut.flash_data_in[10] top.ghdl_stub.dut.flash_data_in[9] top.ghdl_stub.dut.flash_data_in[8] top.ghdl_stub.dut.flash_data_in[7] top.ghdl_stub.dut.flash_data_in[6] top.ghdl_stub.dut.flash_data_in[5] top.ghdl_stub.dut.flash_data_in[4] top.ghdl_stub.dut.flash_data_in[3] top.ghdl_stub.dut.flash_data_in[2] top.ghdl_stub.dut.flash_data_in[1] top.ghdl_stub.dut.flash_data_in[0]
+#{top.ghdl_stub.dut.flash_data_out[15:0]} top.ghdl_stub.dut.flash_data_out[15] top.ghdl_stub.dut.flash_data_out[14] top.ghdl_stub.dut.flash_data_out[13] top.ghdl_stub.dut.flash_data_out[12] top.ghdl_stub.dut.flash_data_out[11] top.ghdl_stub.dut.flash_data_out[10] top.ghdl_stub.dut.flash_data_out[9] top.ghdl_stub.dut.flash_data_out[8] top.ghdl_stub.dut.flash_data_out[7] top.ghdl_stub.dut.flash_data_out[6] top.ghdl_stub.dut.flash_data_out[5] top.ghdl_stub.dut.flash_data_out[4] top.ghdl_stub.dut.flash_data_out[3] top.ghdl_stub.dut.flash_data_out[2] top.ghdl_stub.dut.flash_data_out[1] top.ghdl_stub.dut.flash_data_out[0]
+@1000200
+-FLASH IF
+@c00200
+-SCREEN IF
+@28
+top.ghdl_stub.dut.screen_en
+top.ghdl_stub.dut.screen_rs
+#{top.ghdl_stub.dut.screen_data[7:0]} top.ghdl_stub.dut.screen_data[7] top.ghdl_stub.dut.screen_data[6] top.ghdl_stub.dut.screen_data[5] top.ghdl_stub.dut.screen_data[4] top.ghdl_stub.dut.screen_data[3] top.ghdl_stub.dut.screen_data[2] top.ghdl_stub.dut.screen_data[1] top.ghdl_stub.dut.screen_data[0]
+@1401200
+-SCREEN IF
+@800200
+-LEDS IF
+@28
+#{top.ghdl_stub.dut.leds[5:0]} top.ghdl_stub.dut.leds[5] top.ghdl_stub.dut.leds[4] top.ghdl_stub.dut.leds[3] top.ghdl_stub.dut.leds[2] top.ghdl_stub.dut.leds[1] top.ghdl_stub.dut.leds[0]
+@1000200
+-LEDS IF
+-IF
+@200
+-
+@28
+top.ghdl_stub.clk
+@800200
+-CPU
+-STATE
+@28
+top.ghdl_stub.dut.cpu.cur_cycle
+top.ghdl_stub.dut.cpu.finish
+top.ghdl_stub.dut.cpu.state_update
+top.ghdl_stub.dut.cpu.advance
+@22
+#{top.ghdl_stub.dut.cpu.instr_addr_next[15:0]} top.ghdl_stub.dut.cpu.instr_addr_next[15] top.ghdl_stub.dut.cpu.instr_addr_next[14] top.ghdl_stub.dut.cpu.instr_addr_next[13] top.ghdl_stub.dut.cpu.instr_addr_next[12] top.ghdl_stub.dut.cpu.instr_addr_next[11] top.ghdl_stub.dut.cpu.instr_addr_next[10] top.ghdl_stub.dut.cpu.instr_addr_next[9] top.ghdl_stub.dut.cpu.instr_addr_next[8] top.ghdl_stub.dut.cpu.instr_addr_next[7] top.ghdl_stub.dut.cpu.instr_addr_next[6] top.ghdl_stub.dut.cpu.instr_addr_next[5] top.ghdl_stub.dut.cpu.instr_addr_next[4] top.ghdl_stub.dut.cpu.instr_addr_next[3] top.ghdl_stub.dut.cpu.instr_addr_next[2] top.ghdl_stub.dut.cpu.instr_addr_next[1] top.ghdl_stub.dut.cpu.instr_addr_next[0]
+#{top.ghdl_stub.dut.cpu.instr_addr[15:0]} top.ghdl_stub.dut.cpu.instr_addr[15] top.ghdl_stub.dut.cpu.instr_addr[14] top.ghdl_stub.dut.cpu.instr_addr[13] top.ghdl_stub.dut.cpu.instr_addr[12] top.ghdl_stub.dut.cpu.instr_addr[11] top.ghdl_stub.dut.cpu.instr_addr[10] top.ghdl_stub.dut.cpu.instr_addr[9] top.ghdl_stub.dut.cpu.instr_addr[8] top.ghdl_stub.dut.cpu.instr_addr[7] top.ghdl_stub.dut.cpu.instr_addr[6] top.ghdl_stub.dut.cpu.instr_addr[5] top.ghdl_stub.dut.cpu.instr_addr[4] top.ghdl_stub.dut.cpu.instr_addr[3] top.ghdl_stub.dut.cpu.instr_addr[2] top.ghdl_stub.dut.cpu.instr_addr[1] top.ghdl_stub.dut.cpu.instr_addr[0]
+@2028
+^1 /home/sarvel/Projects/Computers/16b4x/fpga/helium/gtkwave/alias_execution_mode.txt
+#{top.ghdl_stub.dut.cpu.execution_mode[1:0]} top.ghdl_stub.dut.cpu.execution_mode[1] top.ghdl_stub.dut.cpu.execution_mode[0]
+^1 /home/sarvel/Projects/Computers/16b4x/fpga/helium/gtkwave/alias_execution_mode.txt
+#{top.ghdl_stub.dut.cpu.execution_mode_in[1:0]} top.ghdl_stub.dut.cpu.execution_mode_in[1] top.ghdl_stub.dut.cpu.execution_mode_in[0]
+@28
+top.ghdl_stub.dut.cpu.should_jump
+@22
++{cur_instr} #{top.ghdl_stub.dut.cpu.instr.dout[15:0]} top.ghdl_stub.dut.cpu.instr.dout[15] top.ghdl_stub.dut.cpu.instr.dout[14] top.ghdl_stub.dut.cpu.instr.dout[13] top.ghdl_stub.dut.cpu.instr.dout[12] top.ghdl_stub.dut.cpu.instr.dout[11] top.ghdl_stub.dut.cpu.instr.dout[10] top.ghdl_stub.dut.cpu.instr.dout[9] top.ghdl_stub.dut.cpu.instr.dout[8] top.ghdl_stub.dut.cpu.instr.dout[7] top.ghdl_stub.dut.cpu.instr.dout[6] top.ghdl_stub.dut.cpu.instr.dout[5] top.ghdl_stub.dut.cpu.instr.dout[4] top.ghdl_stub.dut.cpu.instr.dout[3] top.ghdl_stub.dut.cpu.instr.dout[2] top.ghdl_stub.dut.cpu.instr.dout[1] top.ghdl_stub.dut.cpu.instr.dout[0]
+@1000200
+-STATE
+@800200
+-INTERRUPTS
+@28
+top.ghdl_stub.dut.cpu.int_saved
+top.ghdl_stub.dut.cpu.prev_ui_xwr
+top.ghdl_stub.dut.cpu.int_en_in
+top.ghdl_stub.dut.cpu.int_en
+top.ghdl_stub.dut.cpu.int_assert
+top.ghdl_stub.dut.cpu.int
+top.ghdl_stub.dut.cpu.int_saved_priv
+@2022
+^2 /home/sarvel/Projects/Computers/16b4x/fpga/helium/gtkwave/alias_int_id.txt
+#{top.ghdl_stub.dut.cpu.int_id[7:0]} top.ghdl_stub.dut.cpu.int_id[7] top.ghdl_stub.dut.cpu.int_id[6] top.ghdl_stub.dut.cpu.int_id[5] top.ghdl_stub.dut.cpu.int_id[4] top.ghdl_stub.dut.cpu.int_id[3] top.ghdl_stub.dut.cpu.int_id[2] top.ghdl_stub.dut.cpu.int_id[1] top.ghdl_stub.dut.cpu.int_id[0]
+@1000200
+-INTERRUPTS
+@c00200
+-IF
+@28
+top.ghdl_stub.dut.cpu.mem_access
+top.ghdl_stub.dut.cpu.ctrl_mem_we
+top.ghdl_stub.dut.cpu.ctrl_mem_re
+top.ghdl_stub.dut.cpu.port_access
+top.ghdl_stub.dut.cpu.ctrl_port_re
+top.ghdl_stub.dut.cpu.ctrl_port_we
+@1401200
+-IF
+@c00200
+-PRIVILEGE
+@28
+top.ghdl_stub.dut.cpu.privileged
+top.ghdl_stub.dut.cpu.privilege_lower
+top.ghdl_stub.dut.cpu.privilege_raise
+@1401200
+-PRIVILEGE
+@c00200
+-VM
+@22
+#{top.ghdl_stub.dut.cpu.pid[15:0]} top.ghdl_stub.dut.cpu.pid[15] top.ghdl_stub.dut.cpu.pid[14] top.ghdl_stub.dut.cpu.pid[13] top.ghdl_stub.dut.cpu.pid[12] top.ghdl_stub.dut.cpu.pid[11] top.ghdl_stub.dut.cpu.pid[10] top.ghdl_stub.dut.cpu.pid[9] top.ghdl_stub.dut.cpu.pid[8] top.ghdl_stub.dut.cpu.pid[7] top.ghdl_stub.dut.cpu.pid[6] top.ghdl_stub.dut.cpu.pid[5] top.ghdl_stub.dut.cpu.pid[4] top.ghdl_stub.dut.cpu.pid[3] top.ghdl_stub.dut.cpu.pid[2] top.ghdl_stub.dut.cpu.pid[1] top.ghdl_stub.dut.cpu.pid[0]
+@28
+top.ghdl_stub.dut.clk
+top.ghdl_stub.dut.cpu.paging_en
+@22
+top.ghdl_stub.dut.cpu.tlb_miss
+#{top.ghdl_stub.dut.cpu.p_addr[15:0]} top.ghdl_stub.dut.cpu.p_addr[15] top.ghdl_stub.dut.cpu.p_addr[14] top.ghdl_stub.dut.cpu.p_addr[13] top.ghdl_stub.dut.cpu.p_addr[12] top.ghdl_stub.dut.cpu.p_addr[11] top.ghdl_stub.dut.cpu.p_addr[10] top.ghdl_stub.dut.cpu.p_addr[9] top.ghdl_stub.dut.cpu.p_addr[8] top.ghdl_stub.dut.cpu.p_addr[7] top.ghdl_stub.dut.cpu.p_addr[6] top.ghdl_stub.dut.cpu.p_addr[5] top.ghdl_stub.dut.cpu.p_addr[4] top.ghdl_stub.dut.cpu.p_addr[3] top.ghdl_stub.dut.cpu.p_addr[2] top.ghdl_stub.dut.cpu.p_addr[1] top.ghdl_stub.dut.cpu.p_addr[0]
+#{top.ghdl_stub.dut.cpu.v_addr[15:0]} top.ghdl_stub.dut.cpu.v_addr[15] top.ghdl_stub.dut.cpu.v_addr[14] top.ghdl_stub.dut.cpu.v_addr[13] top.ghdl_stub.dut.cpu.v_addr[12] top.ghdl_stub.dut.cpu.v_addr[11] top.ghdl_stub.dut.cpu.v_addr[10] top.ghdl_stub.dut.cpu.v_addr[9] top.ghdl_stub.dut.cpu.v_addr[8] top.ghdl_stub.dut.cpu.v_addr[7] top.ghdl_stub.dut.cpu.v_addr[6] top.ghdl_stub.dut.cpu.v_addr[5] top.ghdl_stub.dut.cpu.v_addr[4] top.ghdl_stub.dut.cpu.v_addr[3] top.ghdl_stub.dut.cpu.v_addr[2] top.ghdl_stub.dut.cpu.v_addr[1] top.ghdl_stub.dut.cpu.v_addr[0]
+#{top.ghdl_stub.dut.cpu.tlb_entry[15:0]} top.ghdl_stub.dut.cpu.tlb_entry[15] top.ghdl_stub.dut.cpu.tlb_entry[14] top.ghdl_stub.dut.cpu.tlb_entry[13] top.ghdl_stub.dut.cpu.tlb_entry[12] top.ghdl_stub.dut.cpu.tlb_entry[11] top.ghdl_stub.dut.cpu.tlb_entry[10] top.ghdl_stub.dut.cpu.tlb_entry[9] top.ghdl_stub.dut.cpu.tlb_entry[8] top.ghdl_stub.dut.cpu.tlb_entry[7] top.ghdl_stub.dut.cpu.tlb_entry[6] top.ghdl_stub.dut.cpu.tlb_entry[5] top.ghdl_stub.dut.cpu.tlb_entry[4] top.ghdl_stub.dut.cpu.tlb_entry[3] top.ghdl_stub.dut.cpu.tlb_entry[2] top.ghdl_stub.dut.cpu.tlb_entry[1] top.ghdl_stub.dut.cpu.tlb_entry[0]
+@1401200
+-VM
+@800200
+-REG_FILE
+-IF
+@28
+top.ghdl_stub.dut.cpu.regf.we
+#{top.ghdl_stub.dut.cpu.regf.r0[2:0]} top.ghdl_stub.dut.cpu.regf.r0[2] top.ghdl_stub.dut.cpu.regf.r0[1] top.ghdl_stub.dut.cpu.regf.r0[0]
+#{top.ghdl_stub.dut.cpu.regf.r1[2:0]} top.ghdl_stub.dut.cpu.regf.r1[2] top.ghdl_stub.dut.cpu.regf.r1[1] top.ghdl_stub.dut.cpu.regf.r1[0]
+@22
+#{top.ghdl_stub.dut.cpu.regf.d0[15:0]} top.ghdl_stub.dut.cpu.regf.d0[15] top.ghdl_stub.dut.cpu.regf.d0[14] top.ghdl_stub.dut.cpu.regf.d0[13] top.ghdl_stub.dut.cpu.regf.d0[12] top.ghdl_stub.dut.cpu.regf.d0[11] top.ghdl_stub.dut.cpu.regf.d0[10] top.ghdl_stub.dut.cpu.regf.d0[9] top.ghdl_stub.dut.cpu.regf.d0[8] top.ghdl_stub.dut.cpu.regf.d0[7] top.ghdl_stub.dut.cpu.regf.d0[6] top.ghdl_stub.dut.cpu.regf.d0[5] top.ghdl_stub.dut.cpu.regf.d0[4] top.ghdl_stub.dut.cpu.regf.d0[3] top.ghdl_stub.dut.cpu.regf.d0[2] top.ghdl_stub.dut.cpu.regf.d0[1] top.ghdl_stub.dut.cpu.regf.d0[0]
+#{top.ghdl_stub.dut.cpu.regf.d1[15:0]} top.ghdl_stub.dut.cpu.regf.d1[15] top.ghdl_stub.dut.cpu.regf.d1[14] top.ghdl_stub.dut.cpu.regf.d1[13] top.ghdl_stub.dut.cpu.regf.d1[12] top.ghdl_stub.dut.cpu.regf.d1[11] top.ghdl_stub.dut.cpu.regf.d1[10] top.ghdl_stub.dut.cpu.regf.d1[9] top.ghdl_stub.dut.cpu.regf.d1[8] top.ghdl_stub.dut.cpu.regf.d1[7] top.ghdl_stub.dut.cpu.regf.d1[6] top.ghdl_stub.dut.cpu.regf.d1[5] top.ghdl_stub.dut.cpu.regf.d1[4] top.ghdl_stub.dut.cpu.regf.d1[3] top.ghdl_stub.dut.cpu.regf.d1[2] top.ghdl_stub.dut.cpu.regf.d1[1] top.ghdl_stub.dut.cpu.regf.d1[0]
+#{top.ghdl_stub.dut.cpu.regf.din[15:0]} top.ghdl_stub.dut.cpu.regf.din[15] top.ghdl_stub.dut.cpu.regf.din[14] top.ghdl_stub.dut.cpu.regf.din[13] top.ghdl_stub.dut.cpu.regf.din[12] top.ghdl_stub.dut.cpu.regf.din[11] top.ghdl_stub.dut.cpu.regf.din[10] top.ghdl_stub.dut.cpu.regf.din[9] top.ghdl_stub.dut.cpu.regf.din[8] top.ghdl_stub.dut.cpu.regf.din[7] top.ghdl_stub.dut.cpu.regf.din[6] top.ghdl_stub.dut.cpu.regf.din[5] top.ghdl_stub.dut.cpu.regf.din[4] top.ghdl_stub.dut.cpu.regf.din[3] top.ghdl_stub.dut.cpu.regf.din[2] top.ghdl_stub.dut.cpu.regf.din[1] top.ghdl_stub.dut.cpu.regf.din[0]
+@1000200
+-IF
+@800200
+-DATA
+@22
+#{top.ghdl_stub.dut.cpu.regf.rf[0][15:0]} top.ghdl_stub.dut.cpu.regf.rf[0][15] top.ghdl_stub.dut.cpu.regf.rf[0][14] top.ghdl_stub.dut.cpu.regf.rf[0][13] top.ghdl_stub.dut.cpu.regf.rf[0][12] top.ghdl_stub.dut.cpu.regf.rf[0][11] top.ghdl_stub.dut.cpu.regf.rf[0][10] top.ghdl_stub.dut.cpu.regf.rf[0][9] top.ghdl_stub.dut.cpu.regf.rf[0][8] top.ghdl_stub.dut.cpu.regf.rf[0][7] top.ghdl_stub.dut.cpu.regf.rf[0][6] top.ghdl_stub.dut.cpu.regf.rf[0][5] top.ghdl_stub.dut.cpu.regf.rf[0][4] top.ghdl_stub.dut.cpu.regf.rf[0][3] top.ghdl_stub.dut.cpu.regf.rf[0][2] top.ghdl_stub.dut.cpu.regf.rf[0][1] top.ghdl_stub.dut.cpu.regf.rf[0][0]
+#{top.ghdl_stub.dut.cpu.regf.rf[1][15:0]} top.ghdl_stub.dut.cpu.regf.rf[1][15] top.ghdl_stub.dut.cpu.regf.rf[1][14] top.ghdl_stub.dut.cpu.regf.rf[1][13] top.ghdl_stub.dut.cpu.regf.rf[1][12] top.ghdl_stub.dut.cpu.regf.rf[1][11] top.ghdl_stub.dut.cpu.regf.rf[1][10] top.ghdl_stub.dut.cpu.regf.rf[1][9] top.ghdl_stub.dut.cpu.regf.rf[1][8] top.ghdl_stub.dut.cpu.regf.rf[1][7] top.ghdl_stub.dut.cpu.regf.rf[1][6] top.ghdl_stub.dut.cpu.regf.rf[1][5] top.ghdl_stub.dut.cpu.regf.rf[1][4] top.ghdl_stub.dut.cpu.regf.rf[1][3] top.ghdl_stub.dut.cpu.regf.rf[1][2] top.ghdl_stub.dut.cpu.regf.rf[1][1] top.ghdl_stub.dut.cpu.regf.rf[1][0]
+#{top.ghdl_stub.dut.cpu.regf.rf[2][15:0]} top.ghdl_stub.dut.cpu.regf.rf[2][15] top.ghdl_stub.dut.cpu.regf.rf[2][14] top.ghdl_stub.dut.cpu.regf.rf[2][13] top.ghdl_stub.dut.cpu.regf.rf[2][12] top.ghdl_stub.dut.cpu.regf.rf[2][11] top.ghdl_stub.dut.cpu.regf.rf[2][10] top.ghdl_stub.dut.cpu.regf.rf[2][9] top.ghdl_stub.dut.cpu.regf.rf[2][8] top.ghdl_stub.dut.cpu.regf.rf[2][7] top.ghdl_stub.dut.cpu.regf.rf[2][6] top.ghdl_stub.dut.cpu.regf.rf[2][5] top.ghdl_stub.dut.cpu.regf.rf[2][4] top.ghdl_stub.dut.cpu.regf.rf[2][3] top.ghdl_stub.dut.cpu.regf.rf[2][2] top.ghdl_stub.dut.cpu.regf.rf[2][1] top.ghdl_stub.dut.cpu.regf.rf[2][0]
+#{top.ghdl_stub.dut.cpu.regf.rf[3][15:0]} top.ghdl_stub.dut.cpu.regf.rf[3][15] top.ghdl_stub.dut.cpu.regf.rf[3][14] top.ghdl_stub.dut.cpu.regf.rf[3][13] top.ghdl_stub.dut.cpu.regf.rf[3][12] top.ghdl_stub.dut.cpu.regf.rf[3][11] top.ghdl_stub.dut.cpu.regf.rf[3][10] top.ghdl_stub.dut.cpu.regf.rf[3][9] top.ghdl_stub.dut.cpu.regf.rf[3][8] top.ghdl_stub.dut.cpu.regf.rf[3][7] top.ghdl_stub.dut.cpu.regf.rf[3][6] top.ghdl_stub.dut.cpu.regf.rf[3][5] top.ghdl_stub.dut.cpu.regf.rf[3][4] top.ghdl_stub.dut.cpu.regf.rf[3][3] top.ghdl_stub.dut.cpu.regf.rf[3][2] top.ghdl_stub.dut.cpu.regf.rf[3][1] top.ghdl_stub.dut.cpu.regf.rf[3][0]
+#{top.ghdl_stub.dut.cpu.regf.rf[4][15:0]} top.ghdl_stub.dut.cpu.regf.rf[4][15] top.ghdl_stub.dut.cpu.regf.rf[4][14] top.ghdl_stub.dut.cpu.regf.rf[4][13] top.ghdl_stub.dut.cpu.regf.rf[4][12] top.ghdl_stub.dut.cpu.regf.rf[4][11] top.ghdl_stub.dut.cpu.regf.rf[4][10] top.ghdl_stub.dut.cpu.regf.rf[4][9] top.ghdl_stub.dut.cpu.regf.rf[4][8] top.ghdl_stub.dut.cpu.regf.rf[4][7] top.ghdl_stub.dut.cpu.regf.rf[4][6] top.ghdl_stub.dut.cpu.regf.rf[4][5] top.ghdl_stub.dut.cpu.regf.rf[4][4] top.ghdl_stub.dut.cpu.regf.rf[4][3] top.ghdl_stub.dut.cpu.regf.rf[4][2] top.ghdl_stub.dut.cpu.regf.rf[4][1] top.ghdl_stub.dut.cpu.regf.rf[4][0]
+#{top.ghdl_stub.dut.cpu.regf.rf[5][15:0]} top.ghdl_stub.dut.cpu.regf.rf[5][15] top.ghdl_stub.dut.cpu.regf.rf[5][14] top.ghdl_stub.dut.cpu.regf.rf[5][13] top.ghdl_stub.dut.cpu.regf.rf[5][12] top.ghdl_stub.dut.cpu.regf.rf[5][11] top.ghdl_stub.dut.cpu.regf.rf[5][10] top.ghdl_stub.dut.cpu.regf.rf[5][9] top.ghdl_stub.dut.cpu.regf.rf[5][8] top.ghdl_stub.dut.cpu.regf.rf[5][7] top.ghdl_stub.dut.cpu.regf.rf[5][6] top.ghdl_stub.dut.cpu.regf.rf[5][5] top.ghdl_stub.dut.cpu.regf.rf[5][4] top.ghdl_stub.dut.cpu.regf.rf[5][3] top.ghdl_stub.dut.cpu.regf.rf[5][2] top.ghdl_stub.dut.cpu.regf.rf[5][1] top.ghdl_stub.dut.cpu.regf.rf[5][0]
+#{top.ghdl_stub.dut.cpu.regf.rf[6][15:0]} top.ghdl_stub.dut.cpu.regf.rf[6][15] top.ghdl_stub.dut.cpu.regf.rf[6][14] top.ghdl_stub.dut.cpu.regf.rf[6][13] top.ghdl_stub.dut.cpu.regf.rf[6][12] top.ghdl_stub.dut.cpu.regf.rf[6][11] top.ghdl_stub.dut.cpu.regf.rf[6][10] top.ghdl_stub.dut.cpu.regf.rf[6][9] top.ghdl_stub.dut.cpu.regf.rf[6][8] top.ghdl_stub.dut.cpu.regf.rf[6][7] top.ghdl_stub.dut.cpu.regf.rf[6][6] top.ghdl_stub.dut.cpu.regf.rf[6][5] top.ghdl_stub.dut.cpu.regf.rf[6][4] top.ghdl_stub.dut.cpu.regf.rf[6][3] top.ghdl_stub.dut.cpu.regf.rf[6][2] top.ghdl_stub.dut.cpu.regf.rf[6][1] top.ghdl_stub.dut.cpu.regf.rf[6][0]
+@c00022
+#{top.ghdl_stub.dut.cpu.regf.rf[7][15:0]} top.ghdl_stub.dut.cpu.regf.rf[7][15] top.ghdl_stub.dut.cpu.regf.rf[7][14] top.ghdl_stub.dut.cpu.regf.rf[7][13] top.ghdl_stub.dut.cpu.regf.rf[7][12] top.ghdl_stub.dut.cpu.regf.rf[7][11] top.ghdl_stub.dut.cpu.regf.rf[7][10] top.ghdl_stub.dut.cpu.regf.rf[7][9] top.ghdl_stub.dut.cpu.regf.rf[7][8] top.ghdl_stub.dut.cpu.regf.rf[7][7] top.ghdl_stub.dut.cpu.regf.rf[7][6] top.ghdl_stub.dut.cpu.regf.rf[7][5] top.ghdl_stub.dut.cpu.regf.rf[7][4] top.ghdl_stub.dut.cpu.regf.rf[7][3] top.ghdl_stub.dut.cpu.regf.rf[7][2] top.ghdl_stub.dut.cpu.regf.rf[7][1] top.ghdl_stub.dut.cpu.regf.rf[7][0]
+@28
+top.ghdl_stub.dut.cpu.regf.rf[7][15]
+top.ghdl_stub.dut.cpu.regf.rf[7][14]
+top.ghdl_stub.dut.cpu.regf.rf[7][13]
+top.ghdl_stub.dut.cpu.regf.rf[7][12]
+top.ghdl_stub.dut.cpu.regf.rf[7][11]
+top.ghdl_stub.dut.cpu.regf.rf[7][10]
+top.ghdl_stub.dut.cpu.regf.rf[7][9]
+top.ghdl_stub.dut.cpu.regf.rf[7][8]
+top.ghdl_stub.dut.cpu.regf.rf[7][7]
+top.ghdl_stub.dut.cpu.regf.rf[7][6]
+top.ghdl_stub.dut.cpu.regf.rf[7][5]
+top.ghdl_stub.dut.cpu.regf.rf[7][4]
+top.ghdl_stub.dut.cpu.regf.rf[7][3]
+top.ghdl_stub.dut.cpu.regf.rf[7][2]
+top.ghdl_stub.dut.cpu.regf.rf[7][1]
+top.ghdl_stub.dut.cpu.regf.rf[7][0]
+@1401200
+-group_end
+@1000200
+-DATA
+-REG_FILE
+@28
+top.ghdl_stub.clk
+@800200
+-EXTREG
+-IP
+@28
++{int_IP_we} top.ghdl_stub.dut.cpu.interrupt_ip.we
+@22
++{int_IP_in} #{top.ghdl_stub.dut.cpu.interrupt_ip.din[15:0]} top.ghdl_stub.dut.cpu.interrupt_ip.din[15] top.ghdl_stub.dut.cpu.interrupt_ip.din[14] top.ghdl_stub.dut.cpu.interrupt_ip.din[13] top.ghdl_stub.dut.cpu.interrupt_ip.din[12] top.ghdl_stub.dut.cpu.interrupt_ip.din[11] top.ghdl_stub.dut.cpu.interrupt_ip.din[10] top.ghdl_stub.dut.cpu.interrupt_ip.din[9] top.ghdl_stub.dut.cpu.interrupt_ip.din[8] top.ghdl_stub.dut.cpu.interrupt_ip.din[7] top.ghdl_stub.dut.cpu.interrupt_ip.din[6] top.ghdl_stub.dut.cpu.interrupt_ip.din[5] top.ghdl_stub.dut.cpu.interrupt_ip.din[4] top.ghdl_stub.dut.cpu.interrupt_ip.din[3] top.ghdl_stub.dut.cpu.interrupt_ip.din[2] top.ghdl_stub.dut.cpu.interrupt_ip.din[1] top.ghdl_stub.dut.cpu.interrupt_ip.din[0]
++{int_IP_we} #{top.ghdl_stub.dut.cpu.interrupt_ip.dout[15:0]} top.ghdl_stub.dut.cpu.interrupt_ip.dout[15] top.ghdl_stub.dut.cpu.interrupt_ip.dout[14] top.ghdl_stub.dut.cpu.interrupt_ip.dout[13] top.ghdl_stub.dut.cpu.interrupt_ip.dout[12] top.ghdl_stub.dut.cpu.interrupt_ip.dout[11] top.ghdl_stub.dut.cpu.interrupt_ip.dout[10] top.ghdl_stub.dut.cpu.interrupt_ip.dout[9] top.ghdl_stub.dut.cpu.interrupt_ip.dout[8] top.ghdl_stub.dut.cpu.interrupt_ip.dout[7] top.ghdl_stub.dut.cpu.interrupt_ip.dout[6] top.ghdl_stub.dut.cpu.interrupt_ip.dout[5] top.ghdl_stub.dut.cpu.interrupt_ip.dout[4] top.ghdl_stub.dut.cpu.interrupt_ip.dout[3] top.ghdl_stub.dut.cpu.interrupt_ip.dout[2] top.ghdl_stub.dut.cpu.interrupt_ip.dout[1] top.ghdl_stub.dut.cpu.interrupt_ip.dout[0]
+@28
++{reg_IP_we} top.ghdl_stub.dut.cpu.regular_ip.we
+@22
++{reg_IP_in} #{top.ghdl_stub.dut.cpu.regular_ip.din[15:0]} top.ghdl_stub.dut.cpu.regular_ip.din[15] top.ghdl_stub.dut.cpu.regular_ip.din[14] top.ghdl_stub.dut.cpu.regular_ip.din[13] top.ghdl_stub.dut.cpu.regular_ip.din[12] top.ghdl_stub.dut.cpu.regular_ip.din[11] top.ghdl_stub.dut.cpu.regular_ip.din[10] top.ghdl_stub.dut.cpu.regular_ip.din[9] top.ghdl_stub.dut.cpu.regular_ip.din[8] top.ghdl_stub.dut.cpu.regular_ip.din[7] top.ghdl_stub.dut.cpu.regular_ip.din[6] top.ghdl_stub.dut.cpu.regular_ip.din[5] top.ghdl_stub.dut.cpu.regular_ip.din[4] top.ghdl_stub.dut.cpu.regular_ip.din[3] top.ghdl_stub.dut.cpu.regular_ip.din[2] top.ghdl_stub.dut.cpu.regular_ip.din[1] top.ghdl_stub.dut.cpu.regular_ip.din[0]
++{reg_IP_out} #{top.ghdl_stub.dut.cpu.regular_ip.dout[15:0]} top.ghdl_stub.dut.cpu.regular_ip.dout[15] top.ghdl_stub.dut.cpu.regular_ip.dout[14] top.ghdl_stub.dut.cpu.regular_ip.dout[13] top.ghdl_stub.dut.cpu.regular_ip.dout[12] top.ghdl_stub.dut.cpu.regular_ip.dout[11] top.ghdl_stub.dut.cpu.regular_ip.dout[10] top.ghdl_stub.dut.cpu.regular_ip.dout[9] top.ghdl_stub.dut.cpu.regular_ip.dout[8] top.ghdl_stub.dut.cpu.regular_ip.dout[7] top.ghdl_stub.dut.cpu.regular_ip.dout[6] top.ghdl_stub.dut.cpu.regular_ip.dout[5] top.ghdl_stub.dut.cpu.regular_ip.dout[4] top.ghdl_stub.dut.cpu.regular_ip.dout[3] top.ghdl_stub.dut.cpu.regular_ip.dout[2] top.ghdl_stub.dut.cpu.regular_ip.dout[1] top.ghdl_stub.dut.cpu.regular_ip.dout[0]
+@28
++{ucode_IP_we} top.ghdl_stub.dut.cpu.ucode_ip.we
+@22
++{ucode_IP_in} #{top.ghdl_stub.dut.cpu.ucode_ip.din[15:0]} top.ghdl_stub.dut.cpu.ucode_ip.din[15] top.ghdl_stub.dut.cpu.ucode_ip.din[14] top.ghdl_stub.dut.cpu.ucode_ip.din[13] top.ghdl_stub.dut.cpu.ucode_ip.din[12] top.ghdl_stub.dut.cpu.ucode_ip.din[11] top.ghdl_stub.dut.cpu.ucode_ip.din[10] top.ghdl_stub.dut.cpu.ucode_ip.din[9] top.ghdl_stub.dut.cpu.ucode_ip.din[8] top.ghdl_stub.dut.cpu.ucode_ip.din[7] top.ghdl_stub.dut.cpu.ucode_ip.din[6] top.ghdl_stub.dut.cpu.ucode_ip.din[5] top.ghdl_stub.dut.cpu.ucode_ip.din[4] top.ghdl_stub.dut.cpu.ucode_ip.din[3] top.ghdl_stub.dut.cpu.ucode_ip.din[2] top.ghdl_stub.dut.cpu.ucode_ip.din[1] top.ghdl_stub.dut.cpu.ucode_ip.din[0]
++{ucode_IP_out} #{top.ghdl_stub.dut.cpu.ucode_ip.dout[15:0]} top.ghdl_stub.dut.cpu.ucode_ip.dout[15] top.ghdl_stub.dut.cpu.ucode_ip.dout[14] top.ghdl_stub.dut.cpu.ucode_ip.dout[13] top.ghdl_stub.dut.cpu.ucode_ip.dout[12] top.ghdl_stub.dut.cpu.ucode_ip.dout[11] top.ghdl_stub.dut.cpu.ucode_ip.dout[10] top.ghdl_stub.dut.cpu.ucode_ip.dout[9] top.ghdl_stub.dut.cpu.ucode_ip.dout[8] top.ghdl_stub.dut.cpu.ucode_ip.dout[7] top.ghdl_stub.dut.cpu.ucode_ip.dout[6] top.ghdl_stub.dut.cpu.ucode_ip.dout[5] top.ghdl_stub.dut.cpu.ucode_ip.dout[4] top.ghdl_stub.dut.cpu.ucode_ip.dout[3] top.ghdl_stub.dut.cpu.ucode_ip.dout[2] top.ghdl_stub.dut.cpu.ucode_ip.dout[1] top.ghdl_stub.dut.cpu.ucode_ip.dout[0]
+@1000200
+-IP
+@c00200
+-UI
+@22
++{ui_in} #{top.ghdl_stub.dut.cpu.interrupt_ui.din[15:0]} top.ghdl_stub.dut.cpu.interrupt_ui.din[15] top.ghdl_stub.dut.cpu.interrupt_ui.din[14] top.ghdl_stub.dut.cpu.interrupt_ui.din[13] top.ghdl_stub.dut.cpu.interrupt_ui.din[12] top.ghdl_stub.dut.cpu.interrupt_ui.din[11] top.ghdl_stub.dut.cpu.interrupt_ui.din[10] top.ghdl_stub.dut.cpu.interrupt_ui.din[9] top.ghdl_stub.dut.cpu.interrupt_ui.din[8] top.ghdl_stub.dut.cpu.interrupt_ui.din[7] top.ghdl_stub.dut.cpu.interrupt_ui.din[6] top.ghdl_stub.dut.cpu.interrupt_ui.din[5] top.ghdl_stub.dut.cpu.interrupt_ui.din[4] top.ghdl_stub.dut.cpu.interrupt_ui.din[3] top.ghdl_stub.dut.cpu.interrupt_ui.din[2] top.ghdl_stub.dut.cpu.interrupt_ui.din[1] top.ghdl_stub.dut.cpu.interrupt_ui.din[0]
+@28
++{int_UI_we} top.ghdl_stub.dut.cpu.interrupt_ui.we
+@22
++{int_UI_out} #{top.ghdl_stub.dut.cpu.interrupt_ui.dout[15:0]} top.ghdl_stub.dut.cpu.interrupt_ui.dout[15] top.ghdl_stub.dut.cpu.interrupt_ui.dout[14] top.ghdl_stub.dut.cpu.interrupt_ui.dout[13] top.ghdl_stub.dut.cpu.interrupt_ui.dout[12] top.ghdl_stub.dut.cpu.interrupt_ui.dout[11] top.ghdl_stub.dut.cpu.interrupt_ui.dout[10] top.ghdl_stub.dut.cpu.interrupt_ui.dout[9] top.ghdl_stub.dut.cpu.interrupt_ui.dout[8] top.ghdl_stub.dut.cpu.interrupt_ui.dout[7] top.ghdl_stub.dut.cpu.interrupt_ui.dout[6] top.ghdl_stub.dut.cpu.interrupt_ui.dout[5] top.ghdl_stub.dut.cpu.interrupt_ui.dout[4] top.ghdl_stub.dut.cpu.interrupt_ui.dout[3] top.ghdl_stub.dut.cpu.interrupt_ui.dout[2] top.ghdl_stub.dut.cpu.interrupt_ui.dout[1] top.ghdl_stub.dut.cpu.interrupt_ui.dout[0]
+@28
++{reg_UI_we} top.ghdl_stub.dut.cpu.regular_ui.we
+@22
++{reg_UI_out} #{top.ghdl_stub.dut.cpu.regular_ui.dout[15:0]} top.ghdl_stub.dut.cpu.regular_ui.dout[15] top.ghdl_stub.dut.cpu.regular_ui.dout[14] top.ghdl_stub.dut.cpu.regular_ui.dout[13] top.ghdl_stub.dut.cpu.regular_ui.dout[12] top.ghdl_stub.dut.cpu.regular_ui.dout[11] top.ghdl_stub.dut.cpu.regular_ui.dout[10] top.ghdl_stub.dut.cpu.regular_ui.dout[9] top.ghdl_stub.dut.cpu.regular_ui.dout[8] top.ghdl_stub.dut.cpu.regular_ui.dout[7] top.ghdl_stub.dut.cpu.regular_ui.dout[6] top.ghdl_stub.dut.cpu.regular_ui.dout[5] top.ghdl_stub.dut.cpu.regular_ui.dout[4] top.ghdl_stub.dut.cpu.regular_ui.dout[3] top.ghdl_stub.dut.cpu.regular_ui.dout[2] top.ghdl_stub.dut.cpu.regular_ui.dout[1] top.ghdl_stub.dut.cpu.regular_ui.dout[0]
+@28
++{ucode_UI_we} top.ghdl_stub.dut.cpu.ucode_ui.we
+@22
++{ucode_UI_out} #{top.ghdl_stub.dut.cpu.ucode_ui.dout[15:0]} top.ghdl_stub.dut.cpu.ucode_ui.dout[15] top.ghdl_stub.dut.cpu.ucode_ui.dout[14] top.ghdl_stub.dut.cpu.ucode_ui.dout[13] top.ghdl_stub.dut.cpu.ucode_ui.dout[12] top.ghdl_stub.dut.cpu.ucode_ui.dout[11] top.ghdl_stub.dut.cpu.ucode_ui.dout[10] top.ghdl_stub.dut.cpu.ucode_ui.dout[9] top.ghdl_stub.dut.cpu.ucode_ui.dout[8] top.ghdl_stub.dut.cpu.ucode_ui.dout[7] top.ghdl_stub.dut.cpu.ucode_ui.dout[6] top.ghdl_stub.dut.cpu.ucode_ui.dout[5] top.ghdl_stub.dut.cpu.ucode_ui.dout[4] top.ghdl_stub.dut.cpu.ucode_ui.dout[3] top.ghdl_stub.dut.cpu.ucode_ui.dout[2] top.ghdl_stub.dut.cpu.ucode_ui.dout[1] top.ghdl_stub.dut.cpu.ucode_ui.dout[0]
+@1401200
+-UI
+@c00200
+-LR
+@28
++{LR_we} top.ghdl_stub.dut.cpu.extreg_lr.we
+@22
+#{top.ghdl_stub.dut.cpu.extreg_lr.din[15:0]} top.ghdl_stub.dut.cpu.extreg_lr.din[15] top.ghdl_stub.dut.cpu.extreg_lr.din[14] top.ghdl_stub.dut.cpu.extreg_lr.din[13] top.ghdl_stub.dut.cpu.extreg_lr.din[12] top.ghdl_stub.dut.cpu.extreg_lr.din[11] top.ghdl_stub.dut.cpu.extreg_lr.din[10] top.ghdl_stub.dut.cpu.extreg_lr.din[9] top.ghdl_stub.dut.cpu.extreg_lr.din[8] top.ghdl_stub.dut.cpu.extreg_lr.din[7] top.ghdl_stub.dut.cpu.extreg_lr.din[6] top.ghdl_stub.dut.cpu.extreg_lr.din[5] top.ghdl_stub.dut.cpu.extreg_lr.din[4] top.ghdl_stub.dut.cpu.extreg_lr.din[3] top.ghdl_stub.dut.cpu.extreg_lr.din[2] top.ghdl_stub.dut.cpu.extreg_lr.din[1] top.ghdl_stub.dut.cpu.extreg_lr.din[0]
+#{top.ghdl_stub.dut.cpu.extreg_lr.dout[15:0]} top.ghdl_stub.dut.cpu.extreg_lr.dout[15] top.ghdl_stub.dut.cpu.extreg_lr.dout[14] top.ghdl_stub.dut.cpu.extreg_lr.dout[13] top.ghdl_stub.dut.cpu.extreg_lr.dout[12] top.ghdl_stub.dut.cpu.extreg_lr.dout[11] top.ghdl_stub.dut.cpu.extreg_lr.dout[10] top.ghdl_stub.dut.cpu.extreg_lr.dout[9] top.ghdl_stub.dut.cpu.extreg_lr.dout[8] top.ghdl_stub.dut.cpu.extreg_lr.dout[7] top.ghdl_stub.dut.cpu.extreg_lr.dout[6] top.ghdl_stub.dut.cpu.extreg_lr.dout[5] top.ghdl_stub.dut.cpu.extreg_lr.dout[4] top.ghdl_stub.dut.cpu.extreg_lr.dout[3] top.ghdl_stub.dut.cpu.extreg_lr.dout[2] top.ghdl_stub.dut.cpu.extreg_lr.dout[1] top.ghdl_stub.dut.cpu.extreg_lr.dout[0]
+@1401200
+-LR
+@c00200
+-SP
+@28
++{SP_we} top.ghdl_stub.dut.cpu.extreg_sp.we
+@22
+#{top.ghdl_stub.dut.cpu.extreg_sp.din[15:0]} top.ghdl_stub.dut.cpu.extreg_sp.din[15] top.ghdl_stub.dut.cpu.extreg_sp.din[14] top.ghdl_stub.dut.cpu.extreg_sp.din[13] top.ghdl_stub.dut.cpu.extreg_sp.din[12] top.ghdl_stub.dut.cpu.extreg_sp.din[11] top.ghdl_stub.dut.cpu.extreg_sp.din[10] top.ghdl_stub.dut.cpu.extreg_sp.din[9] top.ghdl_stub.dut.cpu.extreg_sp.din[8] top.ghdl_stub.dut.cpu.extreg_sp.din[7] top.ghdl_stub.dut.cpu.extreg_sp.din[6] top.ghdl_stub.dut.cpu.extreg_sp.din[5] top.ghdl_stub.dut.cpu.extreg_sp.din[4] top.ghdl_stub.dut.cpu.extreg_sp.din[3] top.ghdl_stub.dut.cpu.extreg_sp.din[2] top.ghdl_stub.dut.cpu.extreg_sp.din[1] top.ghdl_stub.dut.cpu.extreg_sp.din[0]
+#{top.ghdl_stub.dut.cpu.extreg_sp.dout[15:0]} top.ghdl_stub.dut.cpu.extreg_sp.dout[15] top.ghdl_stub.dut.cpu.extreg_sp.dout[14] top.ghdl_stub.dut.cpu.extreg_sp.dout[13] top.ghdl_stub.dut.cpu.extreg_sp.dout[12] top.ghdl_stub.dut.cpu.extreg_sp.dout[11] top.ghdl_stub.dut.cpu.extreg_sp.dout[10] top.ghdl_stub.dut.cpu.extreg_sp.dout[9] top.ghdl_stub.dut.cpu.extreg_sp.dout[8] top.ghdl_stub.dut.cpu.extreg_sp.dout[7] top.ghdl_stub.dut.cpu.extreg_sp.dout[6] top.ghdl_stub.dut.cpu.extreg_sp.dout[5] top.ghdl_stub.dut.cpu.extreg_sp.dout[4] top.ghdl_stub.dut.cpu.extreg_sp.dout[3] top.ghdl_stub.dut.cpu.extreg_sp.dout[2] top.ghdl_stub.dut.cpu.extreg_sp.dout[1] top.ghdl_stub.dut.cpu.extreg_sp.dout[0]
+@1401200
+-SP
+@c00200
+-OF
+@28
++{OF_we} top.ghdl_stub.dut.cpu.extreg_of.we
+@22
+#{top.ghdl_stub.dut.cpu.extreg_of.din[15:0]} top.ghdl_stub.dut.cpu.extreg_of.din[15] top.ghdl_stub.dut.cpu.extreg_of.din[14] top.ghdl_stub.dut.cpu.extreg_of.din[13] top.ghdl_stub.dut.cpu.extreg_of.din[12] top.ghdl_stub.dut.cpu.extreg_of.din[11] top.ghdl_stub.dut.cpu.extreg_of.din[10] top.ghdl_stub.dut.cpu.extreg_of.din[9] top.ghdl_stub.dut.cpu.extreg_of.din[8] top.ghdl_stub.dut.cpu.extreg_of.din[7] top.ghdl_stub.dut.cpu.extreg_of.din[6] top.ghdl_stub.dut.cpu.extreg_of.din[5] top.ghdl_stub.dut.cpu.extreg_of.din[4] top.ghdl_stub.dut.cpu.extreg_of.din[3] top.ghdl_stub.dut.cpu.extreg_of.din[2] top.ghdl_stub.dut.cpu.extreg_of.din[1] top.ghdl_stub.dut.cpu.extreg_of.din[0]
+#{top.ghdl_stub.dut.cpu.extreg_of.dout[15:0]} top.ghdl_stub.dut.cpu.extreg_of.dout[15] top.ghdl_stub.dut.cpu.extreg_of.dout[14] top.ghdl_stub.dut.cpu.extreg_of.dout[13] top.ghdl_stub.dut.cpu.extreg_of.dout[12] top.ghdl_stub.dut.cpu.extreg_of.dout[11] top.ghdl_stub.dut.cpu.extreg_of.dout[10] top.ghdl_stub.dut.cpu.extreg_of.dout[9] top.ghdl_stub.dut.cpu.extreg_of.dout[8] top.ghdl_stub.dut.cpu.extreg_of.dout[7] top.ghdl_stub.dut.cpu.extreg_of.dout[6] top.ghdl_stub.dut.cpu.extreg_of.dout[5] top.ghdl_stub.dut.cpu.extreg_of.dout[4] top.ghdl_stub.dut.cpu.extreg_of.dout[3] top.ghdl_stub.dut.cpu.extreg_of.dout[2] top.ghdl_stub.dut.cpu.extreg_of.dout[1] top.ghdl_stub.dut.cpu.extreg_of.dout[0]
+@1401200
+-OF
+@800200
+-FL
+@28
++{FL_we} top.ghdl_stub.dut.cpu.extreg_fl.we
+@22
+#{top.ghdl_stub.dut.cpu.extreg_fl.din[15:0]} top.ghdl_stub.dut.cpu.extreg_fl.din[15] top.ghdl_stub.dut.cpu.extreg_fl.din[14] top.ghdl_stub.dut.cpu.extreg_fl.din[13] top.ghdl_stub.dut.cpu.extreg_fl.din[12] top.ghdl_stub.dut.cpu.extreg_fl.din[11] top.ghdl_stub.dut.cpu.extreg_fl.din[10] top.ghdl_stub.dut.cpu.extreg_fl.din[9] top.ghdl_stub.dut.cpu.extreg_fl.din[8] top.ghdl_stub.dut.cpu.extreg_fl.din[7] top.ghdl_stub.dut.cpu.extreg_fl.din[6] top.ghdl_stub.dut.cpu.extreg_fl.din[5] top.ghdl_stub.dut.cpu.extreg_fl.din[4] top.ghdl_stub.dut.cpu.extreg_fl.din[3] top.ghdl_stub.dut.cpu.extreg_fl.din[2] top.ghdl_stub.dut.cpu.extreg_fl.din[1] top.ghdl_stub.dut.cpu.extreg_fl.din[0]
+#{top.ghdl_stub.dut.cpu.extreg_fl.dout[15:0]} top.ghdl_stub.dut.cpu.extreg_fl.dout[15] top.ghdl_stub.dut.cpu.extreg_fl.dout[14] top.ghdl_stub.dut.cpu.extreg_fl.dout[13] top.ghdl_stub.dut.cpu.extreg_fl.dout[12] top.ghdl_stub.dut.cpu.extreg_fl.dout[11] top.ghdl_stub.dut.cpu.extreg_fl.dout[10] top.ghdl_stub.dut.cpu.extreg_fl.dout[9] top.ghdl_stub.dut.cpu.extreg_fl.dout[8] top.ghdl_stub.dut.cpu.extreg_fl.dout[7] top.ghdl_stub.dut.cpu.extreg_fl.dout[6] top.ghdl_stub.dut.cpu.extreg_fl.dout[5] top.ghdl_stub.dut.cpu.extreg_fl.dout[4] top.ghdl_stub.dut.cpu.extreg_fl.dout[3] top.ghdl_stub.dut.cpu.extreg_fl.dout[2] top.ghdl_stub.dut.cpu.extreg_fl.dout[1] top.ghdl_stub.dut.cpu.extreg_fl.dout[0]
+@28
+top.ghdl_stub.dut.cpu.fs
+top.ghdl_stub.dut.cpu.fo
+top.ghdl_stub.dut.cpu.fc
+top.ghdl_stub.dut.cpu.fz
+@1000200
+-FL
+@c00200
+-F1
+@28
++{F1_we} top.ghdl_stub.dut.cpu.extreg_f1.we
+@22
+#{top.ghdl_stub.dut.cpu.extreg_f1.din[15:0]} top.ghdl_stub.dut.cpu.extreg_f1.din[15] top.ghdl_stub.dut.cpu.extreg_f1.din[14] top.ghdl_stub.dut.cpu.extreg_f1.din[13] top.ghdl_stub.dut.cpu.extreg_f1.din[12] top.ghdl_stub.dut.cpu.extreg_f1.din[11] top.ghdl_stub.dut.cpu.extreg_f1.din[10] top.ghdl_stub.dut.cpu.extreg_f1.din[9] top.ghdl_stub.dut.cpu.extreg_f1.din[8] top.ghdl_stub.dut.cpu.extreg_f1.din[7] top.ghdl_stub.dut.cpu.extreg_f1.din[6] top.ghdl_stub.dut.cpu.extreg_f1.din[5] top.ghdl_stub.dut.cpu.extreg_f1.din[4] top.ghdl_stub.dut.cpu.extreg_f1.din[3] top.ghdl_stub.dut.cpu.extreg_f1.din[2] top.ghdl_stub.dut.cpu.extreg_f1.din[1] top.ghdl_stub.dut.cpu.extreg_f1.din[0]
+#{top.ghdl_stub.dut.cpu.extreg_f1.dout[15:0]} top.ghdl_stub.dut.cpu.extreg_f1.dout[15] top.ghdl_stub.dut.cpu.extreg_f1.dout[14] top.ghdl_stub.dut.cpu.extreg_f1.dout[13] top.ghdl_stub.dut.cpu.extreg_f1.dout[12] top.ghdl_stub.dut.cpu.extreg_f1.dout[11] top.ghdl_stub.dut.cpu.extreg_f1.dout[10] top.ghdl_stub.dut.cpu.extreg_f1.dout[9] top.ghdl_stub.dut.cpu.extreg_f1.dout[8] top.ghdl_stub.dut.cpu.extreg_f1.dout[7] top.ghdl_stub.dut.cpu.extreg_f1.dout[6] top.ghdl_stub.dut.cpu.extreg_f1.dout[5] top.ghdl_stub.dut.cpu.extreg_f1.dout[4] top.ghdl_stub.dut.cpu.extreg_f1.dout[3] top.ghdl_stub.dut.cpu.extreg_f1.dout[2] top.ghdl_stub.dut.cpu.extreg_f1.dout[1] top.ghdl_stub.dut.cpu.extreg_f1.dout[0]
+@1401200
+-F1
+@c00200
+-F2
+@28
++{F2_we} top.ghdl_stub.dut.cpu.extreg_f2.we
+@22
+#{top.ghdl_stub.dut.cpu.extreg_f2.din[15:0]} top.ghdl_stub.dut.cpu.extreg_f2.din[15] top.ghdl_stub.dut.cpu.extreg_f2.din[14] top.ghdl_stub.dut.cpu.extreg_f2.din[13] top.ghdl_stub.dut.cpu.extreg_f2.din[12] top.ghdl_stub.dut.cpu.extreg_f2.din[11] top.ghdl_stub.dut.cpu.extreg_f2.din[10] top.ghdl_stub.dut.cpu.extreg_f2.din[9] top.ghdl_stub.dut.cpu.extreg_f2.din[8] top.ghdl_stub.dut.cpu.extreg_f2.din[7] top.ghdl_stub.dut.cpu.extreg_f2.din[6] top.ghdl_stub.dut.cpu.extreg_f2.din[5] top.ghdl_stub.dut.cpu.extreg_f2.din[4] top.ghdl_stub.dut.cpu.extreg_f2.din[3] top.ghdl_stub.dut.cpu.extreg_f2.din[2] top.ghdl_stub.dut.cpu.extreg_f2.din[1] top.ghdl_stub.dut.cpu.extreg_f2.din[0]
+#{top.ghdl_stub.dut.cpu.extreg_f2.dout[15:0]} top.ghdl_stub.dut.cpu.extreg_f2.dout[15] top.ghdl_stub.dut.cpu.extreg_f2.dout[14] top.ghdl_stub.dut.cpu.extreg_f2.dout[13] top.ghdl_stub.dut.cpu.extreg_f2.dout[12] top.ghdl_stub.dut.cpu.extreg_f2.dout[11] top.ghdl_stub.dut.cpu.extreg_f2.dout[10] top.ghdl_stub.dut.cpu.extreg_f2.dout[9] top.ghdl_stub.dut.cpu.extreg_f2.dout[8] top.ghdl_stub.dut.cpu.extreg_f2.dout[7] top.ghdl_stub.dut.cpu.extreg_f2.dout[6] top.ghdl_stub.dut.cpu.extreg_f2.dout[5] top.ghdl_stub.dut.cpu.extreg_f2.dout[4] top.ghdl_stub.dut.cpu.extreg_f2.dout[3] top.ghdl_stub.dut.cpu.extreg_f2.dout[2] top.ghdl_stub.dut.cpu.extreg_f2.dout[1] top.ghdl_stub.dut.cpu.extreg_f2.dout[0]
+@1401200
+-F2
+@1000200
+-EXTREG
+@c00200
+-CPU_INTERNAL_MEMORY
+@22
++{addr} #{top.ghdl_stub.dut.cpu.operand1[15:0]} top.ghdl_stub.dut.cpu.operand1[15] top.ghdl_stub.dut.cpu.operand1[14] top.ghdl_stub.dut.cpu.operand1[13] top.ghdl_stub.dut.cpu.operand1[12] top.ghdl_stub.dut.cpu.operand1[11] top.ghdl_stub.dut.cpu.operand1[10] top.ghdl_stub.dut.cpu.operand1[9] top.ghdl_stub.dut.cpu.operand1[8] top.ghdl_stub.dut.cpu.operand1[7] top.ghdl_stub.dut.cpu.operand1[6] top.ghdl_stub.dut.cpu.operand1[5] top.ghdl_stub.dut.cpu.operand1[4] top.ghdl_stub.dut.cpu.operand1[3] top.ghdl_stub.dut.cpu.operand1[2] top.ghdl_stub.dut.cpu.operand1[1] top.ghdl_stub.dut.cpu.operand1[0]
+#{top.ghdl_stub.dut.cpu.imem_data[15:0]} top.ghdl_stub.dut.cpu.imem_data[15] top.ghdl_stub.dut.cpu.imem_data[14] top.ghdl_stub.dut.cpu.imem_data[13] top.ghdl_stub.dut.cpu.imem_data[12] top.ghdl_stub.dut.cpu.imem_data[11] top.ghdl_stub.dut.cpu.imem_data[10] top.ghdl_stub.dut.cpu.imem_data[9] top.ghdl_stub.dut.cpu.imem_data[8] top.ghdl_stub.dut.cpu.imem_data[7] top.ghdl_stub.dut.cpu.imem_data[6] top.ghdl_stub.dut.cpu.imem_data[5] top.ghdl_stub.dut.cpu.imem_data[4] top.ghdl_stub.dut.cpu.imem_data[3] top.ghdl_stub.dut.cpu.imem_data[2] top.ghdl_stub.dut.cpu.imem_data[1] top.ghdl_stub.dut.cpu.imem_data[0]
+@1401200
+-CPU_INTERNAL_MEMORY
+@c00200
+-CPU_UCODE_ROM
+@22
+#{top.ghdl_stub.dut.cpu.rom_data[15:0]} top.ghdl_stub.dut.cpu.rom_data[15] top.ghdl_stub.dut.cpu.rom_data[14] top.ghdl_stub.dut.cpu.rom_data[13] top.ghdl_stub.dut.cpu.rom_data[12] top.ghdl_stub.dut.cpu.rom_data[11] top.ghdl_stub.dut.cpu.rom_data[10] top.ghdl_stub.dut.cpu.rom_data[9] top.ghdl_stub.dut.cpu.rom_data[8] top.ghdl_stub.dut.cpu.rom_data[7] top.ghdl_stub.dut.cpu.rom_data[6] top.ghdl_stub.dut.cpu.rom_data[5] top.ghdl_stub.dut.cpu.rom_data[4] top.ghdl_stub.dut.cpu.rom_data[3] top.ghdl_stub.dut.cpu.rom_data[2] top.ghdl_stub.dut.cpu.rom_data[1] top.ghdl_stub.dut.cpu.rom_data[0]
+@1401200
+-CPU_UCODE_ROM
+@c00200
+-CPU_CONTROLS
+@22
+#{top.ghdl_stub.dut.cpu.operand0[15:0]} top.ghdl_stub.dut.cpu.operand0[15] top.ghdl_stub.dut.cpu.operand0[14] top.ghdl_stub.dut.cpu.operand0[13] top.ghdl_stub.dut.cpu.operand0[12] top.ghdl_stub.dut.cpu.operand0[11] top.ghdl_stub.dut.cpu.operand0[10] top.ghdl_stub.dut.cpu.operand0[9] top.ghdl_stub.dut.cpu.operand0[8] top.ghdl_stub.dut.cpu.operand0[7] top.ghdl_stub.dut.cpu.operand0[6] top.ghdl_stub.dut.cpu.operand0[5] top.ghdl_stub.dut.cpu.operand0[4] top.ghdl_stub.dut.cpu.operand0[3] top.ghdl_stub.dut.cpu.operand0[2] top.ghdl_stub.dut.cpu.operand0[1] top.ghdl_stub.dut.cpu.operand0[0]
+#{top.ghdl_stub.dut.cpu.operand1[15:0]} top.ghdl_stub.dut.cpu.operand1[15] top.ghdl_stub.dut.cpu.operand1[14] top.ghdl_stub.dut.cpu.operand1[13] top.ghdl_stub.dut.cpu.operand1[12] top.ghdl_stub.dut.cpu.operand1[11] top.ghdl_stub.dut.cpu.operand1[10] top.ghdl_stub.dut.cpu.operand1[9] top.ghdl_stub.dut.cpu.operand1[8] top.ghdl_stub.dut.cpu.operand1[7] top.ghdl_stub.dut.cpu.operand1[6] top.ghdl_stub.dut.cpu.operand1[5] top.ghdl_stub.dut.cpu.operand1[4] top.ghdl_stub.dut.cpu.operand1[3] top.ghdl_stub.dut.cpu.operand1[2] top.ghdl_stub.dut.cpu.operand1[1] top.ghdl_stub.dut.cpu.operand1[0]
+@200
+-
+@22
+#{top.ghdl_stub.dut.cpu.imm_se[15:0]} top.ghdl_stub.dut.cpu.imm_se[15] top.ghdl_stub.dut.cpu.imm_se[14] top.ghdl_stub.dut.cpu.imm_se[13] top.ghdl_stub.dut.cpu.imm_se[12] top.ghdl_stub.dut.cpu.imm_se[11] top.ghdl_stub.dut.cpu.imm_se[10] top.ghdl_stub.dut.cpu.imm_se[9] top.ghdl_stub.dut.cpu.imm_se[8] top.ghdl_stub.dut.cpu.imm_se[7] top.ghdl_stub.dut.cpu.imm_se[6] top.ghdl_stub.dut.cpu.imm_se[5] top.ghdl_stub.dut.cpu.imm_se[4] top.ghdl_stub.dut.cpu.imm_se[3] top.ghdl_stub.dut.cpu.imm_se[2] top.ghdl_stub.dut.cpu.imm_se[1] top.ghdl_stub.dut.cpu.imm_se[0]
+@420
+#{top.ghdl_stub.dut.cpu.imm_se[15:0]} top.ghdl_stub.dut.cpu.imm_se[15] top.ghdl_stub.dut.cpu.imm_se[14] top.ghdl_stub.dut.cpu.imm_se[13] top.ghdl_stub.dut.cpu.imm_se[12] top.ghdl_stub.dut.cpu.imm_se[11] top.ghdl_stub.dut.cpu.imm_se[10] top.ghdl_stub.dut.cpu.imm_se[9] top.ghdl_stub.dut.cpu.imm_se[8] top.ghdl_stub.dut.cpu.imm_se[7] top.ghdl_stub.dut.cpu.imm_se[6] top.ghdl_stub.dut.cpu.imm_se[5] top.ghdl_stub.dut.cpu.imm_se[4] top.ghdl_stub.dut.cpu.imm_se[3] top.ghdl_stub.dut.cpu.imm_se[2] top.ghdl_stub.dut.cpu.imm_se[1] top.ghdl_stub.dut.cpu.imm_se[0]
+@22
+#{top.ghdl_stub.dut.cpu.imm_ze[15:0]} top.ghdl_stub.dut.cpu.imm_ze[15] top.ghdl_stub.dut.cpu.imm_ze[14] top.ghdl_stub.dut.cpu.imm_ze[13] top.ghdl_stub.dut.cpu.imm_ze[12] top.ghdl_stub.dut.cpu.imm_ze[11] top.ghdl_stub.dut.cpu.imm_ze[10] top.ghdl_stub.dut.cpu.imm_ze[9] top.ghdl_stub.dut.cpu.imm_ze[8] top.ghdl_stub.dut.cpu.imm_ze[7] top.ghdl_stub.dut.cpu.imm_ze[6] top.ghdl_stub.dut.cpu.imm_ze[5] top.ghdl_stub.dut.cpu.imm_ze[4] top.ghdl_stub.dut.cpu.imm_ze[3] top.ghdl_stub.dut.cpu.imm_ze[2] top.ghdl_stub.dut.cpu.imm_ze[1] top.ghdl_stub.dut.cpu.imm_ze[0]
+@24
+#{top.ghdl_stub.dut.cpu.imm_ze[15:0]} top.ghdl_stub.dut.cpu.imm_ze[15] top.ghdl_stub.dut.cpu.imm_ze[14] top.ghdl_stub.dut.cpu.imm_ze[13] top.ghdl_stub.dut.cpu.imm_ze[12] top.ghdl_stub.dut.cpu.imm_ze[11] top.ghdl_stub.dut.cpu.imm_ze[10] top.ghdl_stub.dut.cpu.imm_ze[9] top.ghdl_stub.dut.cpu.imm_ze[8] top.ghdl_stub.dut.cpu.imm_ze[7] top.ghdl_stub.dut.cpu.imm_ze[6] top.ghdl_stub.dut.cpu.imm_ze[5] top.ghdl_stub.dut.cpu.imm_ze[4] top.ghdl_stub.dut.cpu.imm_ze[3] top.ghdl_stub.dut.cpu.imm_ze[2] top.ghdl_stub.dut.cpu.imm_ze[1] top.ghdl_stub.dut.cpu.imm_ze[0]
+@200
+-
+@28
+top.ghdl_stub.clk
+top.ghdl_stub.dut.cpu.controls.alu
+top.ghdl_stub.dut.cpu.controls.cal
+top.ghdl_stub.dut.cpu.controls.fwr
+top.ghdl_stub.dut.cpu.controls.hlt
+top.ghdl_stub.dut.cpu.controls.ien
+top.ghdl_stub.dut.cpu.controls.iim
+top.ghdl_stub.dut.cpu.controls.int
+top.ghdl_stub.dut.cpu.controls.inv
+top.ghdl_stub.dut.cpu.controls.ird
+top.ghdl_stub.dut.cpu.controls.irt
+top.ghdl_stub.dut.cpu.controls.iwr
+top.ghdl_stub.dut.cpu.controls.jcc
+top.ghdl_stub.dut.cpu.controls.jmp
+top.ghdl_stub.dut.cpu.controls.mrd
+top.ghdl_stub.dut.cpu.controls.msw
+top.ghdl_stub.dut.cpu.controls.mwr
+top.ghdl_stub.dut.cpu.controls.off
+top.ghdl_stub.dut.cpu.controls.pop
+top.ghdl_stub.dut.cpu.controls.prd
+top.ghdl_stub.dut.cpu.controls.prv
+top.ghdl_stub.dut.cpu.controls.psh
+top.ghdl_stub.dut.cpu.controls.pwr
+top.ghdl_stub.dut.cpu.controls.pxr
+top.ghdl_stub.dut.cpu.controls.pxw
+top.ghdl_stub.dut.cpu.controls.ret
+top.ghdl_stub.dut.cpu.controls.rwr
+top.ghdl_stub.dut.cpu.controls.sig
+top.ghdl_stub.dut.cpu.controls.xrd
+top.ghdl_stub.dut.cpu.controls.xwr
+@1401200
+-CPU_CONTROLS
+@1000200
+-CPU
+@200
+-
+@28
+top.ghdl_stub.dut.clk
+@800200
+-CONTROLLERS
+-RAM
+@28
+top.ghdl_stub.dut.mc.clk
+top.ghdl_stub.dut.mc.rdy
+top.ghdl_stub.dut.mc.we
+top.ghdl_stub.dut.mc.re
+@200
+-
+@28
+top.ghdl_stub.dut.mc.mem_clk
+top.ghdl_stub.dut.mc.mem_rdy
+top.ghdl_stub.dut.mc.mem_we
+top.ghdl_stub.dut.mc.mem_re
+top.ghdl_stub.dut.mc.rdy
+@420
+top.ghdl_stub.dut.mc.state_in
+@22
+#{top.ghdl_stub.dut.mc.data_saved[15:0]} top.ghdl_stub.dut.mc.data_saved[15] top.ghdl_stub.dut.mc.data_saved[14] top.ghdl_stub.dut.mc.data_saved[13] top.ghdl_stub.dut.mc.data_saved[12] top.ghdl_stub.dut.mc.data_saved[11] top.ghdl_stub.dut.mc.data_saved[10] top.ghdl_stub.dut.mc.data_saved[9] top.ghdl_stub.dut.mc.data_saved[8] top.ghdl_stub.dut.mc.data_saved[7] top.ghdl_stub.dut.mc.data_saved[6] top.ghdl_stub.dut.mc.data_saved[5] top.ghdl_stub.dut.mc.data_saved[4] top.ghdl_stub.dut.mc.data_saved[3] top.ghdl_stub.dut.mc.data_saved[2] top.ghdl_stub.dut.mc.data_saved[1] top.ghdl_stub.dut.mc.data_saved[0]
+#{top.ghdl_stub.dut.mc.addr_saved[15:0]} top.ghdl_stub.dut.mc.addr_saved[15] top.ghdl_stub.dut.mc.addr_saved[14] top.ghdl_stub.dut.mc.addr_saved[13] top.ghdl_stub.dut.mc.addr_saved[12] top.ghdl_stub.dut.mc.addr_saved[11] top.ghdl_stub.dut.mc.addr_saved[10] top.ghdl_stub.dut.mc.addr_saved[9] top.ghdl_stub.dut.mc.addr_saved[8] top.ghdl_stub.dut.mc.addr_saved[7] top.ghdl_stub.dut.mc.addr_saved[6] top.ghdl_stub.dut.mc.addr_saved[5] top.ghdl_stub.dut.mc.addr_saved[4] top.ghdl_stub.dut.mc.addr_saved[3] top.ghdl_stub.dut.mc.addr_saved[2] top.ghdl_stub.dut.mc.addr_saved[1] top.ghdl_stub.dut.mc.addr_saved[0]
+@1000200
+-RAM
+@c00200
+-FLASH
+@28
+top.ghdl_stub.dut.fc.rdy
+top.ghdl_stub.dut.fc.we
+top.ghdl_stub.dut.fc.re
+top.ghdl_stub.dut.fc.action
+top.ghdl_stub.dut.fc.flash_csn
+top.ghdl_stub.dut.fc.flash_clk
+top.ghdl_stub.dut.fc.flash_so
+top.ghdl_stub.dut.fc.flash_si
+@200
+-
+@1401200
+-FLASH
+@1000200
+-CONTROLLERS
+@200
+-
+-
+@800200
+-SIMULATION
+-SIMULATION_PSRAM
+@28
+top.ghdl_stub.mem_clk
+top.ghdl_stub.mem_rdy
+@29
+top.ghdl_stub.mem_we
+@28
+top.ghdl_stub.mem_re
+@420
+top.ghdl_stub.m_state
+@1000200
+-SIMULATION_PSRAM
+@c00200
+-SIMULATION_FLASH
+@420
+top.ghdl_stub.f_counter
+@22
+#{top.ghdl_stub.f_addr[23:0]} top.ghdl_stub.f_addr[23] top.ghdl_stub.f_addr[22] top.ghdl_stub.f_addr[21] top.ghdl_stub.f_addr[20] top.ghdl_stub.f_addr[19] top.ghdl_stub.f_addr[18] top.ghdl_stub.f_addr[17] top.ghdl_stub.f_addr[16] top.ghdl_stub.f_addr[15] top.ghdl_stub.f_addr[14] top.ghdl_stub.f_addr[13] top.ghdl_stub.f_addr[12] top.ghdl_stub.f_addr[11] top.ghdl_stub.f_addr[10] top.ghdl_stub.f_addr[9] top.ghdl_stub.f_addr[8] top.ghdl_stub.f_addr[7] top.ghdl_stub.f_addr[6] top.ghdl_stub.f_addr[5] top.ghdl_stub.f_addr[4] top.ghdl_stub.f_addr[3] top.ghdl_stub.f_addr[2] top.ghdl_stub.f_addr[1] top.ghdl_stub.f_addr[0]
+@28
+top.ghdl_stub.flash_clk
+top.ghdl_stub.flash_csn
+top.ghdl_stub.flash_so
+top.ghdl_stub.flash_si
+@1401200
+-SIMULATION_FLASH
+@1000200
+-SIMULATION
+[pattern_trace] 1
+[pattern_trace] 0
+!100000@@
+?06
+@29
+top.ghdl_stub.clk
+!!

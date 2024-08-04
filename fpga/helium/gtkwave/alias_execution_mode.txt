@@ -1,0 +1,4 @@
+00 ?invalid?invalid
+01 ucode
+10 regular
+11 interrupt

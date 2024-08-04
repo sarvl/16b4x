@@ -8,11 +8,13 @@
         <File path="src/arithmetic.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/cpu.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/decode.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/flash.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/gowin_rpll/gowin_rpll.vhd" type="file.vhdl" enable="1"/>
         <File path="src/main.vhdl" type="file.vhdl" enable="1"/>
-        <File path="src/memory.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/mem.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/packages.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/register.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/timer.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/helium.cst" type="file.cst" enable="1"/>
-        <File path="src/helium.sdc" type="file.sdc" enable="1"/>
     </FileList>
 </Project>

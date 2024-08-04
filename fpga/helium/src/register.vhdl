@@ -2,6 +2,10 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+USE work.p_arithmetic.to_uint;
+USE work.p_word.t_word;
+USE work.p_mem.t_mem;
+
 ENTITY reg_file IS
 	PORT(
 		clk    : IN  std_ulogic;
@@ -11,21 +15,19 @@ ENTITY reg_file IS
 		r0     : IN  std_ulogic_vector(2 DOWNTO 0);
 		r1     : IN  std_ulogic_vector(2 DOWNTO 0);
 
-		din    : IN  std_ulogic_vector(15 DOWNTO 0);
-		d0     : OUT std_ulogic_vector(15 DOWNTO 0);
-		d1     : OUT std_ulogic_vector(15 DOWNTO 0);
+		din    : IN  t_word;
+		d0     : OUT t_word;
+		d1     : OUT t_word;
 
-		wen    : IN  std_ulogic);
+		we     : IN  std_ulogic);
 END ENTITY reg_file;
 
 
 ARCHITECTURE arch OF reg_file IS
-	TYPE t_rf IS ARRAY (7 DOWNTO 0) OF std_ulogic_vector(15 DOWNTO 0);
-
-	SIGNAL rf : t_rf := (OTHERS => x"0000");
+	SIGNAL rf : t_mem(7 DOWNTO 0) := (OTHERS => x"0000");
 BEGIN
-	d0 <= rf(to_integer(unsigned(r0)));
-	d1 <= rf(to_integer(unsigned(r1)));
+	d0 <= rf(to_uint(r0));
+	d1 <= rf(to_uint(r1));
 	
 	PROCESS(ALL) IS 
 	BEGIN
@@ -34,8 +36,8 @@ BEGIN
 				FOR i IN 0 TO 7 LOOP
 					rf(i) <= x"0000";
 				END LOOP;
-			ELSIF wen THEN
-				rf(to_integer(unsigned(rd))) <= din;
+			ELSIF we THEN
+				rf(to_uint(rd)) <= din;
 			END IF;
 		END IF;
 	END PROCESS;

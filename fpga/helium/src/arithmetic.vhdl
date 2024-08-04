@@ -2,11 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+USE work.p_word.t_word;
+
 ENTITY alu IS 
 	PORT(
-		din0 : IN  std_ulogic_vector(15 DOWNTO 0);
-		din1 : IN  std_ulogic_vector(15 DOWNTO 0);
-		dout : OUT std_ulogic_vector(15 DOWNTO 0);
+		din0 : IN  t_word;
+		din1 : IN  t_word;
+		dout : OUT t_word;
 
 		op   : IN  std_ulogic_vector(2 DOWNTO 0);
 		flags: OUT std_ulogic_vector(3 DOWNTO 0));
@@ -17,8 +19,8 @@ END ENTITY alu;
 ARCHITECTURE arch OF alu IS
 	--not a mistake with size
 	--needed to check for a carry
-	SIGNAL temp0, temp1 : unsigned(16 DOWNTO 0);
-	SIGNAL res          : unsigned(16 DOWNTO 0);
+	SIGNAL temp0, temp1 : unsigned(t_word'high + 1 DOWNTO 0);
+	SIGNAL res          : unsigned(t_word'high + 1 DOWNTO 0);
 	SIGNAL issub        : std_ulogic;
 BEGIN
 	temp0 <= unsigned("0" & din0);

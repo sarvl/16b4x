@@ -1,0 +1,8 @@
+000 cmd
+001 latency
+010 read_0
+011 read_1
+100 write_0
+101 write_1
+110 ?red?invalid
+111 ?red?invalid
