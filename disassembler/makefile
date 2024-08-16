@@ -2,7 +2,7 @@ CD := '\033[0m'    #color default
 CR := '\033[0;31m' #color red
 CY := '\033[0;33m' #color yellow 
 
-FILES_LOCAL := out/main.o
+FILES_LOCAL := out/main.o out/disassemble.o
 FILES_UTIL  := ../utility/out/log.o ../utility/out/file.o
 FILES := ${FILES_LOCAL} ${FILES_UTIL}
 

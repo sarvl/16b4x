@@ -3,9 +3,10 @@
 
 
 namespace Log{
-	Level log_level = Level::info;
-	bool is_error   = false;
-	bool is_warning = false;
+	Level log_level  = Level::info;
+	bool is_error    = false;
+	bool is_warning  = false;
+	bool error_abort = false;
 
 
 	void internal_error(
@@ -18,7 +19,7 @@ namespace Log{
 		          << "\033[0;31m                REPORT THIS ERROR @ https://github.com/sarvl/16b4x\033[0m\n"
 				  << "\033[0;31m\tFILE:\033[0m  " << file_name << "\n"
 				  << "\033[0;31m\tLINE:\033[0m  " << line_num << "\n";
-		exit(0);
+		exit(1);
 		return;
 	}
 	void internal_error(
@@ -27,7 +28,7 @@ namespace Log{
 	{
 		std::cout << "\033[0;31mINTERNAL ERROR:\033[0m " << str << "\n"
 		          << "\033[0;31m                REPORT THIS ERROR @ https://github.com/sarvl/16b4x\033[0m\n";
-		exit(0);
+		exit(1);
 		return;
 	}
 
@@ -48,6 +49,9 @@ namespace Log{
 				  << "\033[0;36m\tline:\033[0m  " << line_num << "\n";
 
 		is_error = true;
+
+		if(error_abort)
+			exit(1);
 		return;
 	}
 
@@ -61,6 +65,9 @@ namespace Log{
 				  << "\033[0;36m\tfile:\033[0m  " << file_name << "\n"
 				  << "\033[0;36m\tline:\033[0m  " << line_num << "\n";
 		is_error = true;
+
+		if(error_abort)
+			exit(1);
 		return;
 	}
 
@@ -70,6 +77,9 @@ namespace Log{
 	{
 		std::cout << "\033[0;31mERROR:\033[0m " << str << "\n";
 		is_error = true;
+
+		if(error_abort)
+			exit(1);
 		return;
 	}
 	void perror(
@@ -82,6 +92,9 @@ namespace Log{
 		errno = terrno;
 		::perror("     ");
 		is_error = true;
+
+		if(error_abort)
+			exit(1);
 		return;
 	}
 

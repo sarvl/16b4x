@@ -12,6 +12,7 @@ namespace Log{
 	extern Level log_level ;
 	extern bool  is_error  ;
 	extern bool  is_warning;
+	extern bool  error_abort;
 
 	void internal_error(
 		std::string_view const str, 
