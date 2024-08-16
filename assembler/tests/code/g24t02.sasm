@@ -1,0 +1,10 @@
+%assign i 0 
+%define n 5
+
+%rps #n
+	%rps #n
+		%assign i {$i 1 +}
+	%rpe 
+%rpe
+
+%info %tostring $i

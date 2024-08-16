@@ -1,0 +1,12 @@
+mro R0,IP  
+mro 0,0
+mro IP,0
+mro {0},0
+mro #def,0
+mro $var,0
+mro lab,0
+mro SOCZ,0
+mro LEG,0
+mro R0,R0,R0
+mro R0
+mro

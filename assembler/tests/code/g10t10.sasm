@@ -1,0 +1,5 @@
+prd R0, 0
+prd R0, R0
+prd R0, {0}
+prd R0, #def
+prd R0, $var

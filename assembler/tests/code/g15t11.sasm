@@ -1,0 +1,15 @@
+%define n "str"
+%define n n
+%define n {n}
+%define n %inc
+
+%define 3 3
+%define "str" 3
+%define $n 3
+%define "str" 3
+%define %inc 3
+%define lab: 3
+%define {3} 3
+
+%define
+%define n 3 3 

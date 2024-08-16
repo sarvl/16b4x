@@ -1,0 +1,6 @@
+mov R0,0
+mov R0,R0
+mov R0,{0}
+mov R0,lab
+mov R0,#def
+mov R0,$var

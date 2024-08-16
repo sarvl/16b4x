@@ -1,0 +1,11 @@
+pop 0   
+pop IP  
+pop {0} 
+pop #def
+pop $var
+pop lab 
+pop SOCZ
+pop LEG 
+
+pop R0, R0
+pop

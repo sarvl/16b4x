@@ -1,0 +1,5 @@
+lab:
+nop
+nop
+cal 3
+cal lab

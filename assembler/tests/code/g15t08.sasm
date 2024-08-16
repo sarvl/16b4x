@@ -1,0 +1,10 @@
+%wes 3
+%wes n
+%wes {n}
+%wes $n
+%wes #n
+%wes {3}
+%wes %inc
+
+%wes
+%wes "str" "str"

@@ -1,0 +1,5 @@
+int {%typeof }
+int {%same R0 }
+int {%isdefined lab}
+int {%isassigned lab}
+int {%inc}

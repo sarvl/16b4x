@@ -1,0 +1,13 @@
+%define n 7
+
+%assign fib0 0 
+%assign fib1 1 
+%assign fib2 1 
+
+%rps #n
+	%assign fib0 $fib1
+	%assign fib1 $fib2
+	%assign fib2 {$fib0 $fib1 +}
+%rpe
+
+%info %tostring $fib0

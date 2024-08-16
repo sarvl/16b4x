@@ -1,0 +1,9 @@
+%if 0
+	%info "notok"
+%elsif 1
+	%info "ok"
+%elsif 1
+	%info "notok"
+%else
+	%info "notok"
+%end

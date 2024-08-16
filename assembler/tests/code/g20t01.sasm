@@ -1,0 +1,3 @@
+%info %tostring 3
+%warn %tostring 3
+%error %tostring 3

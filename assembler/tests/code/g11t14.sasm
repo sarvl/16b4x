@@ -1,0 +1,12 @@
+mrd R0,IP  
+mrd 0,0
+mrd IP,0
+mrd {0},0
+mrd #def,0
+mrd $var,0
+mrd lab,0
+mrd SOCZ,0
+mrd LEG,0
+mrd R0,R0,R0
+mrd R0
+mrd

@@ -1,0 +1,3 @@
+%assert "str" "e"
+%assert %inc "e"
+%assert lab: "e"

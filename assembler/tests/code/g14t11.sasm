@@ -1,0 +1,5 @@
+%define n 3
+%define n #n
+%define n $n
+%define n {3}
+%define #n 3

@@ -1,0 +1,13 @@
+pwr IP, R0  
+pwr lab, R0 
+pwr SOCZ, R0
+pwr LEG, R0 
+pwr R0, 0   
+pwr R0, IP  
+pwr R0, {0}
+pwr R0, #def
+pwr R0, $var
+pwr R0, lab 
+pwr R0, R0, R0
+pwr R0
+pwr

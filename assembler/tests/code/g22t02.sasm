@@ -1,0 +1,29 @@
+%assign n 0
+
+%if {$n 0 =}
+	%info "ok"
+%elsif {$n 1 =}
+	%error "notok"
+%else 
+	%error "notok"
+%end
+
+%assign n 1
+
+%if {$n 0 =}
+	%error "error"
+%elsif {$n 1 =}
+	%info "ok"
+%else 
+	%error "notok"
+%end
+
+%assign n 2
+
+%if {$n 0 =}
+	%error "notok"
+%elsif {$n 1 =}
+	%error "notok"
+%else 
+	%info "ok"
+%end

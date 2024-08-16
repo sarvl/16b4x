@@ -1,0 +1,10 @@
+%inc 3
+%inc n
+%inc {n}
+%inc $n
+%inc #n
+%inc {3}
+%inc %inc
+
+%inc
+%inc "str" "str"

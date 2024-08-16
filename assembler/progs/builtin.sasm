@@ -1,0 +1,82 @@
+@macro same_type(b, a)
+	{%typeof _a %typeof _b =}
+@end
+
+@macro same a b
+	{%same _a _b}
+@end
+
+
+@macro is_label a
+	.,
+	@same_type(.<, _a)
+@end
+
+@macro is_number a
+	@same_type(0, _a)
+@end
+
+@macro is_register a
+	@same_type(R0, _a)
+@end
+
+@macro is_define a
+	@same_type(EXT_MUL, _a)
+@end
+
+@macro is_string a
+	@same_type(_a, "")
+@end
+
+@macro is_directive a
+	@same_type(_a, %end)
+@end
+
+@macro is_instruction a
+	@same_type(_a, nop)
+@end
+
+@macro is_condition a
+	@same_type(_a, LEG)
+@end
+
+@macro is_flag a
+	@same_type(_a, SOCZ)
+@end
+
+@macro is_external_register a
+	@same_type(_a, IP)
+@end
+	
+
+//no need for asserts as types are correctly infered
+@macro add Rd Ra Rb
+	%if @same(_Rd, _Ra)
+		add _Rd, _Rb
+	%else
+		mov _Rd, _Ra
+		add	_Rd, _Rb
+	%end
+@end
+
+@macro mov Rd op 
+	%if @is_number(_op)
+		;_op >= 0
+		%if {_op 0 - 1 + ?}
+			mov _Rd, _op
+		;_op < 0
+		%else
+			not	_Rd, {_op 1 + ~}
+		%end
+	%else
+		mov	_Rd, _op	
+	%end
+@end
+
+
+//THESE HAVE TO BE IMPLEMENTED BY ASSEMBLER ITSELF
+EXT_MUL
+EXT_DIV
+EXT_BIG_INT
+//etc
+

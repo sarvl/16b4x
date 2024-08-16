@@ -1,0 +1,13 @@
+prd R0, IP  
+prd R0, lab 
+prd 0, R0   
+prd IP, R0  
+prd {0}, R0
+prd #def, R0
+prd $var, R0
+prd lab, R0 
+prd SOCZ, R0
+prd LEG, R0 
+prd R0, R0, R0
+prd R0
+prd

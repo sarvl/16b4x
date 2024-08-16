@@ -1,0 +1,7 @@
+%align "str"
+%align n
+%align {n}
+%align %inc
+
+%align
+%align 3 3 

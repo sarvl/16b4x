@@ -1,0 +1,7 @@
+%define n 3 
+%assign n 4
+n:
+
+%info %tostring #n
+%info %tostring $n
+%info %tostring {$n #n +}

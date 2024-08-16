@@ -1,0 +1,14 @@
+cmp R0,IP  
+
+cmp 0,0
+cmp IP,0
+cmp {0},0
+cmp #def,0
+cmp $var,0
+cmp lab,0
+cmp SOCZ,0
+cmp LEG,0
+
+cmp R0,R0,R0
+cmp R0
+cmp

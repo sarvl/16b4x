@@ -1,0 +1,11 @@
+psh 0   
+psh IP  
+psh {0} 
+psh #def
+psh $var
+psh lab 
+psh SOCZ
+psh LEG 
+
+psh R0, R0
+psh

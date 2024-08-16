@@ -1,0 +1,14 @@
+orr R0,IP  
+
+orr 0,0
+orr IP,0
+orr {0},0
+orr #def,0
+orr $var,0
+orr lab,0
+orr SOCZ,0
+orr LEG,0
+
+orr R0,R0,R0
+orr R0
+orr

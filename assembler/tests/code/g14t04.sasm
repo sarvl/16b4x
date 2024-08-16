@@ -1,0 +1,4 @@
+%rps 3
+%rps #n
+%rps $n
+%rps {3}

@@ -1,0 +1,4 @@
+nop
+lab:
+%assert {lab 0 = !} "lab is zero"
+%assert {lab 0 = ?} "lab is nonzero"

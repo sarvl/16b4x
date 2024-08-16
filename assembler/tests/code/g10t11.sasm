@@ -1,0 +1,5 @@
+pwr 0, R0
+pwr R0, R0
+pwr {0}, R0
+pwr #def, R0
+pwr $var, R0

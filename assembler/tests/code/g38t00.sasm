@@ -1,0 +1,6 @@
+%dw l0
+add R0 l1
+mwr l2 R0
+xwr IP l3
+cal l4
+jcs L l5

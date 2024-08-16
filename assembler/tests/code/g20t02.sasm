@@ -1,0 +1,8 @@
+%define n 3 
+%info %tostring #n
+%info %tostring {#n . *}
+
+%assign i 4 
+%info %tostring {$i . *}
+%assign i {$i 1 +}
+%info %tostring {$i . *}

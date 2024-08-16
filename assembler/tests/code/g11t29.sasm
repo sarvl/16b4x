@@ -1,0 +1,9 @@
+nop 0   
+nop R0  
+nop IP  
+nop {0} 
+nop #def
+nop $var
+nop lab 
+nop SOCZ
+nop LEG 

@@ -1,0 +1,8 @@
+@macro
+_x
+@end
+
+@m1
+@m12(x y z)
+@m123(x, y, z)
+@m1234(@m1(x,y z), @ms2(x yyz z), @m3(x,yz))

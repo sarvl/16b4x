@@ -1,0 +1,4 @@
+%align 3
+%align #n
+%align $n
+%align {3}

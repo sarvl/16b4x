@@ -1,0 +1,8 @@
+%tostring "str"
+%tostring 3
+%tostring $n
+%tostring #n
+%tostring %info
+%tostring {3}
+%tostring lab
+%tostring {lab}

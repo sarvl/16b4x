@@ -1,0 +1,10 @@
+%error 3
+%error n
+%error {n}
+%error $n
+%error #n
+%error {3}
+%error %inc
+
+%error
+%error "str" "str"

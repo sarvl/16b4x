@@ -1,0 +1,2 @@
+%info %tostring {%same R0 R0}
+%info %tostring {%same R0 R1 !}

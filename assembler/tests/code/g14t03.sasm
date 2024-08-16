@@ -1,0 +1,6 @@
+%dw 3
+%dw #n
+%dw $n
+%dw {3}
+%dw lab
+%dw {lab}

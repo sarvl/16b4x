@@ -1,0 +1,14 @@
+pxw R0, R0
+pxw IP, R0
+pxw lab, R0
+pxw LEG, R0
+pxw SOCZ, R0
+pxw 0, IP
+pxw 0, lab
+pxw 0, #def
+pxw 0, $var
+pxw 0, LEG
+pxw 0, SOCZ
+pxw 0, R0, R0
+pxw 0, 
+pxw

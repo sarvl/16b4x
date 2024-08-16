@@ -1,0 +1,11 @@
+%if 1
+	%info "ok"
+%else
+	%error "notok"
+%end
+
+%if 0
+	%error "notok"
+%else
+	%info "ok"
+%end

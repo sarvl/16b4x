@@ -1,0 +1,10 @@
+add R0 {%isdefined 3 3}
+add R0 {%isdefined "str" 3}
+add R0 {%isdefined n 3}
+add R0 {%isdefined $n 3}
+add R0 {%isdefined "str" 3}
+add R0 {%isdefined %inc 3}
+add R0 {%isdefined lab: 3}
+add R0 {%isdefined {3} 3}
+
+add R0 {%isdefined}

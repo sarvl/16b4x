@@ -1,0 +1,2 @@
+%define n.n 3 
+%assign n.n 3 

@@ -1,0 +1,10 @@
+%warn 3
+%warn n
+%warn {n}
+%warn $n
+%warn #n
+%warn {3}
+%warn %inc
+
+%warn
+%warn "str" "str"

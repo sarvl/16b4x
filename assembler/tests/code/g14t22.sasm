@@ -1,0 +1,2 @@
+%info "inf"
+%info %tostring 3

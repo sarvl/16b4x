@@ -1,0 +1,14 @@
+mwo IP,R0  
+
+mwo 0,0
+mwo 0,IP
+mwo 0,{0}
+mwo 0,#def
+mwo 0,$var
+mwo 0,lab
+mwo 0,SOCZ
+mwo 0,LEG
+
+mwo R0,R0,R0
+mwo R0
+mwo

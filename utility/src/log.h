@@ -13,6 +13,21 @@ namespace Log{
 	extern bool  is_error  ;
 	extern bool  is_warning;
 
+	void internal_error(
+		std::string_view const str, 
+		std::string_view const file_name,
+		int              const line_num
+		);
+	void internal_error(
+		std::string_view const str
+		);
+
+	void error(
+		std::string_view const str, 
+		std::string_view const info,
+		std::string_view const file_name,
+		int              const line_num
+		);
 	void error(
 		std::string_view const str, 
 		std::string_view const file_name,
@@ -25,6 +40,12 @@ namespace Log{
 		std::string_view const str
 		);
 
+	void warning(
+		std::string_view const str, 
+		std::string_view const info,
+		std::string_view const file_name,
+		int              const line_num
+		);
 	void warning(
 		std::string_view const str, 
 		std::string_view const file_name,

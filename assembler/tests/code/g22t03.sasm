@@ -1,0 +1,15 @@
+%assign i 12 
+
+%if {$i 3 % !}
+	%if {$i 5 % !}
+		%info "FizzBuzz"
+	%else
+		%info "Fizz"
+	%end
+%else
+	%if {$i 5 % !}
+		%info "Buzz"
+	%else
+		%info %tostring $i
+	%end
+%end

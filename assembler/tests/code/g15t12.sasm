@@ -1,0 +1,16 @@
+%assign n "str"
+%assign n n
+%assign n {n}
+%assign n %inc
+
+%assign 3 3
+%assign "str" 3
+%assign #n 3
+%assign "str" 3
+%assign %inc 3
+%assign lab: 3
+%assign {3} 3
+
+%assign
+%assign n 3 3 
+

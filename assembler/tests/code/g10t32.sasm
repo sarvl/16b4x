@@ -1,0 +1,6 @@
+add R0,0
+add R0,R0
+add R0,{0}
+add R0,lab
+add R0,#def
+add R0,$var

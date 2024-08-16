@@ -1,0 +1,12 @@
+xwr 0,0
+xwr R0,0
+xwr {0},0
+xwr #def,0
+xwr $var,0
+xwr lab,0
+xwr SOCZ,0
+xwr LEG,0
+xwr IP, IP  
+xwr IP, R0, R0
+xwr IP
+xwr

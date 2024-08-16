@@ -1,0 +1,3 @@
+;unterminated macro 4
+@macro test arg
+mov 	R0, R3

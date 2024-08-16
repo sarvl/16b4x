@@ -1,0 +1,5 @@
+pxr R0, 0
+pxr R0, #def
+pxr R0, $var
+pxr R0, {0}
+

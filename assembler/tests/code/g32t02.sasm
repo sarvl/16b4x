@@ -1,0 +1,9 @@
+%define def 3
+add R0, R0
+%adr 2
+add R0, R0
+%adr #def
+add R0, R0
+%adr {32}
+add R0, R0
+nop

@@ -1,0 +1,56 @@
+-DT -WNall
+g00 T_IND13
+-DT -WNall
+g01 T_COM03
+-DT -WNall
+g02 T_ERR24
+-DT -WNall
+g03 T_RND10
+
+g09 T_WAR00
+-DV -WNall
+g10 V_CIN39
+-DV       
+g11 V_EIN40
+-DV -WNall
+g12 V_CEX05
+-DV 
+g13 V_EEX05
+-DV -dcmd=1
+g14 V_CDI26
+-DV -dcmd=1
+g15 V_EDI26
+
+g18 V_COM00
+
+g19 V_WAR00
+-DP -dcmddef -dcmddef2=3
+g20 P_CGN11
+-DP
+g21 P_EGN08
+-DP
+g22 P_CIF07
+-DP
+g23 P_EIF07
+-DP
+g24 P_CRE03
+-DP
+g25 P_ERE02
+
+g28 P_COM00
+
+g29 P_WAR00
+
+g30 C_IND39
+
+g32 C_CDR04
+
+g33 C_EDR00
+
+g34 C_OTH00
+
+g35 C_COM00
+
+g38 C_EGN03
+
+g39 C_WAR04

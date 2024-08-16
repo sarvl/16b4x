@@ -1,0 +1,20 @@
+xrd R0, 0
+xrd R0, R0
+xrd R0, {0}
+xrd R0, #def
+xrd R0, $var
+xrd R0, lab
+xrd R0, @mus
+xrd R0, SOCZ
+xrd R0, LEG
+xrd 0, IP
+xrd IP, IP
+xrd {0}, IP
+xrd #def, IP
+xrd $var, IP
+xrd lab, IP
+xrd SOCZ, IP
+xrd LEG, IP
+xrd R0, IP, IP
+xrd R0
+xrd

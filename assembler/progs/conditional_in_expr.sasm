@@ -1,0 +1,3 @@
+@macro ternary(c, a, b)
+	{_c . _a * , ! _b * |}
+@end

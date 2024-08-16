@@ -1,0 +1,31 @@
+mcu 0   ,R0,R0
+mcu R0  ,R0,R0
+mcu IP  ,R0,R0
+mcu {0} ,R0,R0
+mcu #def,R0,R0
+mcu $var,R0,R0
+mcu lab ,R0,R0
+mcu SOCZ,R0,R0
+
+mcu LEG,0   ,R0
+mcu LEG,IP  ,R0
+mcu LEG,{0} ,R0
+mcu LEG,#def,R0
+mcu LEG,$var,R0
+mcu LEG,lab ,R0
+mcu LEG,SOCZ,R0
+mcu LEG,LEG ,R0
+
+mcu LEG,R0,0   
+mcu LEG,R0,IP  
+mcu LEG,R0,{0} 
+mcu LEG,R0,#def
+mcu LEG,R0,$var
+mcu LEG,R0,lab 
+mcu LEG,R0,SOCZ
+mcu LEG,R0,LEG 
+
+mcu LEG,R0,R0,R0
+mcu LEG,R0
+mcu LEG
+mcu

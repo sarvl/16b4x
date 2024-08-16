@@ -1,0 +1,6 @@
+xor R0,0
+xor R0,R0
+xor R0,{0}
+xor R0,lab
+xor R0,#def
+xor R0,$var

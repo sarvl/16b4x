@@ -1,0 +1,6 @@
+cmp R0,0
+cmp R0,R0
+cmp R0,{0}
+cmp R0,lab
+cmp R0,#def
+cmp R0,$var

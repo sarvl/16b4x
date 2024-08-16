@@ -1,0 +1,7 @@
+%adr "str"
+%adr n
+%adr {n}
+%adr %inc
+
+%adr
+%adr 3 3

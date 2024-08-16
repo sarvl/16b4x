@@ -1,0 +1,25 @@
+;wrongly nested arg list and expression 2 
+{
+	{
+		@mus(
+			@mus(
+				{
+					)
+					{
+					}
+					)
+					@mus(
+						}
+					)
+					@mus(
+						}
+						}
+					)
+					)
+					)
+				}
+			)
+			@mus(
+				@mus(
+					}
+					@mus(

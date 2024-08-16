@@ -1,0 +1,5 @@
+cal 0
+cal {0}
+cal lab
+cal #def
+cal $var

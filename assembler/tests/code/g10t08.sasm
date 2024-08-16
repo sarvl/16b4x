@@ -1,0 +1,16 @@
+jcu LEG 0
+jcu LEG {0}
+jcu LEG lab
+jcu LEG #def
+jcu LEG $var
+jcu G,0
+jcu E,0
+jcu Z,0
+jcu EG,0
+jcu ZG,0
+jcu L,0
+jcu LG,0
+jcu LE,0
+jcu LZ,0
+jcu LEG,0
+jcu LZG,0

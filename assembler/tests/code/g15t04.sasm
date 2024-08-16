@@ -1,0 +1,7 @@
+%rps "str"
+%rps n
+%rps {n}
+%rps %inc
+
+%rps
+%rps 3 3

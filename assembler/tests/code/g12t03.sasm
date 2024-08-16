@@ -1,0 +1,3 @@
+int {%typeof R0 %same R0 R0 %isdefined #def %isassigned $var}
+int {%typeof {exp} %typeof {exp {exp}} }
+int {%same {exp} R0 %same {exp} {exp} }

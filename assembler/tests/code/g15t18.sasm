@@ -1,0 +1,7 @@
+%elsif "str"
+%elsif n
+%elsif {n}
+%elsif %inc
+
+%elsif
+%elsif 3 3

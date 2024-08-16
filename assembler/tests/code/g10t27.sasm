@@ -1,0 +1,6 @@
+shr R0,0
+shr R0,R0
+shr R0,{0}
+shr R0,lab
+shr R0,#def
+shr R0,$var

@@ -1,0 +1,14 @@
+%if {%isdefined #n}
+	%info "#n defined"
+	%info %tostring #n
+%end
+
+%if {%isdefined #cmddef}
+	%info "#cmddef defined"
+	%info %tostring #cmddef
+%end
+
+%if {%isdefined #cmddef2}
+	%info "#cmddef2 defined"
+	%info %tostring #cmddef2
+%end

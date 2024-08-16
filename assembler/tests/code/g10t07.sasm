@@ -1,0 +1,5 @@
+jmp 0
+jmp {0}
+jmp lab
+jmp #def
+jmp $var

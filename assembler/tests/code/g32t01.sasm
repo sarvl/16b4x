@@ -1,0 +1,9 @@
+%define def 3
+add R0, R0
+%align 2
+add R0, R0
+%align #def
+add R0, R0
+%align {8 2 *}
+add R0, R0
+nop

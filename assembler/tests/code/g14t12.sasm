@@ -1,0 +1,5 @@
+%assign n 3
+%assign n #n
+%assign n $n
+%assign n {3}
+%assign $n 3

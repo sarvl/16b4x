@@ -1,0 +1,13 @@
+..
+	jmp 	.<
+.,
+	jmp 	.>
+..
+end:
+	jmp 	.special
+.special:
+	nop
+	nop
+..
+othertll:
+	jmp 	end.special

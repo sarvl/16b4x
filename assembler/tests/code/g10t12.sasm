@@ -1,0 +1,8 @@
+xrd R0, IP
+xrd R0, CF
+xrd R0, LR
+xrd R0, SP
+xrd R0, OF
+xrd R0, FL
+xrd R0, F1
+xrd R0, F2

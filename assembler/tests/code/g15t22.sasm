@@ -1,0 +1,10 @@
+%info 3
+%info n
+%info {n}
+%info $n
+%info #n
+%info {3}
+%info %inc
+
+%info
+%info "str" "str"

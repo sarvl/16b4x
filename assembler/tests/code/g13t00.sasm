@@ -1,0 +1,4 @@
+int {1 2 R0}
+int {R0}
+add R0 {1 2 R0}
+add R0 {R0}

@@ -1,0 +1,7 @@
+%assign $var 3 
+%define #def 9
+%dw 1234
+%dw 0x1234
+%dw {0x1234 $var #def + +}
+lab:
+%dw lab

@@ -9,188 +9,148 @@
 
 #include <cstring> //strlen
 
-#include "./../../utility/src/log.h"
-#include "./token.h"
-#include "./pass.h"
+#include <utility> //std::move
+
+//signals
+#include <signal.h>
+#include <unistd.h>
+
+#include "top/gen_utils/log.h"
+#include "top/types/token.h"
+#include "top/command_line/input.h"
+#include "top/config.h"
+#include "top/save.h"
+#include "top/process/process.h"
 
 using namespace std::literals;
 
-std::vector<std::string_view> filenames;
-std::vector<std::string> strings;
+static std::vector<std::string> strings;
 
-namespace Config{
-	char const* output_file = "out.bin";
-};
+//necessary to use because SSO with vector increasing its size will  lead to string_view invalidation
+//therefore procedure is used to reserve enough space
+//strings_get and strings_size are used to not expose 'strings' 
+void strings_add(std::string const& str)
+{
+	strings.emplace_back(str);
+	strings.back().reserve(sizeof(std::string) + 1);
+}
 
-char const* const help_string = R"(SASM PARAMETERS FILE...
-Synthesizing Assembler
+std::string& strings_get(int const ind)
+{
+	return strings[ind];
+}
 
-parameters
-	-h	
-		displays this help
-	-lx 
-		sets log level to x
-		 0 - errors 
-		 1 - errors, warnings
-		 2 - errors, warnings, info
-	-o filename
-		sets output file to the filename
-		defaults to "out.bin"
+std::string& strings_back()
+{
+	return strings.back();
+}
 
-)";
+int strings_size()
+{
+	return strings.size();
+}
+
+void sig_handler(int const signo)
+{
+	Log::internal_error("SIGSEGV");
+}
 
 
 int main(int const argc, char const* const argv[])
 {
-	for(int i = 1; i < argc; i++)
+	signal(SIGSEGV, sig_handler);
+
+	std::vector<t_Define> cmdl_defines;
 	{
-		char const* const cur_arg = argv[i];
-		if('-' != cur_arg[0])
-		{
-			if(filenames.size() > 0)
-			{
-				Log::error("more than 1 file provided");	
-				return -1;
-			}
-
-
-			filenames.emplace_back(cur_arg);
-			continue;
-		}
-
-		int const cur_arg_len = strlen(cur_arg);
-		for(int j = 1; j < cur_arg_len; j++)
-		{
-			switch(cur_arg[j])
-			{
-			case 'h':
-				std::cout << help_string;
-				return 0;
-			case 'l':
-				if(cur_arg_len - 1 == j
-				|| cur_arg[j + 1] > '2'
-				|| cur_arg[j + 1] < '0')
-				{
-					Log::error("argument out of range: "s + std::string(cur_arg + j, 2)); 
-					return -2;
-				}
-
-				Log::log_level = static_cast<Log::Level>(cur_arg[j + 1] - '0');
-				j++;
-				break;
-			case 'o':
-				if(argc - 1 == i)
-				{
-					Log::error("no output file provided");
-					return -3;
-				}
-
-				Config::output_file = argv[i + 1];
-				i++;
-				goto arguments_continue_outer;
-				break;
-			default:
-				Log::warning("invalid parameter: "s + std::string(cur_arg + j, 1)); 
-				break;
-			}
-		}
-
-	arguments_continue_outer:
-		continue;
+	const int res = parse_input(argc, argv, cmdl_defines);
+	if(1 != res)
+		return res;
 	}
-	
-	if(0 == filenames.size())
-	{
-		Log::error("no input file provided");
-		return -4;
-	}
-	
 
-	std::vector<t_Token> tokens;
-	tokenize(tokens, filenames[0]);
+	std::vector<t_Token> tokens[2];
+	tokenize(tokens[0], Config::filenames[0]);
 	if(Log::is_error)
 	{
 		Log::info("aborting further processing due to errors in tokenization");
 		return -5;
 	}
 
-//	for(t_Token const& token : tokens)
-//		std::cout << token << ' ';
-//	std::cout << "\n";;
+	if(Config::Debug::to_print & Config::Debug::Print::token)
+	{
+		for(t_Token const& token : tokens[0])
+			std::cout << token << '\n';
+		Config::Debug::to_print &= ~Config::Debug::Print::token;
+
+		if(Config::Debug::abort && Config::Debug::to_print == 0)
+			return 0;
+	}
 
 	//verifies
-	//extracts labels
-	std::vector<t_Label> labels;
-	std::vector<t_Token> tokens_processed;
-	pass_first(tokens_processed, tokens, labels);
+	verify(tokens[1], tokens[0]);
 	if(Log::is_error)
 	{
 		Log::info("aborting further processing due to errors in verification");
 		return -6;
 	}
 
-//	for(t_Token const& token : tokens_processed)
-//		std::cout << token << ' ';
-//	std::cout << "\n";;
+	if(Config::Debug::to_print & Config::Debug::Print::verify)
+	{
+		for(t_Token const& token : tokens[1])
+			std::cout << token << '\n';
+		Config::Debug::to_print &= ~Config::Debug::Print::verify;
 
-	std::string result;
-	pass_second(result, tokens_processed, labels);
+		if(Config::Debug::abort && Config::Debug::to_print == 0)
+			return 0;
+	}
+
+	tokens[0].clear();
+	std::vector<t_Label> labels;
+	preprocess(tokens[0], labels, tokens[1], std::move(cmdl_defines));
 	if(Log::is_error)
 	{
-		Log::info("aborting further processing due to errors in binary generation");
+		Log::info("aborting further processing due to errors in preprocessing");
 		return -7;
 	}
 
-	//open file for writing
-	int const output_fd = open(Config::output_file, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
-	if(-1 == output_fd)
+	if(Config::Debug::to_print & Config::Debug::Print::preprocess)
 	{
-		Log::perror("output file could not be opened");
-		return -7;
-	}	
-	if(-1 == write(output_fd, result.c_str(), result.size()))
+		for(t_Token const& token : tokens[0])
+			std::cout << token << '\n';
+		for(t_Label const& label : labels)
+			std::cout << label.name << ' ' << label.value << '\n';
+		Config::Debug::to_print &= ~Config::Debug::Print::preprocess;
+
+		if(Config::Debug::abort && Config::Debug::to_print == 0)
+			return 0;
+	}
+
+	std::vector<uint16_t> result;
+	code_gen(result, tokens[0], labels);
+	if(Log::is_error)
 	{
-		Log::perror("write failed");
-		close(output_fd);
+		Log::info("aborting further processing due to errors in code gen");
 		return -8;
 	}
-	close(output_fd);
 
-	//dump symbols into symbols.txt
-	int const symbols_fd = open("symbols.txt", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
-	if(-1 == symbols_fd)
+	if(0 == result.size())
 	{
-		Log::perror("output file could not be opened");
-		return -9;
-	}	
-	
-	//labels should not be that big anyway
-	char data[512];
-	for(t_Label const& label : labels)
-	{
-		// text size           space+nl+null  max digits of 65536
-		if(label.name.size() +       3          +  5  >= 512)
-		{	
-			std::string err = "Label ";
-			err.append(label.name);
-			err.append(" too big to be saved in text file");
-			Log::error(err);
-			close(symbols_fd);
-			return -10;
-		}
-		
-		int const size = std::snprintf(
-			data, 512, 
-			"%*s %d\n", static_cast<int>(label.name.size()), &label.name[0], label.instruction);
-
-		if(-1 == write(symbols_fd, data, size))
-		{
-			Log::perror("write failed");
-			close(symbols_fd);
-			return -11;
-		}
+		Log::info("no instructions have been generated");
+		return 0;
 	}
-	close(symbols_fd);
+
+	//fill labels
+
+	{
+	int const res = save_instructions(result);
+	if(0 != res)
+		return res;
+	}
+
+	{
+	int const res = save_symbols(labels);
+	if(0 != res)
+		return res;
+	}
 
 	return 0;
 }

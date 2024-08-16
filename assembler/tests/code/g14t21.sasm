@@ -1,0 +1,8 @@
+%assert 3 "err" 
+%assert #n "err" 
+%assert $n "err" 
+%assert {3} "err" 
+%assert {lab} "err" 
+%assert lab "err" 
+
+%assert 3 %tostring 3

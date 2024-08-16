@@ -1,0 +1,17 @@
+jcs LEG 0
+jcs LEG {0}
+jcs LEG lab
+jcs LEG #def
+jcs LEG $var
+jcs G,0
+jcs E,0
+jcs Z,0
+jcs EG,0
+jcs ZG,0
+jcs L,0
+jcs LG,0
+jcs LE,0
+jcs LZ,0
+jcs LEG,0
+jcs LZG,0
+

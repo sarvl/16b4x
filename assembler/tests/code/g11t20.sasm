@@ -1,0 +1,14 @@
+div R0,IP  
+
+div 0,0
+div IP,0
+div {0},0
+div #def,0
+div $var,0
+div lab,0
+div SOCZ,0
+div LEG,0
+
+div R0,R0,R0
+div R0
+div

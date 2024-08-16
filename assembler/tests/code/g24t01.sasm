@@ -1,0 +1,18 @@
+%assign i 0
+%rps 20
+	%assign i {$i 1 +}
+
+	%assign imod3 {$i 3 % 0 =}
+	%assign imod5 {$i 5 % 0 =}
+
+	%if {$imod3 $imod5 &}
+		%info "FizzBuzz"
+	%elsif $imod3
+		%info "Fizz"
+	%elsif $imod5
+		%info "Buzz"
+	%else
+		%info %tostring $i
+	%end
+%rpe
+

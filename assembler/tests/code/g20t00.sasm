@@ -1,0 +1,3 @@
+%info "info"
+%warn "warning"
+%error "error"

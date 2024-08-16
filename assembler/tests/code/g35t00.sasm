@@ -1,0 +1,338 @@
+;setup page table of OS to physical addr space 
+;start by loading more data into memory
+
+;0x0000
+%adr 0x0000
+pt_os:
+;display 0b000111 on LEDs to show that something happened
+	mov 	R0, 0b000111
+	pwr 	0x00, R0
+;check whether it is necessary to do anything
+	pxr 	R0, 0x03
+	tst 	R0, 0x01
+	jcs 	LG  init
+	xwr 	UI, 0x17
+	mov 	R0, 0xFF
+	xwr 	UI, 0x20
+	mov 	R1, 0x00
+.,
+	pwr 	0x04, R0
+	prd 	R2, 0x05
+	mwr 	R0, R2
+	sub 	R0, 1
+	cmp 	R0, R1
+	jcs 	GE .<
+	jmp 	init
+
+%adr 0x001E
+init:
+;display 0b000110 to indicate copy finish
+	mov 	R0, 0b000110
+	pwr 	0x00, R0
+%adr 0x0020
+pt_process:
+//will be overwritten by process page table later
+	mov 	R0, 31
+	xwr 	UI, 0xF0 ; present, all permissions
+	mov 	R1, 31 
+.,
+	mwr 	R0, R1
+	sub 	R1, 1
+	sub 	R0, 1
+	jcs 	GZ .<
+	mov 	R0, 0 
+	pxw 	0x00, R0 ;R0 = 0 
+	pxw 	0x01, R0 ;set page table address to 0 
+	mov 	R0, 0b11000 ; enable interrupts, flush PT
+	pxw 	31, R0
+	jmp 	.pt_process_init
+
+%adr 0x0040
+.pt_process_init:
+;right now map entry 0 to be OS and nothing else
+;set all else to completely invalid
+	xwr 	UI, 0x80
+	mov 	R0, 0x00
+	mwr 	pt_process, R0
+	mov 	R0, 0
+	mwr 	0x21, R0
+	mwr 	0x22, R0
+	mwr 	0x23, R0
+;set process pid 
+	mov 	R0, 1
+	pxw 	0x00, R0
+;set PT addres
+	mov 	R0, pt_process
+	pxw 	1, R0
+;absolute jump to prog init
+	mov 	R0, 1
+	xwr 	UI, 0x01
+	mwr 	prog_id, R0
+;display 0b001000 to indicate page table setup finish
+	mov 	R7, 0b011000
+	pwr 	0x00, R7
+	xwr 	UI, 0x07
+	xwr 	IP, prog_init
+	
+
+%adr 0x0100
+prog_id:
+	%dw 0x0000
+prog_0_ret:
+	%dw 0x0000
+prog_1_ret:
+	%dw 0x0000
+timer_passed:
+	%dw 0x0000
+
+%adr 0x0200
+IHT_JT:
+IHT_JT_timer:
+	xwr 	UI, 0x04
+	xwr 	IP, IHT_timer
+IHT_JT_page_fault:
+	xwr 	UI, 0x04
+	xwr 	IP, IHT_page_fault
+%adr 0x0300
+IHT_JT_eys_exit:
+	xwr 	UI, 0x04
+	xwr 	IP, IHT_sys_exit
+
+%adr 0x0400
+IHT_routines:
+IHT_timer:
+	mwr 	0xF0, R0
+	xwr 	UI, 0x01
+	mrd 	R0, timer_passed
+	add 	R0, 1
+	xwr 	UI, 0x01
+	mwr 	timer_passed, R0
+	mrd 	R0, 0xF0
+	irt
+IHT_page_fault:
+	mwr 	0xF0, R0
+	mwr 	0xF1, R1
+	pxr 	R0, 12
+	shr 	R0, 11
+	mov 	R1, R0 ; where to write
+	xwr 	UI, 0xF0 
+	orr 	R0, 0x00 
+	add 	R1, 0x20
+	mwr 	R1, R0
+	mrd 	R0, 0xF0
+	mrd 	R1, 0xF1
+	irt
+IHT_sys_exit: ; int 0x80, R0 is return value
+	mov 	R1, 0 
+	pxw 	0x00, R1 ; set PID to 0 
+	pxw 	0x00, R1 ; switch PT to OS
+	mov 	R1, 0b10001 ; enable interrupts and change the PID
+	pxw 	31, R1
+;increment prog id to be run
+	xwr 	UI, 0x01
+	mrd 	R1, prog_id
+	mov 	R2, R1 ; copy to store ret value
+	xwr 	UI, 0x01 
+	add 	R2, prog_id ; yes, first program has offset 1
+	mwr 	R2, R0
+	add 	R1, 1
+	xwr 	UI, 0x01
+	mwr 	prog_id, R1
+	xwr 	UI, 0x07
+	xwr 	IP, prog_init
+
+%adr 0x06E0
+;busy loop to simplify stuff for now
+wait_for_1ms:
+;	mrd 	R7, timer_passed
+;	cmp 	R7, 0
+;	jcs 	LG wait_for_1ms
+;	mov 	R7, 0
+;	mwr 	timer_passed, R7
+	xwr 	UI, 0x04
+	mov 	R0, 0x00
+busy_loop:
+	sub 	R0, 1 
+	jcs 	GE busy_loop
+	nop
+	ret
+send_byte:
+	xrd 	R5, LR
+	;sync to make sure that 1ms is really waited
+	cal 	wait_for_1ms
+	;set RS to R1
+	pwr 	0x02, R1
+	cal 	wait_for_1ms
+	;write the data
+	pwr 	0x01, R0
+	cal 	wait_for_1ms
+	;toggle enable
+	mov 	R2, 1 
+	pwr 	0x03, R2
+	cal 	wait_for_1ms
+	mov 	R2, 0 
+	pwr 	0x03, R2
+	cal 	wait_for_1ms
+	xwr 	LR, R5
+	ret
+
+%adr 0x06FE
+print_regs:
+;display 0b010000 to indicate print reg start
+	mov 	R7, 0b010011
+	pwr 	0x00, R7
+%adr 0x0700
+	mov 	R0, 0
+	mov 	R6, 0
+	;set RS pin to 0 
+	pwr 	0x02, R0
+	;set E  pin to 0 
+	pwr 	0x03, R0
+	;send initial byte
+	mov 	R0, 0b00111000
+	mov 	R1, 0
+	cal 	send_byte
+	;wait 100ms 
+	mov 	R2, 100
+wait_100:
+	cal 	wait_for_1ms
+	sub 	R2, 1
+	jcs 	G wait_100
+	mov 	R3, 1
+repeat:
+	;send byte
+	mov 	R0, 0b00111000
+	;R1 is set properly
+	cal 	send_byte
+	;wait 10ms 
+wait_10:
+	mov 	R2, 10
+lp:
+	cal 	wait_for_1ms
+	sub 	R2, 1
+	jcs 	G lp
+	sub 	R3, 1
+	jcs 	GZ repeat
+	;send more commands
+	mov 	R0, 0b0001100
+	cal 	send_byte
+	mov 	R0, 0b0000001
+	cal 	send_byte
+	mov 	R0, 0b0000110
+	cal 	send_byte
+	;start sending data
+	mov 	R1, 1
+	nop
+	mov 	R0, 0b01001000 //'H'
+	cal 	send_byte
+	mov 	R0, 0b01000001 //'A'
+	cal 	send_byte
+	mov 	R0, 0b01001001 //'I'
+	cal 	send_byte
+	mov 	R0, 0b01001100 //'L'
+	cal 	send_byte
+	mov 	R0, 0b00100000 //' '
+	cal 	send_byte
+	mov 	R0, 0b01001111 //'O'
+	cal 	send_byte
+	mov 	R0, 0b01001101 //'M'
+	cal 	send_byte
+	mov 	R0, 0b01001110 //'N'
+	cal 	send_byte
+	mov 	R0, 0b01001001 //'I'
+	cal 	send_byte
+	mov 	R0, 0b01010011 //'S'
+	cal 	send_byte
+	mov 	R0, 0b01010011 //'S'
+	cal 	send_byte
+	mov 	R0, 0b01001001 //'I'
+	cal 	send_byte
+	mov 	R0, 0b01000001 //'A'
+	cal 	send_byte
+	mov 	R0, 0b01001000 //'H'
+	cal 	send_byte
+;display 0b010010 to indicate print reg fin
+	mov 	R7, 0b010010
+	pwr 	0x00, R7
+	hcf
+;in case hcf does not work
+end:
+	jmp 	end
+
+%adr 0x07E0
+prog_init:
+;read program ID and determine what to start
+	xwr 	UI, 0x01
+	mrd 	R0, prog_id
+	pxw 	0x00, R0 ; setup pid
+	mov 	R1, 0b10000 ; enable int
+	mov 	R2, 0b00001 ; PID reload
+	cmp 	R0, 2
+	jcs 	E setup_fact
+	cmp 	R0, 3
+	jcs 	E fin
+setup_fib:
+	xwr 	UI, 0xF0
+	mov 	R0, 0x01 
+	mwr 	0x21, R0 ; fib maps to exactly the same page
+	pxw 	31, R1
+	pxw 	31, R2
+	xwr 	UI, 0x08 
+	xwr 	IP, 0x00 ; always jump there because VM
+setup_fact:
+	xwr 	UI, 0xF0
+	mov 	R0, 0x02 
+	mwr 	0x21, R0 ; fact maps to next page
+	pxw 	31, R1
+	pxw 	31, R2
+	xwr 	UI, 0x08 
+	xwr 	IP, 0x00 ; always jump there because VM
+	nop
+fin:
+	xwr 	UI, 0x01
+	mrd 	R0, prog_0_ret
+	xwr 	UI, 0x01
+	mrd 	R1, prog_1_ret
+	jmp 	print_regs
+
+%adr 0x0800
+fib_init:
+;lower privilege level
+	mov 	R0, 0b100
+	pxw 	31, R0
+fib:
+	mov 	R0, 0
+	mov 	R1, 1
+	mov 	R7, 7
+	cmp 	R7, 0
+	jcs 	LE fib_end
+	nop
+fib_loop:
+	mov 	R2, R0
+	mov 	R0, R1
+	add 	R1, R2
+	sub 	R7, 1
+	jcs GZ	fib_loop
+fib_end:
+	nop
+;display 0b001010 to indicate fib finish
+	mov 	R7, 0b001010
+	pwr 	0x00, R7
+	int 	0x80 ; sys_exit
+
+%adr 0x1000
+fact_init:
+;lower privilege level
+	mov 	R0, 0b100
+	pxw 	31, R0
+fact:
+	mov 	R1, 7
+	mov 	R0, 1
+fact_loop:
+	mul 	R0, R1
+	sub 	R1, 1
+	jcs 	G fact_loop
+;display 0b001100 to indicate fact finish
+	mov 	R7, 0b001100
+	pwr 	0x00, R7
+	int 	0x80 ; sys exit

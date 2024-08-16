@@ -1,0 +1,10 @@
+add R0 {%isassigned 3 3}
+add R0 {%isassigned "str" 3}
+add R0 {%isassigned n 3}
+add R0 {%isassigned #n 3}
+add R0 {%isassigned "str" 3}
+add R0 {%isassigned %inc 3}
+add R0 {%isassigned lab: 3}
+add R0 {%isassigned {3} 3}
+
+add R0 {%isassigned}

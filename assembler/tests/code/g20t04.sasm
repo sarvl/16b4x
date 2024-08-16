@@ -1,0 +1,2 @@
+%info %tostring {%typeof R0 %typeof R1 =}
+%info %tostring {%typeof R0 %typeof %typeof = !}

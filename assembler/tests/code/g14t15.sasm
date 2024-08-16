@@ -1,0 +1,10 @@
+add R0 {
+%typeof R0
+%typeof #n
+%typeof $n
+%typeof n
+%typeof 3
+%typeof %typeof
+%typeof {3} 
+%typeof jcs
+}

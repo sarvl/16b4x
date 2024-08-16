@@ -1,0 +1,6 @@
+not R0,0
+not R0,R0
+not R0,{0}
+not R0,lab
+not R0,#def
+not R0,$var

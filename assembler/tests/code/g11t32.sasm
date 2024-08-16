@@ -1,0 +1,14 @@
+add R0,IP  
+
+add 0,0
+add IP,0
+add {0},0
+add #def,0
+add $var,0
+add lab,0
+add SOCZ,0
+add LEG,0
+
+add R0,R0,R0
+add R0
+add

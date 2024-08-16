@@ -1,0 +1,10 @@
+%wns 3
+%wns n
+%wns {n}
+%wns $n
+%wns #n
+%wns {3}
+%wns %inc
+
+%wns
+%wns "str" "str"

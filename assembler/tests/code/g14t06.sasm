@@ -1,0 +1,2 @@
+%ws "all"
+%ws %tostring 3

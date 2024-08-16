@@ -1,0 +1,5 @@
+lab:
+nop
+nop
+jmp 3
+jmp lab
