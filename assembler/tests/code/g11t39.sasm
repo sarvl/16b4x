@@ -1,2 +1,12 @@
-xwr CF, 0
-xrd R0, UI
+mlu R0,IP  
+
+mlu 0,0
+mlu IP,0
+mlu {0},0
+mlu #def,0
+mlu $var,0
+mlu lab,0
+
+mlu R0,R0,R0
+mlu R0
+mlu

@@ -1,11 +1,8 @@
 xwr IP, R0
 xwr UI, R0
-xwr LR, R0
 xwr SP, R0
-xwr OF, R0
 xwr FL, R0
-xwr F1, R0
-xwr F2, R0
+
 xwr IP, 0
 xwr IP, {0}
 xwr IP, lab

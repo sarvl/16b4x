@@ -121,7 +121,7 @@ void code_gen(
 
 			while(address % alignment != 0)
 			{
-				result.emplace_back(0xAF00);
+				result.emplace_back(0x0003);
 				address++;
 			}
 			tid++;
@@ -197,169 +197,252 @@ void code_gen(
 			continue;
 		}
 
+		//0 indicates that particular entry is NEVER to be used
+		//takes care of aligning opcode properly
+		constexpr static uint16_t instr_imm[] = {
+		//	iadd,  iand,  iann,  ical,  icmp,  icrd,  icwr,  idvu,
+			0xC000,0xD000,0xD800,0xA800,0x8800,0x1200,0x1300,   0  ,
+		//	idvs,  ifls,  ihlt,  iint,  iirt,  ijmp,  imls,  imlu,  
+			 0    ,0x1900,0x0101,0x1000,0x0001,0x5000,0x9800,0x8000,
+		//	imov,  imrd,  imwr,  ineg,  inop,  inot,  iorr,  ipop,
+			0xA000,0x6000,0x6800,   0  ,0x0003,   0  ,0xE000,  0   ,
+		//	iprd,  iprf,  ipsh,  ipwr,  iret,  irng,  ishl,  ishr,  
+			0x4000,0x1800,   0  ,0x4800,0x0503,   0  ,0xF000,0xF800,
+		//	isrd,  isub,  iswr,  itst,  ixor,  ixrd,  ixwr,
+			0x7000,0xC800,0x7800,0x9000,0xE800,   0  ,0x5800,
 
-		auto const   ins    = static_cast<t_Instruction_Id::Type>(tokens[tid].val);
-		unsigned int opcode = instruction_to_opcode(ins);
-		unsigned int rf     = 0;
-		unsigned int rs     = 0;
-		unsigned int imm    = 0;
-		unsigned int ccc    = 0;
-		unsigned int socz   = 0;
-		unsigned int res    = 0;
+		//	ijaa,  ijbe,  ijbz,  ijcc,  ijae,  ijaz,  ijge,  ijgz,
+			0x2000,0x2100,0x2100,0x2200,0x2200,0x2200,0x2300,0x2300, 
+		//	ijgg,  ijle,  ijlz,  ijll,  ijnc,  ijbb,  ijno,  ijns,
+			0x2400,0x2500,0x2500,0x2600,0x2700,0x2700,0x2800,0x2900, 
+		//	ijnz,  ijne,  ijoo,  ijss,  ijzz,  ijee,  
+			0x2A00,0x2A00,0x2B00,0x2C00,0x2D00,0x2D00, 
+
+		//	imaa,  imbe,  imbz,  imcc,  imae,  imaz,  imge,  imgz,
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+		//	imgg,  imle,  imlz,  imll,  imnc,  imbb,  imno,  imns,
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+		//	imnz,  imne,  imoo,  imss,  imzz,  imee,  
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+
+		//	isaa,  isbe,  isbz,  iscc,  isae,  isaz,  isge,  isgz,
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+		//	isgg,  isle,  islz,  isll,  isnc,  isbb,  isno,  isns,
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+		//	isnz,  isne,  isoo,  isss,  iszz,  isee
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  
+		};
+		constexpr static uint16_t instr_reg[] = {
+		//	iadd,  iand,  iann,  ical,  icmp,  icrd,  icwr,  idvu,
+			0x0018,0x001A,0x001B,0x0403,0x0011,0x0015,0x0016,0x0006,
+		//	idvs,  ifls,  ihlt,  iint,  iirt,  ijmp,  imls,  imlu,  
+			0x0007,0x0104,   0  ,   0  ,   0  ,   0  ,0x0013,0x0010,
+		//	imov,  imrd,  imwr,  ineg,  inop,  inot,  iorr,  ipop,
+			0x0014,0x000C,0x000D,0x0703,   0  ,0x0603,0x001C,0x0303,
+		//	iprd,  iprf,  ipsh,  ipwr,  iret,  irng,  ishl,  ishr,  
+			0x0008,0x0004,0x0203,0x0009,   0  ,0x0103,0x001E,0x001F,
+		//	isrd,  isub,  iswr,  itst,  ixor,  ixrd,  ixwr,
+			0x000E,0x0019,0x000F,0x0012,0x001D,0x000A,0x000B,
+
+		//	ijaa,  ijbe,  ijbz,  ijcc,  ijae,  ijaz,  ijge,  ijgz,
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+		//	ijgg,  ijle,  ijlz,  ijll,  ijnc,  ijbb,  ijno,  ijns,
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+		//	ijnz,  ijne,  ijoo,  ijss,  ijzz,  ijee,  
+			   0  ,   0  ,   0  ,   0  ,   0  ,   0  ,
+
+		//	imaa,  imbe,  imbz,  imcc,  imae,  imaz,  imge,  imgz,
+			0xB000,0xB002,0xB002,0xB004,0xB004,0xB004,0xB006,0xB006,
+		//	imgg,  imle,  imlz,  imll,  imnc,  imbb,  imno,  imns,
+			0xB008,0xB00A,0xB00A,0xB00C,0xB00E,0xB00E,0xB800,0xB802,
+		//	imnz,  imne,  imoo,  imss,  imzz,  imee,  
+			0xB804,0xB804,0xB806,0xB808,0xB80A,0xB80A,
+
+		//	isaa,  isbe,  isbz,  iscc,  isae,  isaz,  isge,  isgz,
+			0x0005,0x0105,0x0105,0x0205,0x0205,0x0205,0x0305,0x0305,
+		//	isgg,  isle,  islz,  isll,  isnc,  isbb,  isno,  isns,
+			0x0405,0x0505,0x0505,0x0605,0x0705,0x0705,0x0017,0x0117,
+		//	isnz,  isne,  isoo,  isss,  iszz,  isee
+			0x0217,0x0217,0x0317,0x0417,0x0517,0x0517
+		};
+
+
+		auto const   ins    = static_cast<t_Instruction_Id::Type>(tokens[tid].val & 0xFF);
+		unsigned int ins_base = 0;
+		unsigned int rf       = 0;
+		unsigned int rs       = 0;
+		unsigned int imm      = 0;
+		unsigned int res      = 0;
 
 		std::string_view const file_name = tokens[tid].file_name;
 		int              const line_num  = tokens[tid].line_num;
 
 		using enum t_Instruction_Id::Type;
-		//within instructions, stuff may get complicted 
 		switch(ins)
 		{
-		//ins reg imm
+		//ins reg reg/imm8
+		case iadd: case iand: case iann: case icmp: case imls: 
+		case imlu: case imov: case imrd: case iorr: case iprd: 
+		case ishl: case ishr: case isrd: case isub: case itst: 
+		case ixor: case ixwr:
+			if(t_Token::reg == tokens[tid + 2].type)
+			{
+		[[fallthrough]];
 		//ins reg reg 
-		case iadd: case iand: case icmp: case idiv:
-		case imov: case imrd: case imro: case imul:
-		case inot: case iorr: case iprd: case ishl: 
-		case ishr: case isub: case itst: case ixor: 
-			rf = tokens[tid + 1].val;
+		case idvu: case idvs: case imaa: case imbe: case imbz: 
+		case imcc: case imae: case imaz: case imge: case imgz:
+		case imgg: case imle: case imlz: case imll: case imnc:
+		case imbb: case imno: case imns: case imnz: case imne:
+		case imoo: case imss: case imzz: case imee: case ixrd:
+				ins_base = instr_reg[static_cast<int>(ins)];
+				rf       = tokens[tid + 1].val;
 
-			tid += 2;
-			if(tokens[tid].type == t_Token::reg)
-			{
-				rs = tokens[tid].val;
-				goto short_opcode_reg_reg;
+				tid     += 2;
+				rs       = tokens[tid].val;
+			//technically, they are not the same format but ins_base takes care of that 
+				goto encode_so_rr;
 			}
-
-			imm = get_value(tokens, labels, tid);
-
-			if(idiv == ins
-			&& 0 == imm)
-				Utils::warning("[divbyzero] divide by zero",
-							   file_name, line_num,
-							   Warning::divbyzero);
-			goto short_opcode_reg_imm;
-		//ins imm reg 
-		//ins reg reg 
-		case imwo: case imwr: case ipwr:
-			rf = tokens[tid + 2].val;
-
-			tid += 1;
-			if(tokens[tid].type == t_Token::reg)
-			{
-				rs = tokens[tid].val;
-				tid++;
-				goto short_opcode_reg_reg;
-			}
-
-			imm = get_value(tokens, labels, tid);
-			//skip the register too
-			tid++;
-			goto short_opcode_reg_imm;
-
-		//ins ext imm
-		//ins ext reg
-		case ixwr:
-			rf = tokens[tid + 1].val;
-
-			if(tokens[tid + 2].type == t_Token::reg)
-			{
-				rs = tokens[tid + 2].val;
-				tid += 2;
-				goto short_opcode_reg_reg;
-			}
-
-			tid += 2;
-			imm = get_value(tokens, labels, tid);
-			goto short_opcode_reg_imm;
-		//ins reg ext
-		case ixrd:
-			rf = tokens[tid + 1].val;
-			rs = tokens[tid + 2].val;
-			tid += 2;
-			goto short_opcode_reg_reg;
-		//ins imm
-		case iint:
-			tid += 1;
-			imm = get_value(tokens, labels, tid);
-			goto long_opcode_immediate;
-		//ins imm
-		//ins reg
-		case ical: case ijmp: 
-			if(tokens[tid + 1].type == t_Token::reg)
-			{
-				if(ical == ins)
-					opcode = 0b00010101010;
-				else
-					opcode = 0b00010101011;
-
-				rf = tokens[tid + 1].val;
-				tid++;
-				goto long_opcode_reg_imm;
-			}
-
-			tid++;
-
-			imm = get_value(tokens, labels, tid, address);
-			goto short_opcode_long_immediate;
-		//ins ccc imm
-		case ijcu: case ijcs:
-			ccc = tokens[tid + 1].val;
-			if((0b111 & ccc) == 0b111)
-				Utils::warning("[alwaystrue] jump condition always true",
-							   file_name, line_num,
-				               Warning::alwaystrue,
-				               "^ JMP allows for longer jumps and may perform better");
-
-			tid += 2;
-			imm = get_value(tokens, labels, tid, address);
-			goto short_opcode_jmp_ccc;
-		//ins 
-		case ihcf: case ihlt: case iirt: case inop:
-			tid++;
-			goto long_opcode_immediate;
-		//ins
-		//ins socz
-		case iret:
-			//check whether next token on the same line
-			if(tid + 1 < size
-			&& tokens[tid + 1].line_num == tokens[tid + 0].line_num)
-				socz = tokens[tid + 1].val;
 			else
-				socz = 0;	
-			
+			{
+				ins_base = instr_imm[static_cast<int>(ins)];
+				rf       = tokens[tid + 1].val;
+
+				tid      += 2;
+				imm      = get_value(tokens, labels, tid);
+				goto encode_so_ri;
+			}
+		//ins reg/imm11
+		case ical:
+			if(t_Token::reg == tokens[tid + 1].type)
+			{
+				ins_base = instr_reg[static_cast<int>(ins)];
+
+				tid     += 1;
+				rf       = tokens[tid].val;
+				goto encode_lo_r;
+			}
+			else
+			{
+		[[fallthrough]];
+		//ins imm11
+		case ijmp:
+				ins_base = instr_imm[static_cast<int>(ins)];
+
+				tid     += 1;
+				imm      = get_value(tokens, labels, tid, address);
+				goto encode_so_li;
+			}
+
+		//ins reg reg/imm5
+		case icrd:
+			if(t_Token::reg == tokens[tid + 2].type)
+			{
+				ins_base = instr_reg[static_cast<int>(ins)];
+
+				tid     += 1;
+				rf       = tokens[tid    ].val;
+				rs       = tokens[tid + 1].val;
+				goto encode_so_rr;
+			}
+			else
+			{
+				ins_base = instr_imm[static_cast<int>(ins)];
+
+				rf       = tokens[tid + 1].val;
+				tid     += 2;
+				imm      = get_value(tokens, labels, tid);
+				goto encode_mo_ri;
+			}
+		//ins reg/imm5 reg
+		case icwr:
+			if(t_Token::reg == tokens[tid + 1].type)
+			{
+				ins_base = instr_reg[static_cast<int>(ins)];
+
+				tid     += 1;
+				rf       = tokens[tid + 1].val;
+				rs       = tokens[tid    ].val;
+				goto encode_so_rr;
+			}
+			else
+			{
+				ins_base = instr_imm[static_cast<int>(ins)];
+
+				tid     += 1;
+				imm      = get_value(tokens, labels, tid);
+				rf       = tokens[tid].val;
+				goto encode_mo_ri;
+			}
+		//ins reg/imm8 reg
+		case imwr: case iswr: case ipwr:
+			if(t_Token::reg == tokens[tid + 1].type)
+			{
+				ins_base = instr_reg[static_cast<int>(ins)];
+
+				tid     += 1;
+				rf       = tokens[tid + 1].val;
+				rs       = tokens[tid    ].val;
+				goto encode_so_rr;
+			}
+			else
+			{
+				ins_base = instr_imm[static_cast<int>(ins)];
+
+				tid     += 1;
+				imm      = get_value(tokens, labels, tid);
+				rf       = tokens[tid].val;
+				goto encode_so_ri;
+			}
+		//ins
+		case ihlt: case iirt: case inop: case iret:
 			tid++;
-			goto long_opcode_ret_flags;
-
-		//ins ccc reg reg
-		case imcs: case imcu:
-			ccc = tokens[tid + 1].val;
-
-			if((0b111 & ccc) == 0b111)
-				Utils::warning("[alwaystrue] conditional move condition always true",
-							   file_name, line_num,
-				               Warning::alwaystrue,
-				               "^ MOV may perform better");
-
-			rf  = tokens[tid + 2].val;
-			rs  = tokens[tid + 3].val;
-			tid += 4;
-			goto short_opcode_mov_ccc;
+			ins_base = instr_imm[static_cast<int>(ins)];
+			goto encode_lo_r;
+		//ins reg/imm8
+		case iprf: case ifls:
+			if(t_Token::reg == tokens[tid + 1].type)
+			{
+		[[fallthrough]];
 		//ins reg
-		case ipop: case ipsh:
-			rf = tokens[tid + 1].val;
-			tid += 2;
-			goto long_opcode_reg_imm;
-		//ins reg imm
-		case ipxr:
-			rf = tokens[tid + 1].val;
-			tid += 2;
-			imm = get_value(tokens, labels, tid);
-			goto long_opcode_reg_imm;
-		//ins imm reg
-		case ipxw:
-			rf = tokens[tid + 2].val;
-			tid += 1;
-			imm = get_value(tokens, labels, tid);
-			goto long_opcode_reg_imm;
+		case isaa: case isbe: case isbz: case iscc: case isae:
+		case isaz: case isge: case isgz: case isgg: case isle:
+		case islz: case isll: case isnc: case isbb: case isno:
+		case isns: case isnz: case isne: case isoo: case isss:
+		case iszz: case isee: case ineg: case inot: case ipop:
+		case ipsh: case irng:
+				ins_base = instr_reg[static_cast<int>(ins)];
+
+				tid     += 1;
+				rf       = tokens[tid].val;
+
+			//technically, they are not the same format but ins_base takes care of that 
+				goto encode_lo_r;
+			}
+			else
+			{
+		[[fallthrough]];
+		//ins imm8 with label
+		case ijaa: case ijbe: case ijbz: case ijcc: case ijae: 
+		case ijaz: case ijge: case ijgz: case ijgg: case ijle: 
+		case ijlz: case ijll: case ijnc: case ijbb: case ijno: 
+		case ijns: case ijnz: case ijne: case ijoo: case ijss:
+		case ijzz: case ijee:
+				ins_base = instr_imm[static_cast<int>(ins)];
+
+				tid     += 1;
+				imm      = get_value(tokens, labels, tid, address);
+			//technically, they are not the same format but ins_base takes care of that 
+				goto encode_mo_i;
+		//ins imm8
+		case iint:
+				ins_base = instr_imm[static_cast<int>(ins)];
+
+				tid     += 1;
+				imm      = get_value(tokens, labels, tid);
+			//technically, they are not the same format but ins_base takes care of that 
+				goto encode_mo_i;
+			}
+
 		}
 
 	#define WARN_IMM_TOO_BIG(BIT_COUNT)\
@@ -375,70 +458,51 @@ void code_gen(
 		}\
 	}\
 
-	long_opcode_immediate:
+	encode_lo_r:
+		res = ( ins_base                  )
+		    | ((rf     & 0b0000'0111) << 5) 
+		    ;
+		
+		goto insert;
+	encode_mo_i:
 		WARN_IMM_TOO_BIG(8)
-
-		res = ((opcode & 0b1111'1111) << 8)
+		res = ( ins_base                  )
 		    | ((imm    & 0b0111'1111) << 1)
 		    | ((imm    & 0b1000'0000) >> 7)
 		    ;
 
 		goto insert;
-	long_opcode_reg_imm:
+	encode_mo_ri:
 		WARN_IMM_TOO_BIG(5)
 
-		res = ((opcode & 0b1111'1111) << 8)
+		res = ( ins_base                  )
 		    | ((rf     & 0b0000'0111) << 5) 
 		    | ((imm    & 0b0000'1111) << 1) 
 		    | ((imm    & 0b0001'0000) >> 4) 
 		    ;
 
 		goto insert;
-	long_opcode_ret_flags:
-		
-		res = ((opcode & 0b1111'1111) << 8)
-		    | ((socz   &      0b1111) << 4)
-		    ;
-		
-		goto insert;
-	short_opcode_long_immediate:
+	encode_so_li:
 		WARN_IMM_TOO_BIG(11)
 
-		res = ((opcode &        0b1'1111) << 11)
+		res = ( ins_base                       )
 		    | ((imm    &  0b11'1111'1111) <<  1)
 		    | ((imm    & 0b100'0000'0000) >> 10)
 		    ;
 
 		goto insert;
-	short_opcode_jmp_ccc:
+	encode_so_ri:
 		WARN_IMM_TOO_BIG(8)
 
-
-		res = ((opcode &    0b1'1111) << 11)
-		    | ((imm    &  0b111'1111) <<  4)
-		    | ((imm    & 0b1000'0000) >>  7)
-		    | ((ccc    &       0b111) <<  1)
-		    ;
-		goto insert;
-	short_opcode_mov_ccc:
-		res = ((opcode &   0b1'1111) << 11)
-		    | ((rs     &      0b111) <<  8)
-		    | ((rf     &      0b111) <<  5)
-		    | ((ccc    &      0b111) <<  1)
-		    ;
-		goto insert;
-	short_opcode_reg_imm:
-		WARN_IMM_TOO_BIG(8)
-
-		res = ((opcode &    0b1'1111) << 11)
+		res = ( ins_base                   )
 		    | ((rf     &       0b111) <<  5)
 		    | ((imm    & 0b1000'0000) >>  7)
 		    | ((imm    & 0b0111'0000) <<  4)
 		    | ((imm    & 0b0000'1111) <<  1)
 		    ;
 		goto insert;
-	short_opcode_reg_reg:
-		res = ((opcode &   0b1'1111) <<  0)
+	encode_so_rr:
+		res = ( ins_base                  )
 		    | ((rs     &      0b111) <<  8)
 		    | ((rf     &      0b111) <<  5)
 		    ;

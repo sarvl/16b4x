@@ -6,5 +6,5 @@ add R0 {
 %typeof 3
 %typeof %typeof
 %typeof {3} 
-%typeof jcs
+%typeof jcc
 }

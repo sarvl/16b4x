@@ -1,2 +1,2 @@
-mro R0, 0
-mro R0, R0
+srd R0, 0
+srd R0, R0

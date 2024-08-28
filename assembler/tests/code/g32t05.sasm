@@ -1,0 +1,5 @@
+jmp 	start
+
+%align 4
+start:
+	nop

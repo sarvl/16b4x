@@ -1,2 +1,2 @@
-mwr 0, R0
+mwr 12, R0
 mwr R0, R0

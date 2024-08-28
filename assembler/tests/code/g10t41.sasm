@@ -1,0 +1,6 @@
+prf 0
+prf R0
+prf {0}
+prf lab
+prf #def
+prf $var

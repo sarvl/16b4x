@@ -1,3 +1,4 @@
 jmp IP
+jmp R0
 jmp 0, 0
 jmp

@@ -1,31 +1,9 @@
-mcs 0   ,R0,R0
-mcs R0  ,R0,R0
-mcs IP  ,R0,R0
-mcs {0} ,R0,R0
-mcs #def,R0,R0
-mcs $var,R0,R0
-mcs lab ,R0,R0
-mcs SOCZ,R0,R0
+rng #def
+rng $var
+rng 0
+rng IP
+rng lab
+rng {3}
 
-mcs LEG,0   ,R0
-mcs LEG,IP  ,R0
-mcs LEG,{0} ,R0
-mcs LEG,#def,R0
-mcs LEG,$var,R0
-mcs LEG,lab ,R0
-mcs LEG,SOCZ,R0
-mcs LEG,LEG ,R0
-
-mcs LEG,R0,0   
-mcs LEG,R0,IP  
-mcs LEG,R0,{0} 
-mcs LEG,R0,#def
-mcs LEG,R0,$var
-mcs LEG,R0,lab 
-mcs LEG,R0,SOCZ
-mcs LEG,R0,LEG 
-
-mcs LEG,R0,R0,R0
-mcs LEG,R0
-mcs LEG
-mcs
+rng
+rng R0, 0

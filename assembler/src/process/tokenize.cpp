@@ -605,15 +605,30 @@ void tokenize(
 				int instr_id = -1;
 
 				constexpr static char const* const to_compare[] = {
-					"add", "and", "cal", "cmp", "div", "hcf",
-					"hlt", "int", "irt", "jcs", "jcu", "jmp",
-					"mcs", "mcu", "mov", "mrd", "mro", "mul",
-					"mwo", "mwr", "not", "orr", "pop", "prd",
-					"psh", "pwr", "pxr", "pxw", "ret", "shl",
-					"shr", "sub", "tst", "xor", "xrd", "xwr",
-					"nop"
+					"add", "and", "ann", "cal", "cmp", "crd",
+					"cwr", "dvu", "dvs", "fls", "hlt", "int",
+					"irt", "jmp", "mls", "mlu", "mov", "mrd", 
+					"mwr", "neg", "nop", "not", "orr", "pop", 
+					"prd", "prf", "psh", "pwr", "ret", "rng", 
+					"shl", "shr", "srd", "sub", "swr", "tst",
+					"xor", "xrd", "xwr",
+
+					"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
+					"jge", "jgz", "jgg", "jle", "jlz", "jll",
+					"jnc", "jbb", "jno", "jns", "jnz", "jne",
+					"joo", "jss", "jzz", "jee", 
+
+					"maa", "mbe", "mbz", "mcc", "mae", "maz",
+					"mge", "mgz", "mgg", "mle", "mlz", "mll",
+					"mnc", "mbb", "mno", "mns", "mnz", "mne",
+					"moo", "mss", "mzz", "mee", 
+
+					"saa", "sbe", "sbz", "scc", "sae", "saz",
+					"sge", "sgz", "sgg", "sle", "slz", "sll",
+					"snc", "sbb", "sno", "sns", "snz", "sne",
+					"soo", "sss", "szz", "see"
 					};
-				for(int i = 0; i < 37; i++)
+				for(unsigned i = 0; i < sizeof(to_compare)/sizeof(to_compare[0]); i++)
 				{
 					if(0 == strncmp(data + beg, to_compare[i], 3))
 					{
@@ -634,14 +649,9 @@ void tokenize(
 			{
 				int external_id  = -1;
 				if(0 == strncmp(data + beg, "IP", 2)) external_id = 0;
-				if(0 == strncmp(data + beg, "CF", 2)) external_id = 1;
-				if(0 == strncmp(data + beg, "UI", 2)) external_id = 9;
-				if(0 == strncmp(data + beg, "LR", 2)) external_id = 2;
-				if(0 == strncmp(data + beg, "SP", 2)) external_id = 3;
-				if(0 == strncmp(data + beg, "OF", 2)) external_id = 4;
-				if(0 == strncmp(data + beg, "FL", 2)) external_id = 5;
-				if(0 == strncmp(data + beg, "F1", 2)) external_id = 6;
-				if(0 == strncmp(data + beg, "F2", 2)) external_id = 7;
+				if(0 == strncmp(data + beg, "UI", 2)) external_id = 1;
+				if(0 == strncmp(data + beg, "SP", 2)) external_id = 2;
+				if(0 == strncmp(data + beg, "FL", 2)) external_id = 3;
 					
 				if(-1 == external_id)
 					goto insert_string;

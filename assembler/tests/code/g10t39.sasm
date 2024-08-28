@@ -1,0 +1,6 @@
+mlu R0, 0
+mlu R0, R0
+mlu R0, {0}
+mlu R0, lab
+mlu R0, #def
+mlu R0, $var

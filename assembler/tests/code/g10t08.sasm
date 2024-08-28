@@ -1,16 +1,28 @@
-jcu LEG 0
-jcu LEG {0}
-jcu LEG lab
-jcu LEG #def
-jcu LEG $var
-jcu G,0
-jcu E,0
-jcu Z,0
-jcu EG,0
-jcu ZG,0
-jcu L,0
-jcu LG,0
-jcu LE,0
-jcu LZ,0
-jcu LEG,0
-jcu LZG,0
+jcc 0
+jcc {0}
+jcc lab
+jcc #def
+jcc $var
+
+jaa 0
+jbe 0
+jbz 0
+jcc 0
+jae 0
+jaz 0
+jge 0
+jgz 0
+jgg 0
+jle 0
+jlz 0
+jll 0
+jnc 0
+jbb 0
+jno 0
+jns 0
+jnz 0
+jne 0
+joo 0
+jss 0
+jzz 0
+jee 0

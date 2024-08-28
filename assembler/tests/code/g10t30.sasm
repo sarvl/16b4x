@@ -1,12 +1,22 @@
-mcu LEG,R0,R0
-mcu G,R0,R0
-mcu E,R0,R0
-mcu Z,R0,R0
-mcu EG,R0,R0
-mcu EZ,R0,R0
-mcu L,R0,R0
-mcu LG,R0,R0
-mcu LE,R0,R0
-mcu LZ,R0,R0
-mcu LEG,R0,R0
-mcu LZG,R0,R0
+maa R2 R5
+mbe R2 R5
+mbz R2 R5
+mcc R2 R5
+mae R2 R5
+maz R2 R5
+mge R2 R5
+mgz R2 R5
+mgg R2 R5
+mle R2 R5
+mlz R2 R5
+mll R2 R5
+mnc R2 R5
+mbb R2 R5
+mno R2 R5
+mns R2 R5
+mnz R2 R5
+mne R2 R5
+moo R2 R5
+mss R2 R5
+mzz R2 R5
+mee R2 R5

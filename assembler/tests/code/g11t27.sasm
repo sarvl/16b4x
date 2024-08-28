@@ -6,8 +6,6 @@ shr {0},0
 shr #def,0
 shr $var,0
 shr lab,0
-shr SOCZ,0
-shr LEG,0
 
 shr R0,R0,R0
 shr R0

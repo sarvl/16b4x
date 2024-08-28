@@ -1,14 +1,4 @@
-jcu LEG R0
-jcu LEG IP
-jcu LEG 0,0  
-jcu LEG
-jcu 0
-jcu 
-jcu 0, 0
-jcu IP, 0
-jcu R0, 0
-jcu {0}, 0
-jcu #def, 0
-jcu $var, 0
-jcu lab, 0
-jcu SOCZ, 0
+jcc
+jcc R0
+jcc IP
+jcc 0,0  

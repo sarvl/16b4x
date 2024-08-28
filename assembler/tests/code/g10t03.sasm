@@ -1,1 +1,6 @@
-hcf
+fls 0
+fls R0
+fls {0}
+fls lab
+fls #def
+fls $var

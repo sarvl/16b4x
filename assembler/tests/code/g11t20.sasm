@@ -1,14 +1,17 @@
-div R0,IP  
+dvu 0,R0
+dvu IP,R0
+dvu {0},R0
+dvu #def,R0
+dvu $var,R0
+dvu lab,R0
 
-div 0,0
-div IP,0
-div {0},0
-div #def,0
-div $var,0
-div lab,0
-div SOCZ,0
-div LEG,0
+dvu R0,0
+dvu R0,IP
+dvu R0,{0}
+dvu R0,#def
+dvu R0,$var
+dvu R0,lab
 
-div R0,R0,R0
-div R0
-div
+dvu R0,R0,R0
+dvu R0
+dvu

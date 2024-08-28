@@ -1,14 +1,9 @@
-pxr R0, R0
-pxr R0, IP
-pxr R0, lab
-pxr R0, LEG
-pxr R0, SOCZ
-pxr IP, 0
-pxr lab, 0
-pxr #def, 0
-pxr $var, 0
-pxr LEG, 0
-pxr SOCZ, 0
-pxr R0, 0, R0
-pxr R0
-pxr 
+crd R0, IP
+crd R0, lab
+crd IP, 0
+crd lab, 0
+crd #def, 0
+crd $var, 0
+crd R0, 0, R0
+crd R0
+crd 

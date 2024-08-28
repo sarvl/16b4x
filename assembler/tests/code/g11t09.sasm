@@ -1,14 +1,7 @@
-jcs LEG IP
-jcs LEG R0
-jcs LEG 0,0  
-jcs LEG
-jcs 0
-jcs 
-jcs 0, 0
-jcs IP, 0
-jcs R0, 0
-jcs {0}, 0
-jcs #def, 0
-jcs $var, 0
-jcs lab, 0
-jcs SOCZ, 0
+scc IP
+scc $var
+scc lab
+scc {0}
+scc #def
+scc R0,0  
+scc

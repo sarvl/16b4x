@@ -1,14 +1,12 @@
-mwo IP,R0  
+swr IP,R0  
 
-mwo 0,0
-mwo 0,IP
-mwo 0,{0}
-mwo 0,#def
-mwo 0,$var
-mwo 0,lab
-mwo 0,SOCZ
-mwo 0,LEG
+swr 0,0
+swr 0,IP
+swr 0,{0}
+swr 0,#def
+swr 0,$var
+swr 0,lab
 
-mwo R0,R0,R0
-mwo R0
-mwo
+swr R0,R0,R0
+swr R0
+swr

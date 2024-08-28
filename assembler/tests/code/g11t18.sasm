@@ -1,14 +1,12 @@
-mul R0,IP  
+mls R0,IP  
 
-mul 0,0
-mul IP,0
-mul {0},0
-mul #def,0
-mul $var,0
-mul lab,0
-mul SOCZ,0
-mul LEG,0
+mls 0,0
+mls IP,0
+mls {0},0
+mls #def,0
+mls $var,0
+mls lab,0
 
-mul R0,R0,R0
-mul R0
-mul
+mls R0,R0,R0
+mls R0
+mls

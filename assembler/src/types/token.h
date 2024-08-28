@@ -10,8 +10,6 @@ struct t_Token{
 		dir, //directive
 		str, //string
 		ins, //instruction
-		ccc, //conditions codes
-		fla, //flags
 		ext, //external register
 		mst, //macro start
 		men, //macro end
@@ -41,19 +39,30 @@ struct t_Token{
 
 namespace t_Instruction_Id {
 	enum Type{
-		iadd, iand, ical, icmp, idiv, ihcf,
-		ihlt, iint, iirt, ijcs, ijcu, ijmp,
-		imcs, imcu, imov, imrd, imro, imul,
-		imwo, imwr, inot, iorr, ipop, iprd,
-		ipsh, ipwr, ipxr, ipxw, iret, ishl,
-		ishr, isub, itst, ixor, ixrd, ixwr,
-		inop
-	};
-};
+		iadd, iand, iann, ical, icmp, icrd,
+		icwr, idvu, idvs, ifls, ihlt, iint,
+		iirt, ijmp, imls, imlu, imov, imrd, 
+		imwr, ineg, inop, inot, iorr, ipop, 
+		iprd, iprf, ipsh, ipwr, iret, irng, 
+		ishl, ishr, isrd, isub, iswr, itst,
+		ixor, ixrd, ixwr,
 
-//DOES NOT WORK FOR JMP REG AND CAL REG 
-//MODIFY ACCORDINGLY
-int instruction_to_opcode(t_Instruction_Id::Type const iid);
+		ijaa, ijbe, ijbz, ijcc, ijae, ijaz,
+		ijge, ijgz, ijgg, ijle, ijlz, ijll,
+		ijnc, ijbb, ijno, ijns, ijnz, ijne,
+		ijoo, ijss, ijzz, ijee, 
+
+		imaa, imbe, imbz, imcc, imae, imaz,
+		imge, imgz, imgg, imle, imlz, imll,
+		imnc, imbb, imno, imns, imnz, imne,
+		imoo, imss, imzz, imee, 
+
+		isaa, isbe, isbz, iscc, isae, isaz,
+		isge, isgz, isgg, isle, islz, isll,
+		isnc, isbb, isno, isns, isnz, isne,
+		isoo, isss, iszz, isee
+	}; 
+};
 
 namespace t_Directive{
 	enum Type{

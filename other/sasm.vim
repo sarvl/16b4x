@@ -66,52 +66,56 @@ syn match directive "%isassigned\ze\s\+\$" containedin=expression
 
 "match all instructions by default as error, if they are correct, they are overwritten later
 "excluding ones that take no argument
-syn match error "\<\(add\|and\|cal\|cmp\|div\|int\)\>"
-syn match error "\<\(mcs\|mcu\|mov\|mrd\|mro\|mul\)\>"
-syn match error "\<\(mwo\|mwr\|not\|orr\|pop\|prd\)\>"
-syn match error "\<\(psh\|pwr\|pxr\|pxw\|ret\|shl\)\>"
-syn match error "\<\(shr\|sub\|tst\|xor\|xrd\|xwr\)\>"
-syn match error "\<\(jcs\|jcu\|jmp\)\>"
+syn match error "\<\(add\|and\|ann\|cal\|cmp\|crd\)\>"
+syn match error "\<\(cwr\|dvu\|dvs\|fls\|int\|xor\)\>"
+syn match error "\<\(jmp\|mls\|mlu\|mov\|mrd\|xrd\)\>" 
+syn match error "\<\(mwr\|neg\|not\|orr\|pop\|xwr\)\>"
+syn match error "\<\(shl\|shr\|srd\|sub\|swr\|tst\)\>"
+syn match error "\<\(prd\|prf\|psh\|pwr\|rng\)\>" 
+"conditionals
+syn match error "\<[jsm]\(aa\|ae\|az\|bb\|be\|bz\|cc\|ee\|ge\|gg\|gz\)"
+syn match error "\<[jsm]\(le\|ll\|lz\|nc\|ne\|no\|ns\|nz\|oo\|ss\|zz\)"
+
 
 "	reg reg/num/def/var/lab
-syn match instruction "\<\(add\|and\|cmp\|div\|mov\|mrd\|mro\|mul\|not\|orr\|shl\|shr\|sub\|tst\|xor\)\>\ze\s\+R[0-7][ \t,]\+[a-zA-Z0-9$#{.-]"
+syn match instruction "\<\(add\|and\|ann\|cmp\|mls\|mlu\|mov\|mrd\|orr\|shl\|shr\|sub\|srd\|tst\|xor\)\>\ze\s\+R[0-7][ \t,]\+[a-zA-Z0-9$#{.-]"
 "	reg/num/def/var/lab reg
-syn match instruction "\<\(mwo\|mwr\)\>\ze\s\+[a-zA-Z0-9$#{.-][^ \t]*[ \t,]\+R[0-7]"
+syn match instruction "\<\(swr\|mwr\)\>\ze\s\+[a-zA-Z0-9$#{.-][^ \t]*[ \t,]\+R[0-7]"
 "	reg/num/def/var/lab
-syn match instruction "\<\(cal\|jmp\)\>\ze\s\+[a-zA-Z0-9$#{.-]"
+syn match instruction "\<\(cal\|fls\|prf\)\>\ze\s\+[a-zA-Z0-9$#{.-]"
 "	nothing
-syn match instruction "\<\(hcf\|hlt\|irt\|nop\)\>"
-"	ccc num/def/var/lab
-syn match instruction "\<\(jcs\|jcu\)\>\s\+\<[LEGZ]\+\>\ze[ \t,]\+[0-9a-zA-Z#${.-]" contains=ccc
-"	ccc R R
-syn match instruction "\<\(mcs\|mcu\)\>\s\+\<[LEGZ]\+\>\ze[ \t,]\+R[0-7][ \t,]\+R[0-7]" contains=ccc
-"	flags/nothing
-syn match instruction "\<\(ret\)\>\(\s\+\<[SOCZE]*\>\)\?" contains=flag
+syn match instruction "\<\(hcf\|hlt\|irt\|nop\|ret\)\>"
+"	num/def/var/lab
+syn match instruction "\<\j\(aa\|ae\|az\|bb\|be\|bz\|cc\|ee\|ge\|gg\|gz\)\ze[ \t,]\+[0-9a-zA-Z#${.-]"
+syn match instruction "\<\j\(le\|ll\|lz\|nc\|ne\|no\|ns\|nz\|oo\|ss\|zz\)\ze[ \t,]\+[0-9a-zA-Z#${.-]"
+syn match instruction "\<jmp\>\ze\s\+[a-zA-Z0-9$#{.-]"
+"	R R
+syn match instruction "\<m\(aa\|ae\|az\|bb\|be\|bz\|cc\|ee\|ge\|gg\|gz\)\ze\([ \t,]\+R[0-7]\)\{2\}"
+syn match instruction "\<m\(le\|ll\|lz\|nc\|ne\|no\|ns\|nz\|oo\|ss\|zz\)\ze\([ \t,]\+R[0-7]\)\{2\}"
+syn match instruction "\<\(dvs\|dvu\)\ze\([ \t,]\+R[0-7]\)\{2\}"
 " 	num/def/var
 syn match instruction "\<\(int\)\>\ze\s\+[0-9$#{-]"
 "	reg
-syn match instruction "\<\(pop\|psh\)\>\ze\s\+R[0-7]"
+syn match instruction "\<\(pop\|psh\|neg\|rng\|not\)\>\ze\s\+R[0-7]"
+syn match instruction "\<s\(aa\|ae\|az\|bb\|be\|bz\|cc\|ee\|ge\|gg\|gz\)\ze[ \t,]\+R[0-7]"
+syn match instruction "\<s\(le\|ll\|lz\|nc\|ne\|no\|ns\|nz\|oo\|ss\|zz\)\ze[ \t,]\+R[0-7]"
 "	reg reg/num/def/var
-syn match instruction "\<\(prd\)\>\ze\s\+R[0-7][ \t,]\+[R0-9$#{-]"
+syn match instruction "\<\(prd\|crd\)\>\ze\s\+R[0-7][ \t,]\+[R0-9$#{-]"
 "	reg/num/def/var reg
-syn match instruction "\<\(pwr\)\>\ze\s\+[R0-9$#{-][^ \t]*[ \t,]\+R[0-7]"
-"	reg num/def/var
-syn match instruction "\<\(pxr\)\>\ze\s\+R[0-7][ \t,]\+[0-9$#{-]"
-"	num/def/var reg
-syn match instruction "\<\(pxw\)\>\ze\s\+[0-9$#{-][^ \t]*[ \t,]\+R[0-7]"
+syn match instruction "\<\(pwr\|cwr\)\>\ze\s\+[R0-9$#{-][^ \t]*[ \t,]\+R[0-7]"
 "	ext reg/num/def/var/lab
-syn match instruction "\<\(xwr\)\>\ze\s\+\(IP\|UI\|SP\|LR\|FL\|F1\|F2\|OF\)[ \t,]\+[a-zA-Z0-9$#{.-]"
+syn match instruction "\<\(xwr\)\>\ze\s\+\(IP\|UI\|SP\|FL\)[ \t,]\+[a-zA-Z0-9$#{.-]"
 "	reg ext
-syn match instruction "\<\(xrd\)\>\ze\s\+R[0-7][ \t,]\+\(IP\|CF\|SP\|LR\|FL\|F1\|F2\|OF\)"
+syn match instruction "\<\(xrd\)\>\ze\s\+R[0-7][ \t,]\+\(IP\|SP\|FL\)"
 
 "numbers
 syn match number "-\?[0-9]\+" containedin=expression
-syn match number "-\?0b[0-1]\+" containedin=expression
-syn match number "-\?0x[0-9A-Fa-f]\+" containedin=expression
+syn match number "-\?0[bB][0-1]\+" containedin=expression
+syn match number "-\?0[xX][0-9A-Fa-f]\+" containedin=expression
 
 "registers
 syn match  register  "R[0-7]"
-syn keyword xregister IP UI CF SP LR FL F1 F2 OF
+syn keyword xregister IP UI SP FL
 syn keyword error R8 R9
 
 "
@@ -122,7 +126,7 @@ syn region comment	start=";" end="$"
 syn region string	start="\"" end="\""
 "
 syn match   variable  "\$[a-zA-Z][a-zA-Z0-9_]*" containedin=expression
-syn match   define    "#[a-zA-Z_][a-zA-Z0-9_]*" containedin=expression
+syn match   define    "#[a-zA-Z][a-zA-Z0-9_]*" containedin=expression
 "
 syn match   macro "@[^ \t\n(]\+" containedin=expression
 syn match   macro "@macro.*$"
@@ -130,8 +134,9 @@ syn match   macro "\<_[^ \t\n]\+\>"
 "
 "
 
-syn match  ccc  "\<\(jcs\|jcu\|mcu\|mcs\)\s\+\zs\<[LEGZ]\+\>" contained containedin=instruction
-syn match flag "\<\(ret\)\>\s\+\zs\<[SOCZE]*\>" contained containedin=instruction
+"uncomment for special highlight  of condition codes
+"syn match ccc "\<[jsm]\zs\(aa\|ae\|az\|bb\|be\|bz\|cc\|ee\|ge\|gg\|gz\)" contained containedin=instruction
+"syn match ccc "\<[jsm]\zs\(le\|ll\|lz\|nc\|ne\|no\|ns\|nz\|oo\|ss\|zz\)" contained containedin=instruction
 
 
 let b:current_syntax = "sasm"
@@ -139,22 +144,21 @@ let b:current_syntax = "sasm"
 let &cpo = s:cpo_save
 unlet s:cpo_save
 
-hi directive   ctermfg=magenta  ctermbg=black
-hi instruction ctermfg=cyan     ctermbg=black
-hi variable    ctermfg=white    ctermbg=black
-hi define      ctermfg=white    ctermbg=black
-hi operator    ctermfg=green    ctermbg=black
-hi register    ctermfg=141      ctermbg=black
-hi xregister   ctermfg=141      ctermbg=black
-hi label       ctermfg=brown    ctermbg=black
-hi labeldef    ctermfg=brown    ctermbg=black
-hi number      ctermfg=darkred  ctermbg=black
-hi ccc         ctermfg=129      ctermbg=black
-hi flag        ctermfg=129      ctermbg=black
-hi string      ctermfg=darkred  ctermbg=black
-hi comment     ctermfg=25       ctermbg=black
-hi macro       ctermfg=red      ctermbg=black
-hi expression  ctermfg=yellow   ctermbg=black
-hi separator   ctermfg=green    ctermbg=black
-hi parentheses ctermfg=green    ctermbg=black
+hi directive   ctermfg=magenta  
+hi instruction ctermfg=cyan     
+hi variable    ctermfg=white    
+hi define      ctermfg=white    
+hi operator    ctermfg=green    
+hi register    ctermfg=141      
+hi xregister   ctermfg=141      
+hi label       ctermfg=brown    
+hi labeldef    ctermfg=brown    
+hi number      ctermfg=darkred  
+hi ccc         ctermfg=129      
+hi string      ctermfg=darkred  
+hi comment     ctermfg=25       
+hi macro       ctermfg=red      
+hi expression  ctermfg=yellow   
+hi separator   ctermfg=green    
+hi parentheses ctermfg=green    
 hi error       ctermfg=white    ctermbg=red

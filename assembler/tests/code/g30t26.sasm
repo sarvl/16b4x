@@ -1,1 +1,2 @@
-jmp R0
+ann R0,0
+ann R0,R0

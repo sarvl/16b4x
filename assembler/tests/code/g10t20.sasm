@@ -1,6 +1,1 @@
-div R0,0
-div R0,R0
-div R0,{0}
-div R0,lab
-div R0,#def
-div R0,$var
+dvu R0,R0

@@ -1,5 +1,4 @@
-pxw 0, R0
-pxw #def, R0
-pxw $var, R0
-pxw {0}, R0
-
+cwr 0, R0
+cwr #def, R0
+cwr $var, R0
+cwr {0}, R0

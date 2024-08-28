@@ -1,0 +1,17 @@
+dvs 0,R0
+dvs IP,R0
+dvs {0},R0
+dvs #def,R0
+dvs $var,R0
+dvs lab,R0
+
+dvs R0,0
+dvs R0,IP
+dvs R0,{0}
+dvs R0,#def
+dvs R0,$var
+dvs R0,lab
+
+dvs R0,R0,R0
+dvs R0
+dvs

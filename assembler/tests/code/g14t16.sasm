@@ -6,7 +6,7 @@ add R0 {
 %same R0 3
 %same R0 %typeof
 %same R0 {3} 
-%same R0 jcs
+%same R0 jcc
 
 %same R0 R0
 %same #n R0
@@ -15,5 +15,5 @@ add R0 {
 %same 3 R0
 %same %typeof R0
 %same {3}  R0
-%same jcs R0
+%same jcc R0
 }

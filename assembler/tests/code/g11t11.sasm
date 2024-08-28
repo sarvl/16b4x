@@ -1,7 +1,5 @@
 pwr IP, R0  
 pwr lab, R0 
-pwr SOCZ, R0
-pwr LEG, R0 
 pwr R0, 0   
 pwr R0, IP  
 pwr R0, {0}

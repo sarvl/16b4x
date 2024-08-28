@@ -20,7 +20,7 @@ std::ostream&  operator<<(std::ostream& os, t_Token const& token)
 	os << "[" << token.type;
 	switch(token.type)
 	{
-		case num: case reg: case ccc: case fla: case ext:
+		case num: case reg: case ext:
 			os << " " << token.val << "]";
 			break;
 		case dlb: case ulb: case udf: case uvr: case mus:
@@ -46,7 +46,7 @@ std::ostream&  operator<<(std::ostream& os, t_Token const& token)
 std::string to_string(t_Token::Type          const  type)
 {
 	return (char const* const[]) {
-		"num", "reg", "dir", "str", "ins", "ccc", "fla",
+		"num", "reg", "dir", "str", "ins", 
 		"ext", "mst", "men", "mpr", "mus", "exs", "exe",
 		"exo", "dlb", "ulb", "udf", "uvr", "prl", "prr",
 		"slb"
@@ -55,14 +55,29 @@ std::string to_string(t_Token::Type          const  type)
 std::string to_string(t_Instruction_Id::Type const  instr)
 {
 	return (char const* const[]) {
-		"add", "and", "cal", "cmp", "div", "hcf",
-		"hlt", "int", "irt", "jcs", "jcu", "jmp",
-		"mcs", "mcu", "mov", "mrd", "mro", "mul",
-		"mwo", "mwr", "not", "orr", "pop", "prd",
-		"psh", "pwr", "pxr", "pxw", "ret", "shl",
-		"shr", "sub", "tst", "xor", "xrd", "xwr",
-		"nop", "exs", "exe", "exo"
-		} [instr];
+		"add", "and", "ann", "cal", "cmp", "crd",
+		"cwr", "dvu", "dvs", "fls", "hlt", "int",
+		"irt", "jmp", "mls", "mlu", "mov", "mrd", 
+		"mwr", "neg", "nop", "not", "orr", "pop", 
+		"prd", "prf", "psh", "pwr", "ret", "rng", 
+		"shl", "shr", "srd", "sub", "swr", "tst",
+		"xor", "xrd", "xwr",
+
+		"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
+		"jge", "jgz", "jgg", "jle", "jlz", "jll",
+		"jnc", "jbb", "jno", "jns", "jnz", "jne",
+		"joo", "jss", "jzz", "jee", 
+
+		"maa", "mbe", "mbz", "mcc", "mae", "maz",
+		"mge", "mgz", "mgg", "mle", "mlz", "mll",
+		"mnc", "mbb", "mno", "mns", "mnz", "mne",
+		"moo", "mss", "mzz", "mee", 
+
+		"saa", "sbe", "sbz", "scc", "sae", "saz",
+		"sge", "sgz", "sgg", "sle", "slz", "sll",
+		"snc", "sbb", "sno", "sns", "snz", "sne",
+		"soo", "sss", "szz", "see"
+		} [instr & 0xFF];
 }
 std::string to_string(t_Directive::Type      const  dir)
 {
@@ -78,7 +93,7 @@ std::ostream&  operator<<(std::ostream& os, t_Token::Type const type)
 {
 	return 
 	os << (char const* const[]) {
-		"num", "reg", "dir", "str", "ins", "ccc", "fla",
+		"num", "reg", "dir", "str", "ins", 
 		"ext", "mst", "men", "mpr", "mus", "exs", "exe",
 		"exo", "dlb", "ulb", "udf", "uvr", "prl", "prr",
 		"slb"
@@ -89,14 +104,29 @@ std::ostream&  operator<<(std::ostream& os, t_Instruction_Id::Type const instr)
 {
 	return
 	os << (char const* const[]) {
-		"add", "and", "cal", "cmp", "div", "hcf",
-		"hlt", "int", "irt", "jcs", "jcu", "jmp",
-		"mcs", "mcu", "mov", "mrd", "mro", "mul",
-		"mwo", "mwr", "not", "orr", "pop", "prd",
-		"psh", "pwr", "pxr", "pxw", "ret", "shl",
-		"shr", "sub", "tst", "xor", "xrd", "xwr",
-		"nop", "exs", "exe", "exo"
-		} [instr];
+		"add", "and", "ann", "cal", "cmp", "crd",
+		"cwr", "dvu", "dvs", "fls", "hlt", "int",
+		"irt", "jmp", "mls", "mlu", "mov", "mrd", 
+		"mwr", "neg", "nop", "not", "orr", "pop", 
+		"prd", "prf", "psh", "pwr", "ret", "rng", 
+		"shl", "shr", "srd", "sub", "swr", "tst",
+		"xor", "xrd", "xwr",
+
+		"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
+		"jge", "jgz", "jgg", "jle", "jlz", "jll",
+		"jnc", "jbb", "jno", "jns", "jnz", "jne",
+		"joo", "jss", "jzz", "jee", 
+
+		"maa", "mbe", "mbz", "mcc", "mae", "maz",
+		"mge", "mgz", "mgg", "mle", "mlz", "mll",
+		"mnc", "mbb", "mno", "mns", "mnz", "mne",
+		"moo", "mss", "mzz", "mee", 
+
+		"saa", "sbe", "sbz", "scc", "sae", "saz",
+		"sge", "sgz", "sgg", "sle", "slz", "sll",
+		"snc", "sbb", "sno", "sns", "snz", "sne",
+		"soo", "sss", "szz", "see"
+		} [instr & 0xFF];
 }
 
 std::ostream&  operator<<(std::ostream& os, t_Directive::Type const dir)
@@ -110,55 +140,3 @@ std::ostream&  operator<<(std::ostream& os, t_Directive::Type const dir)
 		} [dir];
 }
 #pragma GCC diagnostic pop
-
-
-
-//DOES NOT WORK FOR JMP REG AND CAL REG 
-//MODIFY ACCORDINGLY
-int instruction_to_opcode(t_Instruction_Id::Type const iid)
-{
-	using namespace t_Instruction_Id;
-	switch(iid)
-	{
-	case iadd: return 0b00011000;
-	case iand: return 0b00011011;
-	case ical: return 0b00000010;
-	case icmp: return 0b00010001;
-	case idiv: return 0b00010010;
-	case ihcf: return 0b00000001011;
-	case ihlt: return 0b00000001010;
-	case iint: return 0b00000001000;
-	case iirt: return 0b00000001001;
-	case ijcs: return 0b00000101;
-	case ijcu: return 0b00000100;
-	case ijmp: return 0b00000011;
-	case imcs: return 0b00010111;
-	case imcu: return 0b00010110;
-	case imov: return 0b00010100;
-	case imrd: return 0b00001100;
-	case imro: return 0b00001110;
-	case imul: return 0b00010000;
-	case imwo: return 0b00001111;
-	case imwr: return 0b00001101;
-	case inot: return 0b00011010;
-	case iorr: return 0b00011100;
-	case ipop: return 0b00010101000;
-	case iprd: return 0b00001000;
-	case ipsh: return 0b00010101001;
-	case ipwr: return 0b00001001;
-	case ipxr: return 0b00000001110;
-	case ipxw: return 0b00000001111;
-	case iret: return 0b00010101100;
-	case inop: return 0b00010101111;
-	case ishl: return 0b00011110;
-	case ishr: return 0b00011111;
-	case isub: return 0b00011001;
-	case itst: return 0b00010011;
-	case ixor: return 0b00011101;
-	case ixrd: return 0b00001010;
-	case ixwr: return 0b00001011;
-	//should not be reachable
-	default:   return -1;
-	}
-}
-

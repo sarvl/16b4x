@@ -6,8 +6,6 @@ sub {0},0
 sub #def,0
 sub $var,0
 sub lab,0
-sub SOCZ,0
-sub LEG,0
 
 sub R0,R0,R0
 sub R0

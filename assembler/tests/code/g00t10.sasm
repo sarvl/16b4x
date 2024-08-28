@@ -1,6 +1,5 @@
-{+ - * / % & | ^ ~ ?  !  = , .  # < > $}
-{%typeof %same %isdefined %isassigned @mus @mus(x y z)}
-{lab}
-{$var #def}
-{ { } } 
-{@mus({1 @mus({1}, {2})}) 3}
+;comment
+/*comment*/
+//comment
+/*multiline
+ comment*/

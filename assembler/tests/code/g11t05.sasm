@@ -1,14 +1,9 @@
-pxw R0, R0
-pxw IP, R0
-pxw lab, R0
-pxw LEG, R0
-pxw SOCZ, R0
-pxw 0, IP
-pxw 0, lab
-pxw 0, #def
-pxw 0, $var
-pxw 0, LEG
-pxw 0, SOCZ
-pxw 0, R0, R0
-pxw 0, 
-pxw
+cwr IP, R0
+cwr lab, R0
+cwr 0, IP
+cwr 0, lab
+cwr 0, #def
+cwr 0, $var
+cwr 0, R0, R0
+cwr 0, 
+cwr

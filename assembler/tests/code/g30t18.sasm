@@ -1,2 +1,2 @@
-mul R0, 0
-mul R0, R0
+mls R0, 0
+mls R0, R0

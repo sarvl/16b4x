@@ -5,5 +5,3 @@ nop {0}
 nop #def
 nop $var
 nop lab 
-nop SOCZ
-nop LEG 

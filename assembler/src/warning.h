@@ -7,18 +7,15 @@
 namespace Warning{
 	enum id : uint64_t{
 		immnofit     = 0x0000'0000'0000'0001,
-		divbyzero    = 0x0000'0000'0000'0002,
-		alwaystrue   = 0x0000'0000'0000'0004,
-		extradata    = 0x0000'0000'0000'0008,
-		custom       = 0x0000'0000'0000'0010,
-		extravals    = 0x0000'0000'0000'0040,
+		extradata    = 0x0000'0000'0000'0002,
+		custom       = 0x0000'0000'0000'0004,
+		extravals    = 0x0000'0000'0000'0008,
 		warn_count
 	};
 	constexpr int count = __builtin_ctz(warn_count - 1) + 1;
 
 	constexpr std::string_view name_list[count + 1] = {
-		"immnofit", "divbyzero", "alwaystrue", "extradata",
-		"custom"  , "extravals",
+		"immnofit", "extradata", "custom" , "extravals",
 
 		"all" //handled separately
 	};

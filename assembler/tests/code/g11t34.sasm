@@ -1,14 +1,9 @@
-not R0,IP  
+not #def
+not $var
+not 0
+not IP
+not lab
+not {3}
 
-not 0,0
-not IP,0
-not {0},0
-not #def,0
-not $var,0
-not lab,0
-not SOCZ,0
-not LEG,0
-
-not R0,R0,R0
-not R0
 not
+not R0, 0

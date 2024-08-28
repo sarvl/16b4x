@@ -1,6 +1,6 @@
-mwo 0, R0
-mwo R0, R0
-mwo {0}, R0
-mwo lab, R0
-mwo #def, R0
-mwo $var, R0
+swr 0, R0
+swr R0, R0
+swr {0}, R0
+swr lab, R0
+swr #def, R0
+swr $var, R0

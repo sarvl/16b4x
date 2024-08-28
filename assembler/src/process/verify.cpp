@@ -13,54 +13,6 @@ std::string& strings_get(int const ind);
 std::string& strings_back();
 int          strings_size();
 
-static int ccc_to_int(std::string_view const cc)
-{
-	int res = 0;
-	for(char const c : cc)
-	switch(c)
-	{
-	case 'L': case 'l':
-		res |= 0b0100;
-		break;
-	case 'Z': case 'z': case 'E': case 'e':
-		res |= 0b0010;
-		break;
-	case 'G': case 'g':
-		res |= 0b0001;
-		break;
-
-	default:
-		return -1;
-	}
-
-	return res;
-}
-
-static int socz_to_int(std::string_view const socz)
-{
-	int res = 0;
-	for(char const c : socz)
-	switch(c)
-	{
-	case 'S': case 's': case 'N': case 'n':
-		res |= 0b1000;
-		break;
-	case 'O': case 'o':
-		res |= 0b0100;
-		break;
-	case 'C': case 'c':
-		res |= 0b0010;
-		break;
-	case 'Z': case 'z': case 'E': case 'e':
-		res |= 0b0001;
-		break;
-	default:
-		return -1;
-	}
-
-	return res;
-}
-
 //does not need to check for start/end
 //this part has been verified by tokenizer
 //checks whether tokens consist of 
@@ -636,27 +588,41 @@ void verify(
 			 * 'v' = 'i' | ulb | exp
 			 * 'o' = 'r' | 'v'
 			 * 'a' = 'r' | 'i'
-			 * 'c' = CCC
-			 * 'f' = FLA | nothing
 			 * for convenience, each entry is 3 chars
 			 * but ' ' indicates that no more need to be parsed
-			 * 'f' allows for nothing as only RET uses it
 			 */
 			constexpr static char const* const pattern_table[] = {
-			//	iadd, iand, ical, icmp, idiv, ihcf,
-				"ro ","ro ","o  ","ro ","ro ","   ",
-			//	ihlt, iint, iirt, ijcs, ijcu, ijmp,
-				"   ","i  ","   ","cv ","cv ","o  ",
-			//	imcs, imcu, imov, imrd, imro, imul,
-				"crr","crr","ro ","ro ","ro ","ro ",
-			//	imwo, imwr, inot, iorr, ipop, iprd,
-				"or ","or ","ro ","ro ","r  ","ra ",
-			//	ipsh, ipwr, ipxr, ipxw, iret, ishl,
-				"r  ","ar ","ri ","ir ","f  ","ro ",
-			//	ishr, isub, itst, ixor, ixrd, ixwr,
-				"ro ","ro ","ro ","ro ","rx ","xo ",
-			//	inop
-				"   "
+			//	add, and, ann, cal, cmp, crd, cwr, dvu,
+				"ro","ro","ro","o ","ro","ra","ar","rr",
+			//  dvs, fls, hlt, int, irt, jmp, mls, mlu, 
+				"rr","o ","  ","i ","  ","v ","ro","ro",
+			//  mov, mrd, mwr, neg, nop, not, orr, pop, 
+				"ro","ro","or","r ","  ","r ","ro","r ",
+			//	prd, prf, psh, pwr, ret, rng, shl, shr, 
+				"ra","o ","r ","ar","  ","r ","ro","ro",
+			//	srd, sub, swr, tst, xor, xrd, xwr,
+				"ro","ro","or","ro","ro","rx","xo",
+
+			//	jaa, jbe, jbz, jcc, jae, jaz, jge, jgz, 
+				"v ","v ","v ","v ","v ","v ","v ","v ",
+			//	jgg, jle, jlz, jll, jnc, jbb, jno, jns, 
+				"v ","v ","v ","v ","v ","v ","v ","v ",
+			//	jnz, jne, joo, jss, jzz, jee,
+				"v ","v ","v ","v ","v ","v ",
+
+			//	maa, mbe, mbz, mcc, mae, maz, mge, mgz, 
+				"rr","rr","rr","rr","rr","rr","rr","rr",
+			//	mgg, mle, mlz, mll, mnc, mbb, mno, mns, 
+				"rr","rr","rr","rr","rr","rr","rr","rr",
+			//	mnz, mne, moo, mss, mzz, mee,
+				"rr","rr","rr","rr","rr","rr",
+
+			//	saa, sbe, sbz, scc, sae, saz, sge, sgz, 
+				"r ","r ","r ","r ","r ","r ","r ","r ",
+			//	sgg, sle, slz, sll, snc, sbb, sno, sns, 
+				"r ","r ","r ","r ","r ","r ","r ","r ",
+			//	snz, sne, soo, sss, szz, see,
+				"r ","r ","r ","r ","r ","r "
 				};
 			
 			auto const ins = static_cast<t_Instruction_Id::Type>(tokens[tid].val);
@@ -668,7 +634,7 @@ void verify(
 			std::string const pattern_err = [&](){
 				std::string ret = "";
 				
-				for(int i = 0; i < 3; i++) switch(pattern[i])
+				for(int i = 0; i < 2; i++) switch(pattern[i])
 				{
 				case ' ': return ret;
 				case 'r': ret += "REG ";                     continue;
@@ -677,8 +643,6 @@ void verify(
 				case 'v': ret += "IMM/UDF/UVR/ULB/EXP ";     continue;
 				case 'o': ret += "REG/IMM/UDF/UVR/ULB/EXP "; continue;
 				case 'a': ret += "REG/IMM/UDF/UVR/CEX ";     continue;
-				case 'c': ret += "CCC ";                     continue;
-				case 'f': ret += "FLG ";                     continue;
 				default:  ret += "invalid pattern supplied ";continue;
 				}
 
@@ -687,7 +651,7 @@ void verify(
 
 			output.emplace_back(tokens[tid]);
 			tid++;
-			for(int i = 0; i < 3; i++) 
+			for(int i = 0; i < 2; i++) 
 			{
 				if(' ' == pattern[i])
 					break;
@@ -695,11 +659,6 @@ void verify(
 				if(tid >= size
 				|| tokens[tid].line_num != first_line)
 				{
-					if('f' == pattern[i] && tid < size)
-					{
-						output.emplace_back(t_Token::fla, 0, tokens[tid].file_name, first_line);
-						break;
-					}
 					Log::error(
 					    "incomplete instruction or instruction split over multiple lines\n       "
 						"expected INS "s + pattern_err,
@@ -722,15 +681,8 @@ void verify(
 				case 'x':
 					if(t_Token::ext == tokens[tid].type) 
 					{
-						if(t_Instruction_Id::ixwr == ins
-						&& tokens[tid].val == 1) //CF
-						{
-							Log::error("CF cannot be written to", tokens[tid].file_name, tokens[tid].line_num);
-							tid++;
-							continue;
-						}
 						if(t_Instruction_Id::ixrd == ins
-						&& tokens[tid].val == 9) //UI
+						&& tokens[tid].val == 1) //UI
 						{
 							Log::error("UI cannot be read from", tokens[tid].file_name, tokens[tid].line_num);
 							tid++;
@@ -745,35 +697,6 @@ void verify(
 						file_name, tokens[tid].line_num);
 					ADVANCE_TO_NEXT_LINE
 					goto next_line;
-
-				case 'c':
-				{
-					//try to convert
-					if(t_Token::ulb == tokens[tid].type) 
-					{
-						int const ccc = ccc_to_int(strings_get(tokens[tid].val));
-						if(-1 != ccc) {output.emplace_back(t_Token::ccc, ccc, tokens[tid].file_name, tokens[tid].line_num); tid++; continue; }
-					}
-					Log::error("unexpected token, expected CCC but got "s + to_string(tokens[tid].type) + "\n       "
-						"expected INS "s + pattern_err,
-						file_name, tokens[tid].line_num);
-					ADVANCE_TO_NEXT_LINE
-					goto next_line;
-				}
-				case 'f':
-				{
-					//try to convert
-					if(t_Token::ulb == tokens[tid].type) 
-					{
-						int const socz = socz_to_int(strings_get(tokens[tid].val));
-						if(-1 != socz) {output.emplace_back(t_Token::fla, socz, tokens[tid].file_name, tokens[tid].line_num); tid++; continue; }
-					}
-					Log::error("unexpected token, expected FLA but got "s + to_string(tokens[tid].type) + "\n       "
-						"expected INS "s + pattern_err,
-						file_name, tokens[tid].line_num);
-					ADVANCE_TO_NEXT_LINE
-					goto next_line;
-				}
 
 				case 'i':
 					if(t_Token::num == tokens[tid].type
@@ -881,6 +804,7 @@ void verify(
 					goto next_line;
 				}
 			}
+			
 			if(tid != size
 			&& tokens[tid].line_num == first_line)
 			{

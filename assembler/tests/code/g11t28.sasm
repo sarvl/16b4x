@@ -1,10 +1,1 @@
 ret 0   
-ret R0  
-ret IP  
-ret {0} 
-ret #def
-ret $var
-ret lab 
-ret LEG 
-
-ret SOCZ, SOCZ

@@ -1,0 +1,5 @@
+jmp 	start
+
+%adr 	0x12
+start:
+	nop

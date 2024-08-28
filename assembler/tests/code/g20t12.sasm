@@ -1,0 +1,7 @@
+%align 4
+lab0:
+	jmp lab1
+
+%align 4
+lab1:
+	jmp lab0

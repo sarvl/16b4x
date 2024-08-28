@@ -1,2 +1,2 @@
 jmp IP  
-jmp R0, R0
+jmp 0, R0

@@ -5,8 +5,6 @@ mwr 0,{0}
 mwr 0,#def
 mwr 0,$var
 mwr 0,lab
-mwr 0,SOCZ
-mwr 0,LEG
 mwr R0,R0,R0
 mwr R0
 mwr

@@ -1,4 +1,4 @@
 lab:
-jcs L 3
-jcs LEG 3
-jcs LEG lab
+jcc 3
+jzz 3
+jaa lab

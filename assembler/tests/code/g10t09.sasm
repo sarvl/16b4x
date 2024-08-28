@@ -1,17 +1,22 @@
-jcs LEG 0
-jcs LEG {0}
-jcs LEG lab
-jcs LEG #def
-jcs LEG $var
-jcs G,0
-jcs E,0
-jcs Z,0
-jcs EG,0
-jcs ZG,0
-jcs L,0
-jcs LG,0
-jcs LE,0
-jcs LZ,0
-jcs LEG,0
-jcs LZG,0
-
+saa R0
+sbe R0
+sbz R0
+scc R0
+sae R0
+saz R0
+sge R0
+sgz R0
+sgg R0
+sle R0
+slz R0
+sll R0
+snc R0
+sbb R0
+sno R0
+sns R0
+snz R0
+sne R0
+soo R0
+sss R0
+szz R0
+see R0

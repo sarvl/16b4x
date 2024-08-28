@@ -1,0 +1,9 @@
+neg #def
+neg $var
+neg 0
+neg IP
+neg lab
+neg {3}
+
+neg
+neg R0, 0

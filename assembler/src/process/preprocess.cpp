@@ -276,8 +276,9 @@ void preprocess(
 				output.emplace_back(t_Token::num, to_get_to, tokens[tid - 1].file_name, tokens[tid - 1].line_num);
 				
 				if(to_get_to < address)
-					Log::error("[loweraddress] desired address ("s + std::to_string(to_get_to) + ") is smaller than current address ("s + std::to_string(address) + ")", 
+					Log::error("desired address ("s + std::to_string(to_get_to) + ") is smaller than current address ("s + std::to_string(address) + ")", 
 					file_name, line_num);
+				address = to_get_to;
 				break;
 			}
 			case alg:
@@ -294,7 +295,11 @@ void preprocess(
 					Log::error("alignment must be positive", file_name, line_num);
 					break;
 				}
-				address = alignment;
+
+				//probably can be done as single computation
+				while(address % alignment != 0)
+					address++;
+
 				break;
 			}
 			case cen:

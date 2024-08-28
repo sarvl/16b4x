@@ -6,8 +6,6 @@ mov {0},0
 mov #def,0
 mov $var,0
 mov lab,0
-mov SOCZ,0
-mov LEG,0
 
 mov R0,R0,R0
 mov R0

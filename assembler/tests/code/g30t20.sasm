@@ -1,2 +1,1 @@
-div R0, 0
-div R0, R0
+dvs R0, R0

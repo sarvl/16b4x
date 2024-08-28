@@ -1,0 +1,12 @@
+ann R0,IP  
+
+ann 0,0
+ann IP,0
+ann {0},0
+ann #def,0
+ann $var,0
+ann lab,0
+
+ann R0,R0,R0
+ann R0
+ann

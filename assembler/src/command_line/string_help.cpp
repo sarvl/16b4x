@@ -84,10 +84,6 @@ available warnings:
 		ALL warnings listed below
 	immnofit
 		immediate not fitting into available space
-	divbyzero
-		div has immediate = 0 
-	alwaystrue
-		condition is always true
 	extradata
 		extra data after instruction
 	extravals
@@ -105,9 +101,9 @@ examples:
 		disable immediate warning, will not produce error or warning
 		enable immnofit warning, will not produce error but will produce warning
 
-	-WNimmnofit,alwaystrue -WEdivbyzero
-		disables immnofit and alwaystrue warnings
-		divbyzero will produce error
+	-WNextravals,custom -WEimmnofit
+		disables extravals and custom warnings
+		immnofit will produce error
 
 	-WNimmnofit -WEall
 		disables immnofit warning

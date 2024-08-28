@@ -7,7 +7,7 @@
 	mov 	R7, 7
 
 	cmp 	R7, 0
-	jcs LE 	end
+	jle  	end
 
 loop: 
 	mov 	R2, R0
@@ -15,7 +15,7 @@ loop:
 	add 	R1, R2
 
 	sub 	R7, 1
-	jcs GZ	loop
+	jgz   	loop
 
 end:
 	mwr 	100, R0
@@ -26,4 +26,4 @@ end:
 	mwr 	110, R5
 	mwr 	112, R6
 	mwr 	114, R7
-	hcf 	
+	hlt 	

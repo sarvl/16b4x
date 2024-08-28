@@ -1,3 +1,5 @@
-l0:
-div R0 0
-div R1 l0
+int 0xFFF
+crd R0 0xFF
+jmp 0xFFF
+jll 0xFFF
+add R0 0xFFF

@@ -1,6 +1,6 @@
-mul R0, 0
-mul R0, R0
-mul R0, {0}
-mul R0, lab
-mul R0, #def
-mul R0, $var
+mls R0, 0
+mls R0, R0
+mls R0, {0}
+mls R0, lab
+mls R0, #def
+mls R0, $var
