@@ -2,7 +2,7 @@
 " Language:		sasm
 " Maintainer:		sarvel
 " Contributors:		sarvel
-" Last Change:		2024 Aug 16
+" Last Change:		2024 Aug 28
 
 " quit when a syntax file was already loaded
 if exists("b:current_syntax")
