@@ -1,0 +1,12 @@
+this branch is going to implement debugger support
+
+it will create
+1. debugger backend
+2. text interface
+3. relevant docs
+
+todo.txt things done with this branch:
+H L C-b for breakpoint
+
+current progress:
+not yet started
