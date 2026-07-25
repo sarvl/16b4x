@@ -1,0 +1,12 @@
+;check whether PSH works 
+
+	xwr 	SP, 0x00
+
+	mov 	R0, 0x12
+	psh 	R0 
+
+	xwr 	UI, 0x12
+	mov 	R0, 0x34
+	psh 	R0 
+
+	hlt

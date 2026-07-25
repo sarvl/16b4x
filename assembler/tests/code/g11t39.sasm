@@ -1,12 +1,25 @@
 mlu R0,IP  
-
+   
 mlu 0,0
 mlu IP,0
 mlu {0},0
 mlu #def,0
 mlu $var,0
 mlu lab,0
-
+   
 mlu R0,R0,R0
 mlu R0
 mlu
+
+mls R0,IP  
+   
+mls 0,0
+mls IP,0
+mls {0},0
+mls #def,0
+mls $var,0
+mls lab,0
+   
+mls R0,R0,R0
+mls R0
+mls

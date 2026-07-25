@@ -1,0 +1,16 @@
+; check all combinations for SAE 
+	
+%assign $fl   0
+%assign $addr 1000
+%rps 16
+	xwr 	FL, $fl
+	%assign $fl {$fl 1 +}
+
+	sae 	R0
+
+	xwr 	UI, {$addr 8 > 0xFF &}
+	mwr 	{$addr 0xFF &}, R0
+	%assign $addr {$addr 1 +}	
+%rpe
+
+	hlt

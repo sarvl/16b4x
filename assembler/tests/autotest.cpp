@@ -13,11 +13,33 @@ int main(int const argc, char const* const* const argv)
 {
 	bool print_detailed   = true;
 	bool print_everything = true;
+	bool print_debug      = false;
 	if(2 == argc)
 	{
-		if('t' == argv[1][0])
+		if('h' == argv[1][0])
+		{
+			printf("./autotest - runs the tests\n"
+			       "\n"
+				   "  h\n"
+				   "  \tprints this help\n"
+				   "  d\n"
+				   "  \tprint debug for autotest\n"
+				   "  t\n"
+				   "  \tprint groups and failed only\n"
+				   "  e\n"
+				   "  \tprint total only\n\n");
+
+			return 0;
+		}
+		if('d' == argv[1][0])
+		{
+			print_debug      = true;
 			print_detailed   = false;
-		if('e' == argv[1][0])
+			print_everything = false;
+		}
+		else if('t' == argv[1][0])
+			print_detailed   = false;
+		else if('e' == argv[1][0])
 		{
 			print_detailed   = false;
 			print_everything = false;
@@ -59,7 +81,7 @@ int main(int const argc, char const* const* const argv)
 		int const test_group = (data[beg + 1] - '0') * 10
 		                     + (data[beg + 2] - '0');
 		
-		if(print_everything)
+		if(print_everything or print_debug)
 			printf("\033[1;38;5;55m%.5s\033[0m\n", data + beg + 4);
 
 		int const limit = (data[beg +  9] - '0') * 10
@@ -89,6 +111,9 @@ int main(int const argc, char const* const* const argv)
 			system("rm -f fout.out sout.out");
 			system(command.c_str());
 
+			if(print_debug) 
+				printf(command.c_str());
+
 			system("touch ./fout.out ./sout.out");
 
 			if(File::Error::create_empty == File::create(&file_undertest, "./fout.out"))
@@ -99,12 +124,13 @@ int main(int const argc, char const* const* const argv)
 			if(file_undertest.size != file_correct.size
 			|| 0 != memcmp(file_undertest.data, file_correct.data, file_correct.size))
 			{
-				if(print_everything)
+				if(print_everything or print_debug)
 					printf("\033[1;38;5;1m[X] g%02dt%02df\n", test_group, test_num);
 			}
 			else
 			{
-				if(print_everything && print_detailed)
+				if( (print_everything && print_detailed) 
+				or  print_debug)
 					printf("\033[1;38;5;46m[V] g%02dt%02df\n", test_group, test_num);
 				passed++;
 			}	
@@ -120,12 +146,13 @@ int main(int const argc, char const* const* const argv)
 			if(file_undertest.size != file_correct.size
 			|| 0 != memcmp(file_undertest.data, file_correct.data, file_correct.size))
 			{
-				if(print_everything)
+				if(print_everything or print_debug)
 					printf("\033[1;38;5;1m[X] g%02dt%02ds\n", test_group, test_num);
 			}
 			else
 			{
-				if(print_everything && print_detailed)
+				if( (print_everything && print_detailed) 
+				or  print_debug)
 					printf("\033[1;38;5;46m[V] g%02dt%02ds\n", test_group, test_num);
 				passed++;
 			}	
@@ -136,7 +163,7 @@ int main(int const argc, char const* const* const argv)
 			test_num++;
 
 		}
-		if(print_everything)
+		if(print_everything or print_debug)
 		{
 			if(passed == limit * 2)
 				printf("\033[1;38;5;46m%d/%d\033[0m\n", passed, limit * 2);

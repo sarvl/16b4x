@@ -1,0 +1,12 @@
+;this test is absolutely necessary for other tests to even mean something
+;test wether writing and saving some data to memory does inteed work
+
+	mov 	R0, 0xAB
+	mov 	R1, 0xFF
+
+	mwr 	0x00, R0
+	mwr 	0x10, R0
+	mwr 	0x20, R1
+
+
+	hlt

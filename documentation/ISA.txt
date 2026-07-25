@@ -1,10 +1,10 @@
 [TABLE_OF_CONTENTS]
-	[TABLE_OF_CONTENTS]
 	[TERMINOLOGY]
 	[OVERVIEW]
 		[GENERAL]
-		[INSTRUCTION_LIST]
-		[ALTERNATE_INSTRUCTION_LIST]
+		[LATEST_REVISION]
+		[INSTRUCTION_LIST_0]
+		[INSTRUCTION_LIST_1]
 	[INSTRUCTION_ENCODING]
 		[GENERAL]
 		[IMMEDIATES]
@@ -16,9 +16,9 @@
 			[R]
 	[REGISTERS]
 		[INTERNAL]
-		[EXTERNAL]
+		[AUXILIARY]
 			[LIST]
-			[IP] [UI] [SP] [FL]
+			[IP] [LC] [UI] [SP] [FL] [AR]
 		[CONTROL]
 			[GENERAL]
 			[LIST]
@@ -39,15 +39,6 @@
 			[PROTECTION]
 	[PRIVILEGE_LEVEL]
 	[IO]
-		[GENERAL]
-		[PREDEFINED]
-			[GENERAL]
-			[LIST]
-		[DEVICE_IDENTIFICATION]
-		[NAME]	
-		[INTERFACE]
-			[LIST]
-			[GENERIC] [STORAGE]
 	[INTERRUPTS]
 		[GENERAL]
 		[LIST]
@@ -58,274 +49,268 @@
 		[HANDLED]
 		[CONTROL]
 		[HANDLER]
-			[TIMER]                     [PAGE_FAULT]    [PRIVILEGE_VIOLATION]       
-			[PERMISSION_VIOLATION]      [DIVISION_BY_0] [IO_INTERRUPT] 
-			[INSTRUCTION_NOT_SUPPORTED] [SOFTWARE_INTERRUPT]
+			[PAGE_FAULT]                   [PRIVILEGE_VIOLATION]        
+			[PERMISSION_VIOLATION]         [INSTRUCTION_NOT_SUPPORTED] 
+			[INSTRUCTION_INVALID_ARGUMENT] [TIMER]  
+			[DIVISION_BY_0]                [IO_INTERRUPT]
+			[SOFTWARE_INTERRUPT]
 	[EXTENSIONS]
-		[D] Divide
+		[A] Arithmetic
 		[R] Random
-	[PERFORMANCE_MEASUREMENT]
-		[GENERAL]
-		[REGISTERS]
 	[INSTRUCTIONS]
-		[ADD] [AND] [ANN] [CAL] [CMP] [CRD]
-		[CWR] [DVU] [DVS] [FLS] [HLT] [INT]
-		[IRT] [JCC] [JMP] [MCC] [MLS] [MLU]
-		[MOV] [MRD] [MWR] [NEG] [NOP] [NOT]
-		[ORR] [POP] [PRD] [PRF] [PSH] [PWR]
-		[RET] [RNG] [SCC] [SHL] [SHR] [SRD]
-		[SUB] [SWR] [TST] [XOR] [XRD] [XWR]
+		[ADD] [AND] [ANN] [CAL] [CMP]
+		[CRD] [CWR] [DVS] [DVU] [HLT] 
+		[INT] [IRT] [JCC] [JMP] [LOP]
+		[MCC] [MOV] [MRD] [MLU] [MLS] 
+		[MWR] [NEG] [NOP] [NOT] [ORR] 
+		[POP] [PRD] [PRF] [PSH] [PWR] 
+		[RET] [RNG] [SCC] [SHL] [SHR] 
+		[SRD] [SUB] [SWR] [TST] [XOR] 
+		[XRD] [XWR]
 
 	To navigate to particular section concatenate sections to one long tag with colons as separators
 	for example to move to PAGE_FAULT search for [MEMORY:VIRTUAL:PAGE_FAULT]
-	more than 1 section on the list is compressed view of list
 
 [TERMINOLOGY]
 	WORD
 		2B wide 
 		smallest addressable unit of data
-	INTERNAL REGISTER
+	REGISTER
 		general purpose register
 		accessible by all instructions requiring register
-		internal to register file
 		shortened to R or R[]
-	EXTERNAL REGISTER
+	AUXILIARY REGISTER
 		special purpose register 
 		can be modified with XWR and read with XRD
-		external to register file
-		shortened to XR or X[]
+		shortened to X or X[]
 	CONTROL REGISTER
-		special purpose register for control data
+		special purpose register for control data and info of specific cpu features
 		can be modified with CWR and read with CRD
 		can only be modified in privileged mode
-		depending on id, may be readable in uunprivileged mode
-		shortened to CR or C[]
-	FEATURE REGISTER
-		control register containing info regarding cpu features
-		shortened to FR or F[]
+		depending on id, may be readable in unprivileged mode
+		shortened to C or C[]
 	IMPLEMENTATION REGISTER
 		register used by implementation
-		no way to access except for special instructions
-		shortened to IR or I[]
+		no way to access except via special instructions
+		shortened to I or I[]
 	FRAME
 		page in physical memory
+	MEMORY
+		general volatile storage, does not persist across reboots
+		shortened to M or M[]
 
 [OVERVIEW]
 	[OVERVIEW:GENERAL]
 		version:            0 
 		codename:           16b40
 		this doc revision:  0 
-		
-		Future ISA versions will be backwards compatible unless bug is found 
 
-		Extensions may be eventually merged into base ISA, corresponding FR bit then is permanently '1'
+		Before reading this document (especially sections about IO), it is important to be aware how general 16b4x system is supposed to work
+		check system.txt for that info
+		
+		Future ISA versions will be backwards compatible unless a bug is found 
+
+		Extensions may be eventually merged into base ISA, corresponding feature bit (found in corresponding CR) then is permanently '1'
 
 		Negative numbers are represented in Two's complement form
 
-		as of right now, interrupts still require rework
+		Currently the ISA is in release candidate state
 
-		boot, IO, performance counters are in release candidate state
-		they still may change if problem is found, otherwise it will be finalized
+	[OVERVIEW:LATEST_REVISION]
+		
+		Initial Version
 
-	[OVERVIEW:INSTRUCTION_LIST]
-		P E
+	[OVERVIEW:INSTRUCTION_LIST_0]
+		PP EE
 		ARITHMETIC
-		    add       d, s/imm8   # R[d] <--  R[d] +  R[s]/ imm16
-		    and       d, s/imm8   # R[d] <--  R[d] &  R[s]/ imm16
-		    ann       d, s/imm8   # R[d] <--  R[d] & ~R[s]/~imm16
-		    cmp       d, s/imm8   #           R[d] -  R[s]/ imm16
-		  D dvs       d, s        # R[d] <--  R[d] /  R[s]        ;   signed
-		  D dvu       d, s        # R[d] <--  R[d] /  R[s]        ; unsigned
-		    mls       d, s/imm8   # R[d] <--  R[d] *  R[s]/imm16  ;   signed
-		    mlu       d, s/imm8   # R[d] <--  R[d] *  R[s]/imm16  ; unsigned 
-		    neg       d           # R[d] <-- -R[d]
-		    not       d           # R[d] <-- ~R[d]
-		    orr       d, s/imm8   # R[d] <--  R[d] |  R[s]/imm16
-		    shl       d, s/imm8   # R[d] <--  R[d] << R[s]/imm16  ; logical
-		    shr       d, s/imm8   # R[d] <--  R[d] >> R[s]/imm16  ; logical
-		    sub       d, s/imm8   # R[d] <--  R[d] -  R[s]/imm16
-		    tst       d, imm8     #           R[d] &  R[s]/imm16
-		    xor       d, s/imm8   # R[d] <--  R[d] ^  R[s]/imm16
+		      add       d, s/imm8   # R[d] <--  R[d] +  R[s]/ imm16
+		      and       d, s/imm8   # R[d] <--  R[d] &  R[s]/ imm16
+		      ann       d, s        # R[d] <--  R[d] & ~R[s]
+		      cmp       d, s/imm8   #           R[d] -  R[s]/ imm16
+		   A  dvs       d, s        # R[d] <--  R[d] /  R[s]        ;   signed
+		   A  dvu       d, s        # R[d] <--  R[d] /  R[s]        ; unsigned
+		   A  mls       d, s/imm8   # R[d] <--  R[d] *  R[s]/imm16  ;   signed
+		   A? mlu       d, s/imm8   # R[d] <--  R[d] *  R[s]/imm16  ; unsigned
+		      neg       d           # R[d] <-- -R[d]
+		      not       d           # R[d] <-- ~R[d]
+		      orr       d, s/imm8   # R[d] <--  R[d] |  R[s]/imm16
+		      shl       d, s/imm8   # R[d] <--  R[d] << R[s]/imm16  ; logical
+		      shr       d, s/imm8   # R[d] <--  R[d] >> R[s]/imm16  ; logical
+		      sub       d, s/imm8   # R[d] <--  R[d] -  R[s]/imm16
+		      tst       d, s/imm8   #           R[d] &  R[s]/imm16
+		      xor       d, s/imm8   # R[d] <--  R[d] ^  R[s]/imm16
 		CONTROL FLOW
-		    cal       s/imm11     # SP <-- SP - 1 ; M[SP] <-- IP ; IP <-- R[s]/(IP + imm16)
-		    jcc       imm8        # IF(conditio) { IP <-- IP + imm16 }
-		    jmp       imm11       # IP <-- IP + imm16
-		    ret                   # IP <-- M[SP] ; SP <-- SP + 1  
-		P   hlt                   # halt processor
+		      cal       s/imm11     # SP <-- SP - 1 ; M[SP] <-- IP ; IP <-- R[s]/(IP + imm16)
+		      jcc       imm8        # IF(condition) { IP <-- IP + imm16 }
+		      jmp       imm11       # IP <-- IP + imm16
+		      ret                   # IP <-- M[SP] ; SP <-- SP + 1  
+			  lop       imm8        # LC <-- LC - 1 ; if(LC >= 0) {IP <-- IP + imm16}
+		R     hlt                   # halt processor
 		INTERRUPTS
-		D   int       imm8        # raises interrupt imm8
-		P   irt                   # return from interrupt
-		IO
-		P   prd       d, s/imm8   # R[d] <-- P[R[s]]/P[imm16]
-		P   pwr       d/imm8, s   # P[R[d]]/P[imm16] <-- R[d]
+		I?    int       imm8        # raises interrupt imm8
+		I     irt                   # return from interrupt
+		INPUT-OUTPUT
+		O     prd       d, s/imm8   # R[d] <-- P[R[s]]/P[imm16]
+		O     pwr       d/imm8, s   # P[R[d]]/P[imm16] <-- R[d]
 		MEMORY
-		    mrd       d, s/imm8   # R[d] <-- M[R[s]]/M[imm16]
-		    mwr       d/imm8, s   # M[R[d]]/M[imm16] <-- R[s]
-		    pop       d           # R[d] <-- M[SP] ; SP <-- SP + 1
-		    psh       s           # SP <-- SP - 1 ; M[SP] <-- R[s]
-		    srd       d, s/imm8   # R[d] <-- M[R[s] + SP]/M[imm16 + SP]
-		    swr       d/imm8, s   # M[R[d] + SP]/M[imm16 + SP] <-- R[s]
+		      mrd       d, s/imm8   # R[d] <-- M[R[s]]/M[imm16]
+		      mwr       d/imm8, s   # M[R[d]]/M[imm16] <-- R[s]
+		      pop       d           # R[d] <-- M[SP] ; SP <-- SP + 1
+		      psh       s           # SP <-- SP - 1 ; M[SP] <-- R[s]
+		      srd       d, imm8     # R[d] <-- M[SP + imm16]
+		      swr       imm8, s     # M[SP + imm16] <-- R[s]
 		PERFORMANCE
-		    fls       s/imm8      # flush R[s]/imm16 from cache, may be nop
-		    prf       s/imm8      # prefetch R[s]/imm16, may be nop
+		      prf       s           # prefetch R[s], may be nop
 		REGISTERS
-		    mcc       d, s        # IF(condition) {R[d] <-- R[s]}
-		    mov       d, s/imm8   # R[d] <-- R[s]/imm16
-		    xrd       d, s        # R[d] <-- X[s]
-		    xwr       d, imm8     # X[d] <-- R[s]/imm16
+		      scc       d           # IF(condition) {R[d] <-- 1} ELSE {R[d] <-- 0}
+		      mcc       d, s        # IF(condition) {R[d] <-- R[s]}
+		      mov       d, s/imm8   # R[d] <-- R[s]/imm16
+		      xrd       d, s        # R[d] <-- X[s]
+		      xwr       d, s/imm8   # X[d] <-- R[s]/imm16
 		CONTROL REGISTERS
-		P   crd       d, imm5     # R[d] <-- C[imm5]
-		P   cwr       imm5, s     # C[imm5] <-- R[s]
+		C?    crd       d, s/imm5   # R[d] <-- C[R[s]/imm5]
+		C     cwr       d/imm5, s   # C[R[d]/imm5] <-- R[s]
 		OTHER
-			scc       d           # R[d] <-- condition = true
-		    nop                   # does nothing
-		  R rng       d           # R[d] <-- pseudorandom bit pattern
+		      nop                   # does nothing
+		   R  rng       d           # R[d] <-- pseudorandom bit pattern
 
-		Where:
-		M[x]  means memory at address x
-		R[x]  means value of internal register x
-		X[x]  means value of external register x
-		P[x]  means value of port x
-		C[x]  means value of control register x
-		F[x]  means value of feature register x
-
-		P in the P column implies that instruction has to be executed in privileged mode
-		D in the P column implies that instruction MAY need to be executed in privileged mode, depending on operands
+		a letter in the P column implies that instruction requires a specific privilege 
+		 a letter followed by '?' implies that instruction MAY require specific privilege, depending on operands
 			see [PRIVILEGE_LEVEL]
-		Letter in E column identifies necessary extensions to run instruction
+		Letter in E column identifies extension necessary to run the instruction
+		 a letter followed by '?' implies that instruction has extended functionality if an extension is present
 			see [EXTENSIONS]
-
 	
-	[OVERVIEW:ALTERNATE_INSTRUCTION_LIST]
-		this overview is primarly useful whenever opcodes are needed
-		JCC, MCC, SCC are duplicated with different opcodes, see detailed description for encoding and disambiguation
+	[OVERVIEW:INSTRUCTION_LIST_1]
+		this overview is primarily useful whenever opcodes are needed
+		JCC, MCC, SCC each have 2 different opcodes, see detailed description for encoding and disambiguation
 
-		                          P E
-		00000___ ________                                    # -----
-			00000___ ___00000            invalid             # will always be invalid
-			00000___ ___00001                                # -----
-				00000000 ___00001 P      irt                 # return from interrupt
-				00000001 ___00001 P      hlt                 # halt processor
-				00000010 ___00001        reserved            #
-				00000011 ___00001        reserved            #
-				00000100 ___00001 P      nop                 # may be reused in the future
-				00000101 ___00001 P      nop                 # may be reused in the future
-				00000110 ___00001        reserved            # 
-				00000111 ___00001        reserved            # 
-			00000___ ___00010                                # -----
-				00000000 ___00010        reserved            # 
-				00000001 ___00010        reserved            # 
-				00000010 ___00010        reserved            # 
-				00000011 ___00010        reserved            # 
-				00000100 ___00010        reserved            # 
-				00000101 ___00010        reserved            # 
-				00000110 ___00010        reserved            # 
-				00000111 ___00010        reserved            # 
-			00000___ ___00011                                # -----
-				00000000 ___00011        nop                 # does nothing
-				00000001 ___00011   R    rng       d         # R[d] <-- pseudorandom bit pattern
-				00000010 ___00011        psh       s         # SP <-- SP - 1 ; M[SP] <-- R[s]
-				00000011 ___00011        pop       d         # R[d] <-- M[SP] ; SP <-- SP + 1
-				00000100 ___00011        cal       s         # SP <-- SP - 1 ; M[SP] <-- IP ; IP <-- R[s]
-				00000101 ___00011        ret                 # IP <-- M[SP] ;  SP <-- SP + 1  
-				00000110 ___00011        not       d         # R[d] <-- ~R[d]
-				00000111 ___00011        neg       d         # R[d] <-- -R[d]
-			00000___ ___00100                                # -----
-				00000000 ___00100        prf       s         # prefetch R[s], may be nop
-				00000001 ___00100        fls       s         # flush R[s] from cache, may be nop
-				00000010 ___00100        nop                 # may be reused in the future
-				00000011 ___00100        nop                 # may be reused in the future
-				00000100 ___00100        nop                 # may be reused in the future
-				00000101 ___00100        reserved            # 
-				00000110 ___00100        reserved            # 
-				00000111 ___00100        reserved            # 
-			00000___ ___00101            scc       d         # R[d] <-- condition = true
-			00000___ ___00110       D    dvu       d, s      # R[d] <-- R[d] / R[s] ;unsigned
-			00000___ ___00111       D    dvs       d, s      # R[d] <-- R[d] / R[s] ;  signed
-			00000___ ___01000     P      prd       d, s      # R[d] <-- P[R[s]]
-			00000___ ___01001     P      pwr       d, s      # P[R[d]] <-- R[d]
-			00000___ ___01010            xrd       d, s      # R[d] <-- X[s]
-			00000___ ___01011            xwr       d, s      # X[d] <-- R[s]
-			00000___ ___01100            mrd       d, s      # R[d] <-- M[R[s]]
-			00000___ ___01101            mwr       d, s      # M[R[d]] <-- R[s]
-			00000___ ___01110            srd       d, s      # R[d] <-- M[R[s] + SP]
-			00000___ ___01111            swr       d, s      # M[R[d] + SP] <-- R[s]
-			00000___ ___10000            mlu       d, s      # R[d] <-- R[d] *  R[s] ;unsigned
-			00000___ ___10001            cmp       d, s      #          R[d] -  R[s]
-			00000___ ___10010            tst       d, s      #          R[d] &  R[s]
-			00000___ ___10011            mls       d, s      # R[d] <-- R[d] *  R[s] ;  signed
-			00000___ ___10100            mov       d, s      # R[d] <-- R[s]
-			00000___ ___10101     D      crd       d, s      # R[d] <-- C[R[s]]
-			00000___ ___10110     P      cwr       d, s      # C[R[s]] <-- R[d]
-			00000___ ___10111            scc       d         # R[d] <-- condition = true
-			00000___ ___11000            add       d, s      # R[d] <-- R[d] +  R[s]
-			00000___ ___11001            sub       d, s      # R[d] <-- R[d] -  R[s]
-			00000___ ___11010            and       d, s      # R[d] <-- R[d] &  R[s]
-			00000___ ___11011            ann       d, s      # R[d] <-- R[d] & ~R[s]
-			00000___ ___11100            orr       d, s      # R[d] <-- R[d] |  R[s]
-			00000___ ___11101            xor       d, s      # R[d] <-- R[d] ^  R[s]
-			00000___ ___11110            shl       d, s      # R[d] <-- R[d] << R[s] ; logical
-			00000___ ___11111            shr       d, s      # R[d] <-- R[d] >> R[s] ; logical
-		00001___ ________                invalid             # will always be invalid, for SW defined instructions
-		00010___ ________                                    # -----
-			00010000 ________     D      int       imm8      # raises interrupt imm8
-			00010001 ________            reserved            # 
-			00010010 ________     P      crd       d, imm5   # R[d] <-- C[imm5]
-			00010011 ________     P      cwr       imm5, s   # C[imm5] <-- R[s]
-			00010100 ________            reserved            # 
-			00010101 ________            reserved            #
-			00010110 ________            reserved            #
-			00010111 ________            reserved            #
-		00011___ ________                                    # -----
-			00011000 ________            prf       imm8      # prefetch imm16, may be nop
-			00011001 ________            fls       imm8      # flush imm16 from cache, may be nop
-			00011010 ________            nop                 # may be reused in the future
-			00011011 ________            nop                 # may be reused in the future
-			00011100 ________            nop                 # may be reused in the future
-			00011101 ________            reserved            # 
-			00011110 ________            reserved            # 
-			00011111 ________            reserved            # 
-		00100___ ________                jcc       imm8      # IF(condition) { IP <-- IP + imm16 } 
-		00101___ ________                jcc       imm8      # IF(condition) { IP <-- IP + imm16 }
-		00110___ ________                reserved            # 
-		00111___ ________                reserved            # 
-		01000___ ________         P      prd       d, imm8   # R[d] <-- P[imm16]
-		01001___ ________         P      pwr       imm8, s   # P[imm16] <-- R[d]
-		01010___ ________                jmp       imm11     # IP <-- IP + imm16
-		01011___ ________                xwr       d, imm8   # X[d] <-- imm16
-		01100___ ________                mrd       d, imm8   # R[d] <-- M[imm16]
-		01101___ ________                mwr       imm8, s   # M[imm16] <-- R[s]
-		01110___ ________                srd       d, imm8   # R[d] <-- M[imm16 + SP]
-		01111___ ________                swr       imm8, s   # M[imm16 + SP] <-- R[s]
-		10000___ ________                mlu       d, imm8   # R[d] <-- R[d] *  imm16 ; unsigned 
-		10001___ ________                cmp       d, imm8   #          R[d] -  imm16
-		10010___ ________                tst       d, imm8   #          R[d] &  imm16
-		10011___ ________                mls       d, imm8   # R[d] <-- R[d] *  imm16 ;   signed
-		10100___ ________                mov       d, imm8   # R[d] <-- imm16
-		10101___ ________                cal       imm11     # SP <-- SP - 1 ; M[SP] <-- IP ; IP <-- IP + imm16
-		10110___ ________                mcc       d, s      # IF(condition) {R[d] <-- R[s]}
-		10111___ ________                mcc       d, s      # IF(condition) {R[d] <-- R[s]}
-		11000___ ________                add       d, imm8   # R[d] <-- R[d] +  imm16
-		11001___ ________                sub       d, imm8   # R[d] <-- R[d] -  imm16
-		11010___ ________                and       d, imm8   # R[d] <-- R[d] &  imm16
-		11011___ ________                ann       d, imm8   # R[d] <-- R[d] & ~imm16
-		11100___ ________                orr       d, imm8   # R[d] <-- R[d] |  imm16
-		11101___ ________                xor       d, imm8   # R[d] <-- R[d] ^  imm16
-		11110___ ________                shl       d, imm8   # R[d] <-- R[d] << imm16 ; type depends on MSb
-		11111___ ________                shr       d, imm8   # R[d] <-- R[d] >> imm16 ; type depends on MSb
+		                          PP E
+		00000___ ________                                     # -----
+			00000___ ___00000             invalid             # will always be invalid
+			00000___ ___00001             scc       d         # IF(condition) {R[d] <-- 1} ELSE {R[d] <-- 0}
+			00000___ ___00010        A    dvu       d, s      # R[d] <-- R[d] / R[s] ;unsigned
+			00000___ ___00011        A    dvs       d, s      # R[d] <-- R[d] / R[s] ;  signed
+			00000___ ___00100                                 # -----
+				00000000 ___00100 I       irt                 # return from interrupt
+				00000001 ___00100 R       hlt                 # halt processor
+				00000010 ___00100         reserved            #
+				00000011 ___00100         reserved            #
+				00000100 ___00100 R       nop                 # may be reused in the future
+				00000101 ___00100 R       nop                 # may be reused in the future
+				00000110 ___00100         reserved            # 
+				00000111 ___00100         reserved            # 
+			00000___ ___00101                                 # -----
+				00000000 ___00101         reserved            # 
+				00000001 ___00101         reserved            # 
+				00000010 ___00101         reserved            # 
+				00000011 ___00101         reserved            # 
+				00000100 ___00101         reserved            # 
+				00000101 ___00101         reserved            # 
+				00000110 ___00101         reserved            # 
+				00000111 ___00101         reserved            # 
+			00000___ ___00110                                 # -----
+				00000000 ___00110         nop                 # does nothing
+				00000001 ___00110    R    rng       d         # R[d] <-- pseudorandom bit pattern
+				00000010 ___00110         psh       s         # SP <-- SP - 1 ; M[SP] <-- R[s]
+				00000011 ___00110         pop       d         # R[d] <-- M[SP] ; SP <-- SP + 1
+				00000100 ___00110         cal       s         # SP <-- SP - 1 ; M[SP] <-- IP ; IP <-- R[s]
+				00000101 ___00110         ret                 # IP <-- M[SP] ;  SP <-- SP + 1  
+				00000110 ___00110         not       d         # R[d] <-- ~R[d]
+				00000111 ___00110         neg       d         # R[d] <-- -R[d]
+			00000___ ___00111                                 # -----
+				00000000 ___00111         prf       s         # prefetch R[s], may be nop
+				00000001 ___00111         nop                 # may be reused in the future
+				00000010 ___00111         nop                 # may be reused in the future
+				00000011 ___00111         nop                 # may be reused in the future
+				00000100 ___00111         nop                 # may be reused in the future
+				00000101 ___00111         reserved            # 
+				00000110 ___00111         reserved            # 
+				00000111 ___00111         reserved            # 
+			00000___ ___01000     O       prd       d, s      # R[d] <-- P[R[s]]
+			00000___ ___01001     O       pwr       d, s      # P[R[d]] <-- R[d]
+			00000___ ___01010             xrd       d, s      # R[d] <-- X[s]
+			00000___ ___01011             xwr       d, s      # X[d] <-- R[s]
+			00000___ ___01100             mrd       d, s      # R[d] <-- M[R[s]]
+			00000___ ___01101             mwr       d, s      # M[R[d]] <-- R[s]
+			00000___ ___01110             reserved            # 
+			00000___ ___01111             reserved            # 
+			00000___ ___10000             mlu       d, s      # R[d] <-- R[d] *  R[s] 
+			00000___ ___10001             cmp       d, s      #          R[d] -  R[s]
+			00000___ ___10010             tst       d, s      #          R[d] &  R[s]
+			00000___ ___10011             reserved            # 
+			00000___ ___10100             mov       d, s      # R[d] <-- R[s]
+			00000___ ___10101     C?      crd       d, s      # R[d] <-- C[R[s]]
+			00000___ ___10110     C       cwr       d, s      # C[R[s]] <-- R[d]
+			00000___ ___10111             scc       d         # R[d] <-- condition = true
+			00000___ ___11000             add       d, s      # R[d] <-- R[d] +  R[s]
+			00000___ ___11001             sub       d, s      # R[d] <-- R[d] -  R[s]
+			00000___ ___11010             and       d, s      # R[d] <-- R[d] &  R[s]
+			00000___ ___11011             ann       d, s      # R[d] <-- R[d] & ~R[s]
+			00000___ ___11100             orr       d, s      # R[d] <-- R[d] |  R[s]
+			00000___ ___11101             xor       d, s      # R[d] <-- R[d] ^  R[s]
+			00000___ ___11110             shl       d, s      # R[d] <-- R[d] << R[s] ; logical
+			00000___ ___11111             shr       d, s      # R[d] <-- R[d] >> R[s] ; logical
+		00001___ ________                 invalid             # will always be invalid, for SW defined instructions
+		00010___ ________                                     # -----
+			00010000 ________     I?      int       imm8      # raises interrupt imm8
+			00010001 ________             reserved            # 
+			00010010 ________     C?      crd       d, imm5   # R[d] <-- C[imm5]
+			00010011 ________     C       cwr       imm5, s   # C[imm5] <-- R[s]
+			00010100 ________             reserved            # 
+			00010101 ________             reserved            #
+			00010110 ________             reserved            #
+			00010111 ________             reserved            #
+		00011___ ________                                     # -----
+			00011000 ________             nop                 # may be reused in the future
+			00011001 ________             nop                 # may be reused in the future
+			00011010 ________             nop                 # may be reused in the future
+			00011011 ________             nop                 # may be reused in the future
+			00011100 ________             nop                 # may be reused in the future
+			00011101 ________             reserved            # 
+			00011110 ________             reserved            # 
+			00011111 ________             lop       imm8      # LC <-- LC - 1; if(LC >= 0) {IP <-- IP + imm16}
+		00100___ ________                 jcc       imm8      # IF(condition) { IP <-- IP + imm16 } 
+		00101___ ________                 jcc       imm8      # IF(condition) { IP <-- IP + imm16 }
+		00110___ ________                 reserved            # 
+		00111___ ________                 reserved            # 
+		01000___ ________         O       prd       d, imm8   # R[d] <-- P[imm16]
+		01001___ ________         O       pwr       imm8, s   # P[imm16] <-- R[d]
+		01010___ ________                 jmp       imm11     # IP <-- IP + imm16
+		01011___ ________                 xwr       d, imm8   # X[d] <-- imm16
+		01100___ ________                 mrd       d, imm8   # R[d] <-- M[imm16]
+		01101___ ________                 mwr       imm8, s   # M[imm16] <-- R[s]
+		01110___ ________                 srd       d, imm8   # R[d] <-- M[imm16 + SP]
+		01111___ ________                 swr       imm8, s   # M[imm16 + SP] <-- R[s]
+		10000___ ________            A?   mlu       d, imm8   # R[d] <-- R[d] *  imm16  ; unsigned
+		10001___ ________                 cmp       d, imm8   #          R[d] -  imm16
+		10010___ ________                 tst       d, imm8   #          R[d] &  imm16
+		10011___ ________            A    mls       d, imm8   # R[d] <-- R[d] *  imm16  ; signed
+		10100___ ________                 mov       d, imm8   # R[d] <-- imm16
+		10101___ ________                 cal       imm11     # SP <-- SP - 1 ; M[SP] <-- IP ; IP <-- IP + imm16
+		10110___ ________                 mcc       d, s      # IF(condition) {R[d] <-- R[s]}
+		10111___ ________                 mcc       d, s      # IF(condition) {R[d] <-- R[s]}
+		11000___ ________                 add       d, imm8   # R[d] <-- R[d] +  imm16
+		11001___ ________                 sub       d, imm8   # R[d] <-- R[d] -  imm16
+		11010___ ________                 and       d, imm8   # R[d] <-- R[d] &  imm16
+		11011___ ________                                     # 
+		11100___ ________                 orr       d, imm8   # R[d] <-- R[d] |  imm16
+		11101___ ________                 xor       d, imm8   # R[d] <-- R[d] ^  imm16
+		11110___ ________                 shl       d, imm8   # R[d] <-- R[d] << imm16 ; type depends on MSb
+		11111___ ________                 slr       d, imm8   # R[d] <-- R[d] >> imm16 ; type depends on MSb
 
 		Where:
 		M[x]  means memory at address x
 		R[x]  means value of internal register x
-		X[x]  means value of external register x
+		X[x]  means value of auxiliary register x
 		P[x]  means value of port x
 		C[x]  means value of control register x
-		F[x]  means value of feature register x
 
-		P in the P column implies that instruction has to be executed in privileged mode
-		D in the P column implies that instruction MAY need to be executed in privileged mode, depending on operands
+		a letter in the P column implies that instruction requires a specific privilege 
+		 a letter followed by '?' implies that instruction MAY require specific privilege, depending on operands
 			see [PRIVILEGE_LEVEL]
-		Letter in E column identifies necessary extensions to run instruction
+		Letter in E column identifies necessary extension to run instruction
+		 a letter followed by '?' implies that instruction has extended functionality if an extension is present
 			see [EXTENSIONS]
 
 	
@@ -342,17 +327,10 @@
 
 
 	[INSTRUCTION_ENCODING:IMMEDIATES]
-		bits in the immediate are encoded as follows
-			let X be length of immediate
-			MSb: X-2...0 X-1 :LSb
-		in other words, Most significant bit comes LAST in the encoding
-		all other bits are in the decreasing order
-		for example, bits for 8bit immediate may organized like this:
-			65432107
-		this way sign extension is much simpler for implementation
+		immediates are encoded from most significant to least significant bit
 
 		immediates are sign extended by 
-			JMP, JCC, CAL
+			JMP, JCC, CAL, LOP
 		all other instructions zero extend their immediate
 
 		if XWR UI precedes an instruction with an immediate then 
@@ -379,7 +357,7 @@
 			used by:
 				JCC C I
 				^ condition is determined based on instruction
-				v0 is 0x2000 ; v1 is 0x2800
+				v0 is x2000 ; v1 is x2800
 
 		[INSTRUCTION_ENCODING:SO:MC]
 			OOOOOSSS DDD0CCC0
@@ -392,7 +370,7 @@
 			used by:
 				MCC D S
 				^ condition is determined based on instruction
-				v0 is 0xB000 ; v1 is 0xB800
+				v0 is xB000 ; v1 is xB800
 
 		[INSTRUCTION_ENCODING:SO:RI]
 			OOOOOIII RRRIIIII
@@ -401,7 +379,7 @@
 				R - register
 
 			used by:
-				ADD R I, AND R I, ANN R I, CMP R I, MLS R I, 
+				ADD R I, AND R I, CMP R I
 				MLU R I, MOV R I, MRD R I, MWR I R, ORR R I,
 				PRD R I, PWR I R, SHL R I, SHR R I, SRD R I,
 				SUB R I, SWR I R, TST R I, XOR R I, XWR R I
@@ -415,15 +393,15 @@
 
 			used by:
 				ADD D S, AND D S, ANN D S, CMP D S, CRD D S,
-				CWR S D, DVU D S, DVS D S, MLS D S, MLU D S, 
+				CWR S D, DVU D S, DVS D S, MLU D S, MLS D S,
 				MOV D S, MRD D S, MWR S D, ORR D S, PRD D S, 
-				PWR S D, SHL D S, SHR D S, SRD D S, SUB D S, 
-				SWR S D, TST D S, XOR D S, XRD D S, XWR D S
+				PWR S D, SHL D S, SHR D S, SUB D S, TST D S, 
+				XOR D S, XRD D S, XWR D S
 
 				SCC D
 				condition to check (ccc) is encoded in S
-				v0 is 0x0005
-				v1 is 0x0017
+				v0 is x0001
+				v1 is x0017
 
 	[INSTRUCTION_ENCODING:MO]
 		[INSTRUCTION_ENCODING:MO:I]
@@ -431,8 +409,8 @@
 				O - opcode 
 				I - imm8 
 
-			used by:
-				FLS I, INT I, PRF I 
+			used by
+				INT I, LOP I
 
 		[INSTRUCTION_ENCODING:MO:RI]
 			OOOOOOOO RRRIIIII
@@ -450,7 +428,7 @@
 				R - register 
 
 			used by:
-				CAL R, FLS R, NEG R, NOT R, POP R,
+				CAL R, NEG R, NOT R, POP R,
 				PRF R, PSH R, RNG R  
 
 				HLT, IRT, NOP, RET
@@ -458,7 +436,7 @@
 
 [REGISTERS]
 	[REGISTERS:INTERNAL]
-		there are 8 registers available to be used in most of the instructions
+		there are 8 registers available for use in most of the instructions
 		denoted by R[x] in instruction description 
 		
 		0 - R0 ; General Purpose Register 0
@@ -470,112 +448,172 @@
 		6 - R6 ; General Purpose Register 6
 		7 - R7 ; General Purpose Register 7
 
-	[REGISTERS:EXTERNAL]
-		[REGISTERS:EXTERNAL:LIST]
+	[REGISTERS:AUXILIARY]
+		[REGISTERS:AUXILIARY:LIST]
 			0 IP Instruction Pointer
-			1 
-			1 UI Upper Immediate (during Write)
-			2 SP Stack Pointer
-			3 FL FLags
-			4 
-			5 
-			6 
-			7 
+			1 LC Loop Count
+			2 UI Upper Immediate (during Write, read is reserved)
+			3 SP Stack Pointer
+			4 FL FLags
+			5 AR Arithmetic Register
+			6 currently unused, reserved
+			7 currently unused, reserved
 
-		[REGISTERS:EXTERNAL:IP] Instruction Pointer
+		[REGISTERS:AUXILIARY:IP] Instruction Pointer
 			holds address of NEXT instruction
 			writing to this register is equivalent to unconditional jump
-				this is the only way to perform jump to absolute address
+				this is the only way to perform **jump** to absolute address
+				it is possible however to perform CAL register which calls absolute address
+
 			
 			each cycle:
-			if instruction was any of: INT, JMP, CAL 
-			or if instruction was JCC and the jump occurred 
+			if instruction was any of: INT, JMP, CAL, RET, IRT
+			or if instruction was JCC or LOP and the jump occurred 
 			or if instruction was XWR IP, /*something*/
 			then value of IP is changed by that instruction
 			otherwise, it is incremented by 1 
 
-		[REGISTERS:EXTERNAL:UI] Upper Immediate
+		[REGISTERS:AUXILIARY:LC] Loop Count
+			holds loop count used by LOP instruction
+			
+			provides quick way to implement loops by reducing number of instructions to execute
+
+		[REGISTERS:AUXILIARY:UI] Upper Immediate
 			this register cannot be read from directly
 
 			extends range of immediate by adding additional 8 bits
-			note that some instructions may ignore extended part completely
+			note that some instructions may completely ignore extended part 
 			see [INSTRUCTION_ENCODING:IMMEDIATE] for details
 
 			each cycle:
-			if XWR UI, X occurs, UI <-- X
-			otherwise            UI <-- 0
+			if XWR UI X occurs: UI <-- X
+			otherwise         : UI <-- 0
 
-		[REGISTERS:EXTERNAL:SP] Stack Pointer
+		[REGISTERS:AUXILIARY:SP] Stack Pointer
 			used implicitly by POP, PSH, CAL, RET, SRD, SWR
 
 			see [MEMORY:STACK]
 
 
-		[REGISTERS:EXTERNAL:FL] FLags register
-			contains 4 flag bits
-			 00000000 0000SOCZ
-			 S - most significant bit (sign) on 
-			 O - carry out of MSb /= carry into MSb, defined for ADD, SUB, CMP
-
-			 C - carry out of MSb = 1,               defined for ADD, SUB, CMP
+		[REGISTERS:AUXILIARY:FL] FLags register
+			contains 5 flag bits
+			 00000000 000DSOCZ
+			 D - division by zero                  , defined for DVS, DVU
+			 S - most significant bit (sign) = 1
+			 O - carry out of MSb /= carry into MSb, defined for ADD, SUB, CMP, DVS, DVU
+			 C - carry out of MSb = 1              , defined for ADD, SUB, CMP
 			 Z - all bits = 0 
 
-			 O and C are changed by *all* instructions modifying flags
-			 but are undefined for other than ADD, SUB, CMP
-			 
+			 ALL flags may be modified by ALL instructions modifying flags
+
+			 S and Z are always defined
+
+			 D flag and div by zero interrupts are set to 1 simultaneously, this provides flexibility to the software to pick preffered method of handling the error
+			  to use flag, silence the interrupt
+			  to use interrupt, simply ignore the flag
+			 if D extension is not present, this flag is always set to 0
+
+
+			 on any write, unused bits MUST be set to 0 
+			 otherwise the behavior is undefined
+
+		[REGISTERS:AUXILIARY:AR] Arithmetic Register
+			Present only if [EXTENSIONS:A] is present
+
+			used to extend the range of available operations for DVS, DVU, MLS, and MLU
+			for details check behavior of each instruction
+
 	[REGISTERS:CONTROL]
 		[REGISTERS:CONTROL:GENERAL]
 			access depends on range, write is always privileged
-			not used (not listed) registers MUST NOT be used, they are reserved for future use
+			not used (not listed) registers are reserved and MUST NOT be used
 
-			0x0000 to 0x3FFF -      architectural,   privileged read	
-			0x4000 to 0x7FFF -      architectural, unprivileged read	
-			0x8000 to 0xBFFF - microarchitectural,   privileged read	
-			0xC000 to 0xFFFF - microarchitectural, unprivileged read	
+			x0000 to x3FFF -      architectural,   privileged read	
+			x4000 to x7FFF -      architectural, unprivileged read	
+			x8000 to xBFFF - microarchitectural,   privileged read	
+			xC000 to xFFFF - microarchitectural, unprivileged read	
 
 			microarchitectural registers are listed in corresponding manual
-			first 32 architectural privileged read registers can be accessed directly, other require putting address into register
+			first 32 architectural privileged read registers can be accessed directly, others require putting address into register
 
-			bits are indexed form least to most significant with hexadecimal digits
+			bits are indexed from least to most significant with hexadecimal digits
+
+			when it does not follow from the descirption, value in parentheses indicates starting value
+			 undefined means that the value can be whatever and running program must not depend on it
 
 		[REGISTERS:CONTROL:LIST]
-			0x0000 : PID of running program
-			0x0001 : PT address
-			0x0002 : privileged flags
-			         2   - interrupts enable
-					 1:0 - privilege mode
-			               11 -   privileged
-			               00 - unprivileged
+			x0000 : PID of running program                                     (x0000)
+			x0001 : PT address                                                 (undefined)
+			x0002 : privilege level settings 0                                 (xFFFF)
+			         5 - [I] interrupt control
+			         4 - [V] virtual memory control
+			         3 - [P] protected memory access
+			         2 - [C] control register access
+			         1 - [O] IO access
+			         0 - [R] processor control
 
-			0x000A : interrupt ID        see [INTERRUPTS]
-			0x000B : interrupt saved IP
-			0x000C : interrupt info
-			0x000D : interrupt info
-			0x000E : interrupt info
+					 the rest should be set to 0 for the least privileged mode, and 1 for the most privileged mode
 
-			0x001F : state update 
+			x0003 : privilege level settings 1                                 (xFFFF)
+
+			         currently not used
+
+					 all bits should be set to 0 for the least privileged mode, and 1 for the most privileged mode
+
+			x0004 : interrupt enabled 0  see [INTERRUPTS:CONTROL]                                       (x0000)
+			x0005 : interrupt enabled 1  see [INTERRUPTS:CONTROL]                                       (x0000)
+
+			x000E : state register
+			        0 - interrupts enabled
+
+					other bits should be set to 0 for future compatibility
+
+			x000F : state update 
 				write of particular bits causes update of machine state
 				note that write to this register may take many cycles, depending on how much HW has to do 
 
 					 1 - flush TLB
 					 0 - IHT reload 
 
-			0x0020 : interrupt control see [INTERRUPTS:CONTROL]
+					writing '1' to any other bit may cause unexpected behavior in the future
 
-			0x1000 : ISA 
+			x0010 : interrupt ID        see [INTERRUPTS]                                                (undefined)
+			x0011 : interrupt saved IP                                                                  (undefined)
+			x0012 : saved CR[x0002]                                                                     (undefined)
+			x0013 : saved CR[x0003]                                                                     (undefined)
+			x0014 : saved UI                                                                            (undefined)
+			x0015 : saved FL                                                                            (undefined)
+
+			x0016 : reserved                                                                            (undefined)
+			x0017 : reserved                                                                            (undefined)
+
+			x0018 : interrupt info                                                                      (undefined)
+			x0019 : interrupt info                                                                      (undefined)
+			x001A : reserved                                                                            (undefined)
+			     ...
+			x001F : reserved                                                                            (undefined)
+
+
+			x1000 : ISA info
 			         MSB - version ; LSB - revision
-			0x1001 : microarchitecture ID 
-			0x1010 : available frame count in physical RAM, at least 32 
+			x1001 : microarchitecture ID 
+			x1002 : catalyst info
+			         MSB - version ; LSB - revision
 
-			0x2000 : PAF 0 see [CPU_FEATURES]
+			0x1010 : substrate info register 0 - available frame count in physical RAM, at least 32     (undefined)
+			0x1011 : substrate info register 1 -                                                        (undefined)
+			      ...                                                                                   (undefined)
+			0X101F : substrate info register F -                                                        (undefined)
 
-			0x3FFE : PC settings  see [PERFORMANCE_MEASUREMENT]
-			0x3FFF : PC enable
-			0x4000 : PC 0
-				  ... 
-			0x400F : PC F
+			x2000 : PAF 0 see [CPU_FEATURES]
+			x2001 : guaranteed to return 0
+			     ...
+			x200F : guaranteed to return 0
 
-			0x5000 : UAF 0 see [CPU_FEATURES]
+			x5000 : UAF 0 see [CPU_FEATURES]
+			x5001 : guaranteed to return 0
+			     ...
+			x500F : guaranteed to return 0
 
 	[REGISTERS:IMPLEMENTATION]
 		since these registers are implementation specific, they are not described here 
@@ -583,43 +621,47 @@
 
 [CPU_FEATURES]
 	[CPU_FEATURES:GENERAL]
-		FRs are part of CRs, see [REGISTERS:CONTROL]
+		Features are part of CRs, see [REGISTERS:CONTROL]
 
-		features can be disabled by writing 1/0 to particular bit
-		contents are resetted on boot
+		These registers cannot be altered
 
 		PAF -   Privileged      Architectural Feature register
-		PMF -   Privileged Microarchitectural Feature register
+		PUF -   Privileged Microarchitectural Feature register
 		UAF - Unprivileged      Architectural Feature register
-		UMF - Unprivileged Microarchitectural Feature register
+		UUF - Unprivileged Microarchitectural Feature register
 
 		microarchitectural registers are described in microarchitecture manual
 		
 		[CPU_FEATURES:LIST] lists what each bit means for given register, 0 is LSb, F is MSb
 		unlisted bits are guaranteed to be 0 for future compatiblity
 
-		not listed registers are guaranteed to read 0
-
 	[CPU_FEATURES:LIST]
 		PAF 0 
-			0 - Fast Boot, program is already loaded into memory
-			    primarly useful for simulation environments
+			0 - Fast Boot, RAM already contains data from lowest 64kiW of drive
+			    primarily useful for simulation environments
 
 		UAF 0 
-			0 - [D] Divide extension
+			0 - [A] Arithmetic extension
 			1 - [R] Random extension
 	
 
 [BOOT]
-	on boot, machine copies first 512kiW from flash to physical addresses starting from 0x0000
-	by setting P[0x000E] to address and reading data from P[0x000F], for each copied word
+	before any execution happens, control registers are initialized according to [REGISTERS:CONTROL:LIST]
 
-	initially TLB is setup to map first 2 pages (entire copied data) to the same physical addresses, other mappings are undefined
-	process ID is set to 0x0000 
+	immediattely after that processor reads catalyst version and puts it into CR[x1002]
+	 note that there are few more registers with control information (substrate info registers 0 until F)
+	 it is the job of software bootloader or OS to initialize them properly according to this document
 
-	then execution begins from 0x0000 in privileged mode
+	then IO_INIT command is issued to the Catalyst,
+	once the catalyst is ready 
+	 machine copies first 512kiW from persistent storage to memory starting from address x0000
+	 by setting P[x000E] to address and reading data from P[x000F], for each copied word
 
-	interrupts are disabled
+	initially TLB maps entire virtual address space 1:1 into physical address space
+	that is, memory sees exactly the same addresses as programs
+	physical addresses that are above maximum 16bit unsigned integer value are not accessible until virtual memory is configured
+
+	And finally execution begins from x0000 in fully privileged mode with interrupts disabled
 
 [MEMORY]
 	[MEMORY:GENERAL]
@@ -627,250 +669,188 @@
 		
 		at least 64kiW (128kiB) is available
 
-		memory can be accessed directly with:
-			MRD MWD SRD SWR 
-		or indirectly with
-			PSH POP CAL RET
-		as well as instruction fetch
-
 	[MEMORY:STACK]
 		managed implicitly by POP, PSH, CAL, RET
 		SP points to the top of the stack
 			NOT to where next value should go
+		 explicit memory accesses can also be used but they are generally less efficient
 
 		PSH first decrements SP THEN puts value
 		POP first gets value THEN increments SP
 
-		wrt stack, CAL acts like PSH
-		wrt stack, RET acts like POP
+		w.r.t. stack, CAL acts like PSH
+		w.r.t. stack, RET acts like POP
 		
-		local variables can easily be accessed with SRD and SWR
+		local variables can be easily accessed with SRD and SWR
 
 	[MEMORY:VIRTUAL]
-		each page is 2kiB in size, thus full PT stores mapping for 32 pages
+		each page is 2kiW in size, thus full PT stores mapping for 32 pages
 
-		on boot, paging is enabled and virtual 0x0000 - 0x07FF maps to physical 0x0000 - 0x07FF
-		other entries are undefined
-		see [BOOT]
+		on boot, paging is enabled and virtual addreses are translated 1:1 into physical
+		it is guaranteed that TLB can always contain address space of currently running program
+		so as long as PID is not changed, there is no need for OS to create page table
 
-		after that OS should setup its own page table to have access to more memory
-		PT can be stored anywhere in virtual memory but must be in 0th frame
-			see [MEMORY:VIRTUAL:PAGE_TABLE:LAYOUT] for format
+		note that if more than 64kiW of memory is provided, it is inaccessible untill proper paging is set up
 
-		PHYSICAL address of PT is then saved into CR[0x0001]
+		PT can be stored anywhere as long as its PHYSICAL address fits into 16bits
+		PHYSICAL address of PT is then saved into CR[x0001]
 		when TLB miss occurs, that address is used to access PT
+			see [MEMORY:VIRTUAL:PAGE_TABLE:LAYOUT] for format
 
 		it is impossible to disable paging
 
+		when page is written to for the first time (its dirty bit is 0) then on write CPU sets dirty bit in page table to 1
+
 		[MEMORY:VIRTUAL:PID]
-			always located in CR[0x0000]
+			always located in CR[x0000]
 
-			CPU may be able to cache PT of more than 1 process at once 
+			CPU may cache PT of more than 1 process at once 
 			it is therefore necessary for CPU to distinguish different processes
-
-			if the CPU runs in privileged mode, all PID checks are skipped
-
+			pid is checked regardless of privilege setting
+			
 		[MEMORY:VIRTUAL:PAGE_TABLE]
 			[MEMORY:VIRTUAL:PAGE_TABLE:LAYOUT]
 				each entry is 1W (16b) 
 
 				32 entries, 1 for each page, ordered 
-				[present] [read] [write] [execute] [frame #]
-					  1b     1b      1b        1b       12b 
+				[present] [protected] [dirty] [read] [write] [execute] [frame #]
+					  1b          1b      1b     1b      1b        1b       10b 
 
-				if frame # exceeds physically available pages, the behavior is undefined
-				os should make sure that a particular page is available via checking contents of FR[0x0002]
-				however, ISA guarantees that at least 64kiW are available (FR[0x0002] >= 32)
+				if there is no frame with id provided, the behavior is undefined
+				OS should make sure that a particular page is available by checking contents of CR[x1010]
+				 it is guaranteed that at least 32 frames are available, indexed from 0
+				 the mapping is always continuous
 
 			[MEMORY:VIRTUAL:PAGE_TABLE:UPDATE]
-				if (entry was NOT mapped)
-				OR (entry was     mapped AND PID was different)
-					no action other than updating is required 
-				else
-					OS MUST flush TLB (CR[0x001F]) after PT update is finished 
-					otherwise HW may use old mapping
+				OS MUST flush TLB (CR[x000F]) after PT update is finished AND proper PID is set 
+				 otherwise HW may use old mapping
+				 this removes all entries with pid matching current pid from TLB
+				 however it leaves other entries unaffected, this lets HW cache entries of more than 1 entry at a time, possibly speeding up context switches
 
-				in practice, unless OS can be sure that given process is not currently mapped, TLB should be flushed
 
 		[MEMORY:VIRTUAL:PAGE_FAULT]	
-			if program attempts to access page that is not present in page table,
-			page fault is raised
-			instruction can be restarted if OS puts corresponding entry into PT
-			important: HW manages UI correctly as long as interrupt is processed inside interrupt mode 
-			if OS switches back to regular mode, it is necessary to take care of preceeding XWR UI
-			see [INTERRUPTS] for more detail
-
+			if program attempts to access page that is not present in page table, page fault interrupt is raised
+			instruction can be restarted if corresponding entry is put into PT
 
 		[MEMORY:VIRTUAL:PROTECTION]
+			'protected' bit is used to verify privilege level, if it is set, then the page entry is available only when [P] privilege is enabled
+			see [PRIVILEGE_LEVEL:LIST]
+			if process tries to access protected page without having the necessary privilege, privilege violation interrupt is raised
+
 			each page entry contains bits for read, write, execute access
 			if process tries to do any action which it cannot based on page table entry
-			permission violation is raised 
-			see [INTERRUPTS]
-			
-			if processor is running in privileged mode, this check is skipped 
+				permission violation interrupt is raised 
+
 
 [PRIVILEGE_LEVEL]
-	supervisor mode (also referred to as privileged mode)
-		enabled on boot and on interrupt 
-	user mode, (also referred to as unprivileged mode)
+	[PRIVILEGE_LEVEL:GENERAL]
+		each category of features gets its own switch in CR[x0002] and CR[x0003], if corresponding bit is `1` then that feature is enabled 
+		 see [REGISTERS:CONTROL:LIST]
+		therefore to achieve fully unprivileged mode, CR[x0002] and CR[x0003] should be set to 0
+		to achieve fully privileged mode, they should be set to xFFFF
 
-	modes can be switched with CR[0x0002]
+		currently only CR[x0002] has any flags, but CR[x0003] is reserved for the future
+		
+	[PRIVILEGE_LEVEL:BOOT]
+		on boot, CR[x0002] and CR[x0003] are set to xFFFF - meaning full privilege is available
+		this can later be changed provided Control Register Access (C) privilege is enabled
 
-[IO]
+	[PRIVILEGE_LEVEL:LIST]
+		[R] processor control
+			general protection switch used to control instructions that don't fit any other category
+			currently controls only HLT instruction
 
-	[IO:GENERAL]
-		communication with different devices is performed via ports or interrupts
-		interrupts are preffered method of communication for start of communication or rarely occuring events
-		ports should be used in all other scenarios 
-		see [INTERRUPTS]
+		[O] IO access
+			protection level used to access IO with PRD and PWR
+			see [IO]
 
-		initially device must request port, see [IO:DEVICE_IDENTIFICATION]
-		later, new port may be acquired through 
+		[C] control register access
+			ability to read/write all control registers
+			see [REGISTERS:CONTROL]
 
-		if communication is timing sensitive, interrupts should be disabled
-	
-	[IO:PREDEFINED]
-		[IO:PREDEFINED:GENERAL]
-			predefined ports are reserved for architectural uses (like external buses)
-			they are always in the range 0x0000 to 0x0FFF
+		[P] protected memory access
+			ability to access pages with Protected bit set 
+			see [MEMORY:VIRTUAL]
 
-		[IO:PREDEFINED:LIST]
-			0x0000 : device identification
-			0x0001 : status LEDs (may not use all bits)
+		[V] virtual memory control
+			ability to modify the Page Table
+			see [MEMORY:VIRTUAL]
 
-			0x000E : primary drive address 
-			0x000F : primary drive data    see [BOOT]
+		[I] interrupt control
+			ability to send all interrupts and to change IHT and IHR
+			see [INTERRUPTS]
 
-			the rest are reserved
 			
+[IO]
+	communication with different devices is performed via ports or interrupts
+	interrupts are preferred method of communication for start of communication and rarely occuring events
+	ports should be used in all other scenarios 
+	see [INTERRUPTS]
 
-	[IO:DEVICE_IDENTIFICATION]
-		P[0x0000] is used to access data about IO devices
-		return value indicates what type of IO wants to communicate, see [IO:INTERFACE:LIST]  
+	if communication is timing sensitive, interrupts should be disabled
 
-		then CPU writes to P[0x0000] port address that is to be used as communication
-		device may require more than 1 port (as indicated by [IO:INTERFACE]), in which case successive addresses are used
-		
-		it is illegal to use ports in the range 0x0000 to 0x0FFF
-			see [IO:PREDEFINED]
-
-		if device does not match any predefined IF, it should identify itself as 0x01 (generic)
-
-	[IO:NAME]	
-		for all IFs, command 0x0001 is used to get the name, this name can be used to identify device ID *and* what driver to use
-		first, 16bit integer indicating length is transfered
-		this length indicates how many characters name uses, transfer count is half of that, rounded up 
-		then, transfer-count times, command port should be read to read full identifier
-		
-		within each transfer, first character is in more significant byte returned
-		characters are transferred from first to last
-		if character length is not even, least significant byte of last transfer should be set to 0 
-
-		names should be in format 
-			vendor.device
-		since length is transferred instead of special end sequence, any bit sequence can be used as identifier
-		
-		for example:
-			"prv.dut" on get_name returns
-			0x0007 ; "pr" ; "v." ; "du" ; "t"0x00
-
-	[IO:INTERFACE]
-		[IO:INTERFACE:LIST]
-			0x0000 - invalid
-			0x0001 - generic ; 1 port
-			0x0002 - storage ; 3 ports
-
-		[IO:INTERFACE:GENERIC]
-			p 0 - RW control
-
-			for IO that requires 1 port or does not fit predefined IF
-
-			commands:
-				0x0000 - invalid
-				0x0001 - get name ; see [IO:NAME]
-
-		[IO:INTERFACE:STORAGE]
-			p 0 - RW control, send commands
-			p 1 -  W address, set address
-			p 2 - RW data   , read/write data
-
-
-			address and data might be wider than 16bits
-			width should be identified with commands listed below
-			command starting with 'get' return data on following read from p 0
-
-			commands:
-				0x0000 - invalid
-				0x0001 - get name ; see [IO:NAME]
-				0x0002 - get addr width 
-				0x0003 - get data width
-
-			for storage devices
-
-
+	for description of communication see Catalyst documentation	
+			
 [INTERRUPTS]
 	[INTERRUPTS:GENERAL]
-		while there is distinction between exceptions, interrupts, faults and traps
-		this ISA treats them the same and thus they are collectively referred to as interrupts
-		whenever distinction is needed, terms `external interrupt` for interrupt or `internal interrupt` for exceptions, faults or traps are used  
+		while there is distinction between exceptions, interrupts, faults, and traps
+		 this ISA treats them the same and thus they are collectively referred to as interrupts
+		 whenever distinction is needed, terms 'external interrupt' for interrupt and 'internal interrupt' for exceptions, faults, or traps are used  
 		
 		INT instruction can cause any kind of interrupt
-		however if the interrupt is in range {0; ...; 63} then it can only be run in privileged mode
-		system calls can be implemented via interrupts interrupts {64; ...; 255}
+		however if the interrupt is in range 0 to 127 then it can be run only with Interrupt Control privilege (see [PRIVILEGE_LEVEL])
+		system calls can be implemented via interrupts 128 to 255
 
-		if INT raises any HW defined interrupt, contents of CR[0x000C..0x000E] are undefined
-		due to above and INT 0x01 behavior (see [INTERRUPTS:HANDLER:PAGE_FAULT])
-		raising HW interrupts by INT instruction should almost definitely be avoided
+		if INT raises any HW defined interrupt, contents of CRs reserved for interrupts are undefined
+		
+		initially, interrupts are fully surpressed, this can be changed via CR[x000F]
+		 note that this also means that NMI are fully surpressed, this is necessary to surpress potential interrupts under interrupts
 	
 	[INTERRUPTS:LIST]
-		0 to 63   - HW defined (unused are reserved)
-		64 to 255 - available to SW 
-			OS can set them up for various syscalls instead of wasting register to decide that 
+		  0 to  31 - internal       , non maskable
+		 32 to  63 - internal       , maskable
+		 64 to 127 - IO             , maskable through Catalyst
+		128 to 255 - available to SW, non maskable
+			OS can set them up for various syscalls 
 
-		0 - TMR : timer, EXTERNAL
-		1 - PGF : page fault
-		2 - PRV : privilege violation (privileged instruction in unprivileged mode)
-		3 - PEV : permission violation (unallowed read/write/execute)
-		4 - DIV : division by 0  
-		5 - IOI : IO interrupt, EXTERNAL
-		6 - INS : instruction not supported
-		7 - PCO : performance couter overflow
-			TO BE FINISHED
+		internal interrupts that are not listed are reserved 
+
+		  0 - reserved 
+		  ...
+		  7 - reserved 
+		  8 - PGF : page fault
+		  9 - PRV : privilege violation
+		 10 - PEV : permission violation (unallowed read/write/execute)
+		 11 - INS : instruction not supported
+		 12 - INA : instruction invalid argument
+
+		 32 - TMR : timer
+		 33 - DIV : division by 0  
 
 	[INTERRUPTS:ORDERING]
-		if more than 1 INTERNAL interrupt happen during execution of instruction
-			the one with lower id takes priority, the other is lost
-			there is no case where that would be a problem
-		if more than 1 EXTERNAL interrupt happen during execution  
-			the one with lower id takes priority, the other is delayed
-		if EXTERNAL and INTERNAL interrupts happen during execution of instruction
-			EXTERNAL is delayed until no INTERNAL interrupt takes place
+		the lowest numbered interrupt always takes precedence while the other is delayed
+		 it is possible that after first interrupt is handled, the other is not needed, in that case the second one stops being asserted
 
 	[INTERRUPTS:PRECISE]
-		all interrupts, except INT 0x01, caused by INT instruction happen precisely between INT and next instruction
-		meaning that IP saved in CR[0x000B] is of NEXT instruction 
-		INT 0x01, sets up CR[0x000B] as defined by PAGE_FAULT, this means that INT 0x01 WILL cause infinite loop if used 
+		all interrupts caused by INT instruction happen precisely AFTER INT but BEFORE next instruction
 		
-		list of HW interrupts that happen between instruction causing interrupt and next instruction 
-			page fault
-			privilege violation
-			permission violation
-			division by 0
-			instruction not supported
-			double fault 
+		list of internal interrupts that happen between instruction causing interrupt and next instruction 
+			PGF : page fault
+			PRV : privilege violation
+			PEV : permission violation (unallowed read/write/execute)
+			INS : instruction not supported
+			DIV : division by 0  
 
 		all other may occur on ANY instruction in the instruction stream 
 		this is to simplify HW and allow for faster execution
-		however it is guaranteed that interrupt will happen at most 10us later than it would if it was precise
-		TO BE FINISHED timing
 
 	[INTERRUPTS:HANDLER_TABLE]
-		IHT is 256x1word table where each entry is an address of interrupt handler
+		IHT is 256x1word table where each entry is a PHYSICAL address of interrupt handler
 		whenever interrupt with id N occurs, HW looks up Nth entry and jumps to address stored there
 
-		IHT is specified by setting up table at address 0x0100 then updating HW state with CR[0x001F] (see [REGISTERS:CONTROL])
+		IHT is specified by setting up table at VIRTUAL address x0100 then updating HW state with CR[x000F] (see [REGISTERS:CONTROL])
 		HW loads IHT to internal registers and IHT in memory that was setup by SW is not needed anymore and is free to be removed
-		it is not possible to modify single entry only
+		it is not possible to modify only single entry 
 
 	[INTERRUPTS:RAISED]
 		source of interrupt does not matter, basic handling looks the same 
@@ -880,127 +860,126 @@
 			interrupt is raised immediately
 			interrupts are disabled
 			necessary data is saved into CR and internal registers (see below)
-			privilege level is raised if necessary
+			privilege level is raised to fully privileged
 			jump into interrupt handler occurs and execution resumes
 
 		saved data
-			CR[0x000A] = interrupt id
-			CR[0x000B] = address of instruction
+			CR[x0010] = interrupt id
+			CR[x0011] = address of instruction
 			             unless specified otherwise, instruction to be executed AFTER interrupt causing one
-			CR[0x000C...0x000E] = interrupt dependent info 
+			CR[x0012] = saved CR[x0002]
+			CR[x0013] = saved CR[x0003]
+			CR[x0014] = saved upper immediate
+			CR[x0015] = saved flags
+
+			CR[x0018...x0019] = interrupt dependent info 
+
+
+		if an interrupt is to be raised, but the interrupts are blocked
+			instruction pointer increases as regular
+			registers affected by the instruction may be updated 
+			no external state changes - meaning no command is issued to IO and no memory is updated
 
 	[INTERRUPTS:HANDLED]
 		interrupts can, but dont have to, be finished with IRT 
-		OS may save IP for its own use and then reenable interrupts
-		this way, longer syscalls can be implemented without disabling interrupts for too long
-		 note that this is not possible for HW generated interrupts 
-		 since they can occur in between XWR UI and instruction that uses immediate
-		 however SW interrupt is always exactly after INT instruction
-
-		handlers of HW interrupts almost definitely should end in IRT
-		syscalls however are notable example which should not end in IRT
+		 IRT is just a convienience instruction to quickly finish handling interupt and return to the execution
 
 		during IRT
-			privilege level is read from CR[0x0002]
-			UI is restored from internal register
-			IP is restored from CR[11]
-			interrupts are enabled
+			privilege level is read from CR[x0012] and CR[x0013] to CR[x0002] and CR[x0003] respectively
+			UI is restored from CR[x0014]
+			FL is restored from CR[x0015]
+			IP is restored from CR[x0011]
+			interrupts are reenabled 
 
 	[INTERRUPTS:CONTROL]
-		C[0x0020] can be used to control how certain interrupts behave
-			0 - timer INT disabled, PC still increments if it was set to 
-			1 - IO int disabled
+		C[x0004 to x0005] can be used to enable interrupts in range 32 to 63 
+		   0 to  31 are non maskable interrupts, they MUST be handled to keep machine running
+		  64 to 127 are IO interrupts, to configure them use Catalyst
+		 128 to 255 are syscalls which are not maskable
+
+		interrupt 32 is enabled by C[x0004] bit  0
+		          ...
+		interrupt 47 is enabled by C[x0004] bit 15
+		interrupt 48 is enabled by C[x0005] bit  0
+		          ...
+		interrupt 63 is enabled by C[x0005] bit 15
 
 		
 	[INTERRUPTS:HANDLER]
 		there is no limit on interrupt handler length
 		it is however advised that interrupt handlers are very short because they block other interrupts
-		 while it is possible to reenable interrupts within interrupt handle, dont
-		 there is no way to restore some of the state saved on interrupt other than IRT
 		IHT entries can overlap like cases in switch statements in C
 		
 		exact behavior depends on interrupt
+
+		[INTERRUPTS:HANDLER:PAGE_FAULT]
+			CR[x0018] = address that caused page fault
+			CR[x0019] = 0
+
+			generated if there is no valid mapping for address that CPU tries to access
+			state update is surpressed
+			
+			CR[x0011] is address of instruction that caused page fault, NOT the next one
+			 instruction fetch is considered part of new instruction, not preceding one
+
+		[INTERRUPTS:HANDLER:PRIVILEGE_VIOLATION]
+			CR[x0018] = bit n corresponds to missing privilege n in register CR[x0002]
+			CR[x0019] = bin n corresponds to missing privilege n in register CR[x0003]
+			
+			generated if CPU tries to execute instruction requiring privilege not possesed
+
+			for example if CPU tries to execute HLT instruction, CR[x0018] = 1 and CR[x0019] = 0
+
+		[INTERRUPTS:HANDLER:PERMISSION_VIOLATION]
+			CR[x0018] = address that CPU tried to access in some way
+			CR[x0019] = type of violation
+				x0001 - read
+				x0002 - write
+				x0004 - execute
+
+			generated if CPU tries to access address in illegal way
+
+		[INTERRUPTS:HANDLER:INSTRUCTION_NOT_SUPPORTED]
+			CR[x0018] = data that CPU tried to execute 
+			CR[x0019] = 0
+
+			generated if byte sequence is not a valid instruction or requires extension
+			note that due to future extentions, it is impossible for CPU to distinguish between these two
+
+		[INTERRUPTS:HANDLER:INSTRUCTION_INVALID_ARGUMENT]
+			CR[x0018] = data that CPU tried to execute 
+			CR[x0019] = 0
+
+			generated if byte sequence is a valid instruction but contains invalid argument
+			for example scc v1 with ccc=b111
 		
 		[INTERRUPTS:HANDLER:TIMER]
-			CR[0x000C] = 0
-			CR[0x000D] = 0
-			CR[0x000E] = 0
+			CR[x0018] = 0
+			CR[x0019] = 0
 			
-			EXTERNAL interrupt
-
 			nothing needs to be done, can be safely ignored
 			but OS probably should utilize it to keep track of passed time
 
-		[INTERRUPTS:HANDLER:PAGE_FAULT]
-			CR[0x000C] = address that caused page fault
-			CR[0x000D] = 0
-			CR[0x000E] = 0
-
-			generated if there is no valid mapping for address that CPU tries to access
-			writes to memory and to register are prevented from occurring
-			
-			CR[0x000B] (address) depends on what caused page fault
-				memory access with immediate that has been extended by XWR UI =>
-					address of preceding XWR
-				all else =>
-					address of instruction that caused page fault
-					instruction fetch is considered part of new instruction, not preceding one
-
-
-		[INTERRUPTS:HANDLER:PRIVILEGE_VIOLATION]
-			CR[0x000C] = instruction that was supposed to execute
-			             (NOT address of)
-			CR[0x000D] = required privilege level
-			CR[0x000E] = 0
-			
-			generated if CPU tries to execute instruction requiring higher privilege mode
-
-		[INTERRUPTS:HANDLER:PERMISSION_VIOLATION]
-			CR[0x000C] = address that CPU tried to access in some way
-			CR[0x000D] = type of violation
-				0 - read
-				1 - write
-				2 - execute
-			CR[0x000E] = 0
-
-			generated if CPU tries to access page in illegal way
-
 		[INTERRUPTS:HANDLER:DIVISION_BY_0]
-			CR[0x000C] = 0
-			CR[0x000D] = 0
-			CR[0x000E] = 0
+			CR[x0018] = 0
+			CR[x0019] = 0
 
 			can be generated only if [EXTENSIONS:D] is available
 			generated when divisor = 0 
 
 		[INTERRUPTS:HANDLER:IO_INTERRUPT]
-			CR[0x000C] = port # 
-			CR[0x000D] = type of action needed 
-				0 - read from port
-				1 - write to port
-			CR[0x000E] = 0
+			CR[x0018] = 0
+			CR[x0019] = 0
 
-			EXTERNAL interrupt
-
-			generated by IO that requires attention
-			further communication can be achieved via port indicated by CR[0x000C]
-
-		[INTERRUPTS:HANDLER:INSTRUCTION_NOT_SUPPORTED]
-			CR[0x000C] = byte sequence that CPU tried to execute
-			CR[0x000D] = 0
-			CR[0x000E] = 0
-
-			generated if byte sequence is not a valid instruction or requires extension
-			note that CPU does not distinguish between the two
+			generated by IO that requires attention, the exact action depends on interrupt ID and device located there
 
 		[INTERRUPTS:HANDLER:SOFTWARE_INTERRUPT]
-			CR[0x000C] = R[0]
-			CR[0x000D] = R[1]
-			CR[0x000E] = R[2]
-			TO BE FINISHED
-			not sure whether to take advantage of that
+			CR[x0018] = 0
+			CR[x0019] = 0
 
-			only 3 registers are saved
+			generated by INT instruction, usually to perform system call
+			
+
 
 [EXTENSIONS]
 	[EXTENSIONS:D] Divide
@@ -1008,64 +987,6 @@
 	
 	[EXTENSIONS:R] Random
 		allows to get pseudorandom bit pattern
-
-
-[PERFORMANCE_MEASUREMENT]
-	[PERFORMANCE_MEASUREMENT:GENERAL]
-		performance can be measured via actual time passed or via detailed performance counters
-		time passed can be measured at 1ms granularity with timer interrupt (see [INTERRUPTS])
-		more fine grained data is collected with performance counters (PC)
-
-		PCs can be accessed via CRD and CWR at IDs listed in [REGISTRES:CONTROL]
-
-		given implementation does not have to implement any PC
-		but if it implements any of arch PC, it has to use ID listed here
-
-	[PERFORMANCE_MEASUREMENT:CONTROL]
-		C[0x3FFE] is meaningless on read, on write bits are responsible for:
-			0 - start all performance counters
-			1 - stop all performance counters (takes precedence)
-			
-		C[0x3FFF] controls whether particular is turned on (collects data)
-			bit n (counting from LSb to MSb) controls whether PC n collects data
-	
-	[PERFORMANCE_MEASUREMENT:REGISTERS]
-		C[0x4000 to 0x400F] are used to calculate particular events (or combination of them)
-
-		C[0x4000 to 0x4001] is pair that counts cycles,       0x4000 contains more significant part
-		C[0x4002 to 0x4003] is pair that counts instructions, 0x4002 contains more significant part
-		C[0x4003 to 0x4008] ANDs conditions (all must occur)
-		C[0x4009 to 0x400F] ORs  conditions (any must occur)
-
-		on write, mask is shifted 16bits at a time, selected bits set the condition to check
-		possible events are listed in [PERFORMANCE_MEASUREMENT:LIST]
-		first listed is first to be shifted 
-		in other words, first listed is controlled by most significant bit
-		
-		currently there are 16bits for architectural events and 16bits for microarchitectural events but this may change in the future
-
-		on overflow interrupts PCO is raised
-
-	[PERFORMANCE_MEASUREMENT:LIST]
-		jumps    : total count of JMP and WRX IP executed
-		branches : total count of JCC executed
-		branch_t : branches taken
-		branch_m : branch misspredictions
-
-		m_data   : data memory references
-		m_instr  : instruction memory references
-		i_alu    : alu operations executed
-		i_mov    : moves executed
-
-		i_xra    : external register accessed explicitly
-		i_cal    : calls
-		i_stk    : stack operations
-		int      : interrupts
-
-		port     : port operations
-
-		TO BE FINISHED 
-			finalize what counters are needed
 
 [INSTRUCTIONS]
 	[INSTRUCTIONS:ADD] ADD
@@ -1084,12 +1005,12 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:AND] AND
 		encoding: 
@@ -1107,44 +1028,38 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:ANN] AND NOT 
 		encoding: 
 			ann D, S  => [INSTRUCTION_ENCODING:SO:RR] 
 			             00000___ ___11011
-			ann D, I8 => [INSTRUCTION_ENCODING:SO:RI] 
-			             11011___ ________
 		
 		complements second operand, then performs logical and on operands, bit by bit
 		stores result in destination (first) register
 
 		R[D] <-- R[D] AND NOT R[S]
-		R[D] <-- R[D] AND NOT I
 
-		uses UI register in RI format
-		see [INSTRUCTION_ENCODING:IMMEDIATE]
-			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 			
 	[INSTRUCTIONS:CAL] CALL
 		encoding: 
 			cal S   => [INSTRUCTION_ENCODING:LO:R]
-			           00000100 ___00011
+			           00000100 ___00110
 			cal I11 => [INSTRUCTION_ENCODING:SO:LI]
 			           10101___ ________
 
-		pushes current IP (adderss of NEXT instruction) onto stack 
+		pushes current IP (address of NEXT instruction) onto stack 
 
 		if operand is register
 			changes IP to value of R[s]
@@ -1162,12 +1077,12 @@
 		if previous instruction wrote to UI then immediate is combined UI and from instruction (highest 3 bits are ignored!!)
 		otherwise immediate is sign extended
 
-		external registers affected:
+		auxiliary registers affected:
 			IP, SP
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:CMP] CMP
 		encoding: 
@@ -1184,12 +1099,12 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:CRD] CONTROL REGISTER READ
 		encoding:
@@ -1204,12 +1119,12 @@
 		R[D] <-- C[I]
 		R[D] <-- C[R[S]]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			depends
+			C
 
 	[INSTRUCTIONS:CWR] CONTROL REGISTER WRITE
 		encoding:
@@ -1224,72 +1139,54 @@
 		C[I]    <-- R[S]
 		C[R[D]] <-- R[S]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			privileged	
+			depending on range: C or none
 	
 	[INSTRUCTIONS:DVU] DIVIDE UNSIGNED
 	[INSTRUCTIONS:DVS] DIVIDE SIGNED
 		encoding: 
 			dvu D, S  => [INSTRUCTION_ENCODING:SO:RR] 
-			             00000___ ___00110
+			             00000___ ___00010
 			dvs D, S  => [INSTRUCTION_ENCODING:SO:RR] 
-			             00000___ ___00111
+			             00000___ ___00011
 		
-		performs arithmetic division on operands
-		stores integer part of result into destination (first) operand
+		performs arithmetic division on operands, first operand is a combination of AR and R[D]
+		stores result rounded down to integer into destination (first) operand 
 
-		R[D] <-- int(R[D] / R[S])
+		R[D] <-- floor(AR:R[D] / R[S])
 
-		if second operand equals 0, raises interrupt #DIV
+		if second operand equals 0, raises interrupt #DIV and sets flag D
 			see [INTERRUPTS]
+			see [REGISTERS:AUXILIARY:FL]
+		if result does not fit into 16 bits, sets flag O 
 
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
-			[EXTENSIONS:D]
+			[EXTENSIONS:A]
 		privilege level:
-			unprivileged	
-
-	[INSTRUCTIONS:FLS] FLUSH CACHE LINE
-		encoding: 
-			fls S  => [INSTRUCTION_ENCODING:LO:R] 
-			             00000001 ___00100
-			fls I8 => [INSTRUCTION_ENCODING:MO:I] 
-			             00011001 ________
-		
-		if supported flushes cache line identified by address in operand 
-		otherwise, nop
-
-		uses UI register in LO:I format
-		see [INSTRUCTION_ENCODING:IMMEDIATE]
-			
-		external registers affected:
 			-
-		required extensions:
-			-
-		privilege level:
-			unprivileged	
-
 
 	[INSTRUCTIONS:HLT] HALT
 		encoding:
 			hlt => [INSTRUCTION_ENCODING:LO:R]
-			       00000001 ___00001
+			       00000001 ___00100
 
 		halts processor
 		if interrupts were enabled prior to hlt
 		 processor is resumed when an interrupt occurs
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			privileged	
+			R
+
 
 	[INSTRUCTIONS:INT] INTERRUPT
 		encoding:
@@ -1301,33 +1198,33 @@
 		affects C[10..14]
 		see [INTERRUPTS] for details about interrupts
 	
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			if   I <= 63 
-				privileged
+			if   I <= 127
+				I
 			else
-				unprivileged
+				-
 
 	[INSTRUCTIONS:IRT] INTERRUPT RETURN
 		encoding:
 			irt => [INSTRUCTION_ENCODING:LO:R]
-			       00000000 ___00001
+			       00000000 ___00100
 
 		returns from interrupt
 		see [INTERRUPTS] for details about interrupts
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			privileged
+			I
 
 	[INSTRUCTIONS:JCC] JUMP CONDITIONAL
-		encoding, choice between v0 and v1 based on condition:
+		encoding, choice between v0 and v1 is based on condition:
 			v0: jcc I8 => [INSTRUCTION_ENCODING:SO:JC]
 			              00100___ ________
 			v1: jcc I8 => [INSTRUCTION_ENCODING:SO:JC]
@@ -1336,7 +1233,7 @@
 		if the condition is true, adds operand to IP 
 		comparison conditions make sense only for SUB/CMP
 
-		synonyms are separated by space
+		aliases are separated by space
 		condition that has to be satisfied
 			JAA         => v0 ; ccc = 000 => C = 1 AND Z  = 0 ; unsigned above
 			JBE JBZ     => v0 ; ccc = 001 => C = 0 OR  Z  = 1 ; unsigned below or equal
@@ -1354,6 +1251,7 @@
 			JZZ JEE     => v1 ; ccc = 101 => Z = 1            ; zero flag / equal
 
 			v1 with ccc = 110 and ccc = 111 are reserved
+			their usage raises INA interrupt
 
 
 		uses UI register
@@ -1362,16 +1260,17 @@
 		if previous instruction wrote to UI then immediate is combined UI and from instruction
 		otherwise immediate is sign extended
 
-		external registers affected:
+		auxiliary registers affected:
 			IP
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:JMP] JUMP
 		encoding:
 			jmp I11 => [INSTRUCTION_ENCODING:SO:LI]
+			           01010___ ________
 
 		adds offset to IP 
 
@@ -1383,12 +1282,26 @@
 		if previous instruction wrote to UI then immediate is combined UI and from instruction (highest 3 bits are ignored!!)
 		otherwise immediate is sign extended
 
-		external registers affected:
+		auxiliary registers affected:
 			IP
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
+
+	[INSTRUCTIONS:LOP] LOOP 
+		encoding: 
+			lop I8 => [INSTRUCTION_ENCODING:MO:I] 
+			             00011111 ________
+		
+		reduces LC register by 1, if the result is nonzero 0, acts like JMP i8
+
+		auxiliary registers affected:
+			LC
+		required extensions:
+			-
+		privilege level:
+			-
 
 	[INSTRUCTIONS:MCC] MOVE CONDITIONAL
 		encoding, choice between v0 and v1 based on condition
@@ -1418,43 +1331,56 @@
 			MZZ MEE     => v1 ; ccc = 101 => Z = 1            ; zero flag / equal
 
 			v1 with ccc = 110 and ccc = 111 are reserved
+			their usage raises INA interrupt
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
-	[INSTRUCTIONS:MLS] MULTIPLY   SIGNED
 	[INSTRUCTIONS:MLU] MULTIPLY UNSIGNED
+	[INSTRUCTIONS:MLS] MULTIPLY SIGNED
 		opcode: 10000
 		encoding:
-			mls D, S => [INSTRUCTION_ENCODING:SO:RR] 
-		                00000___ ___10011
-			mls D, I => [INSTRUCTION_ENCODING:SO:RI] 
-		                10011___ ________
 			mlu D, S => [INSTRUCTION_ENCODING:SO:RR] 
 		                00000___ ___10000
 			mlu D, I => [INSTRUCTION_ENCODING:SO:RI] 
 		                10000___ ________
+		opcode: 10011
+		encoding:
+			mls D, S => [INSTRUCTION_ENCODING:SO:RR] 
+		                00000___ ___10000
+			mls D, I => [INSTRUCTION_ENCODING:SO:RI] 
+		                10000___ ________
 
-		multiplies first and second operand
-		stores result into destination (first) operand
+		performs multiplication on first and second operand
+		stores lower 16bits of the result into destination (first) operand
+
+		Note that flags behave the same way regardless of A extension
+		this means that to test sign of the result it is necessary to either
+		 check sign of AR register
+		 compute XOR of input operands
+
+		if [EXTENSIONS:A] is present
+			stores upper 16bits of the result into AR register 
+		else
+			discards upper 16 bits
+	
 
 		R[D] <-- R[D] * R[s]
 		R[D] <-- R[D] * I
 
-
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
-			FL
+		auxiliary registers affected:
+			FL, AR (if present)
 		required extensions:
-			-
+			A for full functionality
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:MOV] MOVE
 		encoding: 
@@ -1471,12 +1397,12 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:MRD] MEMORY READ
 		encoding:
@@ -1493,12 +1419,12 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:MWR] MEMORY WRITE 
 		encoding:
@@ -1515,59 +1441,59 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:NEG] NEGATE
 		encoding:
 			neg d => [INSTRUCTION_ENCODING]
-			         00000111 ___00011
+			         00000111 ___000110
 
 		negates contents of register
 
 		R[d] <-- -R[d]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:NOP] NO OPERATION
 		encoding:
 			nop => [INSTRUCTION_ENCODING]
-			       00000000 ___00011
+			       00000000 ___00110
 
 		does nothing
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:NOT] NOT
 		encoding:
 			not d => [INSTRUCTION_ENCODING]
-			         00000110 ___00011
+			         00000110 ___00110
 
 		complements contents of register
 		performs binary NOT on each bit
 
 		R[d] <-- ~R[d]
 
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:ORR] OR
 		encoding: 
@@ -1584,29 +1510,29 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:POP] POP
 		encoding: 
 			pop D => [INSTRUCTION_ENCODING:LO:R]
-			         00000011 ___00011
+			         00000011 ___00110
 
 		sets destination to value pointed at address stored by SP
 		increments SP
 
 		R[D] <-- M[SP] ; SP <-- SP + 1
 
-		external registers affected:
+		auxiliary registers affected:
 			SP
 		required extensions:
 			-
 		privilege level:
-			unprivileged
+			-
 
 	[INSTRUCTIONS:PRD] PORT READ
 		encoding:
@@ -1620,46 +1546,44 @@
 		R[D] <-- P[R[S]]
 		R[D] <-- P[I]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			privileged	
+			O
 
 	[INSTRUCTIONS:PRF] PREFECH
 		encoding:
 			prf S => [INSTRUCTION_ENCODING:LO:R] 
-			         00000000 ___00100
-			prf I => [INSTRUCTION_ENCODING:MO:I] 
-			         00011000 ________
+			         00000000 ___00111
 
 		if supported, fetches data from memory indicated by operand into cache
 		otherwise nop
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			privileged	
+			-
 
 	[INSTRUCTIONS:PSH] PUSH
 		encoding: 
 			pop D => [INSTRUCTION_ENCODING:LO:R]
-			         00000010 ___00011
+			         00000010 ___00110
 
 		decrements SP
 		writes contents of operand into memory pointed to by SP
 
 		SP <--  SP - 1 ; M[SP] <-- R[D]
 
-		external registers affected:
+		auxiliary registers affected:
 			SP
 		required extensions:
 			-
 		privilege level:
-			unprivileged
+			-
 
 	[INSTRUCTIONS:PWR] PORT WRITE
 		encoding:
@@ -1673,51 +1597,51 @@
 		P[R[D]] <-- R[S]
 		P[I]    <-- R[S]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			privileged	
+			O
 
 	[INSTRUCTIONS:RET] RETURN
 		encoding:
 			ret => [INSTRUCTION_ENCODING:LO:R]
-			       00000101 ___00011
+			       00000101 ___00110
 
 		pops return address  from stack and jumps to it 
 
 		IP <-- M[SP] ; SP <-- SP + 1
 
-		external registers affected:
+		auxiliary registers affected:
 			SP
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:RNG] RANDOM NUMBER GENERATE
 		encoding:
 			rng D => [INSTRUCTION_ENCODING:LO:R]
-			         00000001 ___00011
+			         00000001 ___00110
 
 		generates pseudorandom bit pattern and stores it into D
 
 		R[D] <-- random
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			[EXTENSIONS:R]
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:SCC] SET CONDITIONAL
 		encoding, choice between v0 and v1 based on condition
-			v0: scc D, S => [INSTRUCTION_ENCODING:SO:RR]
-			                00000___ ___00101
-			v1: scc D, S => [INSTRUCTION_ENCODING:SO:RR]
-			                00000___ ___10111
+			v0: scc D => [INSTRUCTION_ENCODING:SO:RR]
+			             00000___ ___00001
+			v1: scc D => [INSTRUCTION_ENCODING:SO:RR]
+			             00000___ ___10111
 
 		if condition is true, sets destination operand to 1
 		otherwise sets it to 0 
@@ -1731,7 +1655,7 @@
 			SGE SGZ     => v0 ; ccc = 011 =>           S  = O ; signed greater or equal
 			SGG         => v0 ; ccc = 100 => Z = 0 AND S  = O ; signed greater
 			SLE SLZ     => v0 ; ccc = 101 => Z = 1 OR  S /= O ; signed less or equal
-			SLL         => v0 ; ccc = 110 =>           S /= O ; signed less
+			SHL         => v0 ; ccc = 110 =>           S /= O ; signed less
 			SNC SBB     => v0 ; ccc = 111 => C = 0            ; no carry flag / unsigned below
 			SNO         => v1 ; ccc = 000 => O = 0            ; no overflow flag
 			SNS         => v1 ; ccc = 001 => S = 0            ; no sign flag
@@ -1741,13 +1665,14 @@
 			SZZ SEE     => v1 ; ccc = 101 => Z = 1            ; zero flag / equal
 
 			v1 with ccc = 110 and ccc = 111 are reserved
+			their usage raises INA interrupt
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:SHL] SHIFT LEFT
 		encoding:
@@ -1769,12 +1694,12 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:SHR] SHIFT RIGHT
 		encoding:
@@ -1796,35 +1721,32 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:SRD] STACK READ 
 		encoding:
-			srd D, S => [INSTRUCTION_ENCODING:SO:RR] 
-			            00000___ ___01110
 			srd D, I => [INSTRUCTION_ENCODING:SO:RI] 
 			            01110___ ________
 
-		adds SF and second operand
+		adds SP and second operand
 		loads memory stored at computed address into first operand
 
-		R[D] <-- M[SP + R[S]]
 		R[D] <-- M[SP + I]
 
-		uses UI register in RI format
+		uses UI register 
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:SUB] SUBTRACT
 		encoding: 
@@ -1842,36 +1764,33 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:SWR] STACK WRITE 
 		encoding:
-			swr D, S => [INSTRUCTION_ENCODING:SO:RR] 
-			            00000___ ___11001
 			swr I, S => [INSTRUCTION_ENCODING:SO:RI] 
-			            11001___ ________
+			            01111___ ________
 
-		adds OF and first operand
+		adds SP and first operand
 		stores second operand into memory at computed address
 
-		M[OF + R[D]] <-- R[S]
-		M[OF + I   ] <-- R[S]
+		M[SP + I   ] <-- R[S]
 
-		uses UI register in RI format
+		uses UI register 
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
 
-		external registers affected:
+		auxiliary registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:TST] TEST
 		encoding: 
@@ -1888,12 +1807,12 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
 	[INSTRUCTIONS:XOR] XOR
 		encoding: 
@@ -1910,30 +1829,30 @@
 		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 			
-		external registers affected:
+		auxiliary registers affected:
 			FL
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
-	[INSTRUCTIONS:XRD] EXTERNAL REGISTER READ
+	[INSTRUCTIONS:XRD] AUXILIARY REGISTER READ
 		opcode: 01010
 		encoding:
 			xrd D, S => [INSTRUCTION_ENCODING:SO:RR] 
 			            00000___ ___01010
 
-		reads external register into destination (first) operand
+		reads auxiliar register into destination (first) operand
 		R[D] <-- X[S]
 
-		external registers affected:
+		auxiliar registers affected:
 			-
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
+			-
 
-	[INSTRUCTIONS:XWR] EXTERNAL REGISTER WRITE
+	[INSTRUCTIONS:XWR] AUXILIARY REGISTER WRITE
 		opcode: 01011
 		encoding:
 			xwr D, S => [INSTRUCTION_ENCODING:SO:RR] 
@@ -1941,33 +1860,15 @@
 			xwr D, I => [INSTRUCTION_ENCODING:SO:RI] 
 			            01011___ ________
 
-		sets external register (first operand) to second operand
+		sets auxiliar register (first operand) to second operand
 	
 		X[D] <-- R[S]	
 		X[D] <-- I	
-
-		uses UI register in RI format
 		see [INSTRUCTION_ENCODING:IMMEDIATE]
 
-		external registers affected:
+		auxiliar registers affected:
 			potentially any
 		required extensions:
 			-
 		privilege level:
-			unprivileged	
-
-
-[EXPERIMENTAL]
-	performance counters
-		accessing PC is privileged operation so accessing them requires support of OS 
-		user space IF is fully OS dependent and so is not described here 
-
-		OS can implement that IF with the help of 
-			PCC to clear all perf counters 
-			PCS to stop collecting data (so it can be reliably read)
-			PCR to read specifc perf counters
-			interrupt raised on PC overflow
-
-
-		exact counters are microarchitecture specific so they can be found in corresponding uarch manual
-
+			-

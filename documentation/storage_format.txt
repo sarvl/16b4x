@@ -1,0 +1,63 @@
+[TABLE_OF_CONTENTS]
+	[OVERVIEW]
+		[GENERAL]
+	[PARTITIONS]
+		[GENERAL]
+		[FILESYSTEM]
+
+	To navigate to particular section concatenate sections to one long tag with colons as separators
+	for example to move to FILESYSTEM search for [PARTITIONS:FILESYSTEM]
+
+[OVERVIEW]
+	[OVERVIEW:GENERAL]
+		
+		this document describes how storage devices are organized
+
+		[PARTITIONS] describes organization of drives, it divides them into LOGICAL sectors 
+		 to access specific address, logical partition address has to be translated to physical one
+
+[PARTITIONS]
+	[PARTITIONS:GENERAL]
+		Partitioning happens on frame (2kiW) granularity
+		First frame is reserved for partition table (PT) and optionally some executable code, it itself is not included in partition table
+
+		Last 64Words (addresses x7C0 to x7FF) are reserved for identification info (first 16Words) and partition table (last 48Words)
+		ID info currently features 
+			- magic bytes to mark containing valid bootable code - set by Word xAA55 at address x7C0
+			- drive id number - set by 8 Words from x7C8 to x7CF
+
+		PT entry is of the format:
+			[filesystem : start frame : padding : size (in frames)]
+
+			type       : 1Word, see [PARTITIONS:TYPES]
+			start frame: 7Words
+			padding    : 1Word, set to x0000
+			size       : 7Words
+
+		partitions must not overlap
+
+		for example, to create partition table for 20kiW storage with 2 partitions and bootloader code 
+			 Word Address | Data  | Comment
+			--------------+-------+---------------------------------------
+			x0000 : x07BF |       | bootloader code
+			x07C0         | xAA55 | magic number
+			x07C1 : x07C7 | x0000 | 
+			x07C8 : x07CF |       | drive ID
+			x07D0         | x0001 | type 1 - raw
+			x07D1 : x07D6 | x0000 | 
+			x07D7         | x0001 | starting at frame 1 (indexing from 0)
+			x07D8 : x07DE | x0000 | 
+			x07DF         | x0005 | size = 5 frames
+			x07E0         | x0001 | custom type
+			x07E1 : x07E6 | x0000 | 
+			x07E7         | x0006 | starting at frame 6 (indexing from 0)
+			x07E8 : x07EE | x0000 | 
+			x07EF         | x000E | size = 14 frames
+		
+	[PARTITIONS:FILESYSTEM]
+		x0000 - invalid
+		x0001 - raw format
+
+		x0001 to xFFFE - invalid
+
+		xFFFF - custom

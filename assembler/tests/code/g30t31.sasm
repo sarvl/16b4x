@@ -1,2 +1,1 @@
-add R0, 0
-add R0, R1
+rng R2

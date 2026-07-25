@@ -1,0 +1,26 @@
+;check whether jmp can be used to switch instruction 
+;aligned to 4W boundary
+
+
+	mov 	R0, 0x12
+
+	jmp 	skip
+
+	mov 	R0, 0x13
+	
+	mwr 	0x00, R0	
+	hlt
+
+%align 4
+end:
+	mov 	R0, 0x14
+	mwr 	0x00, R0	
+	hlt
+
+
+%align 4
+skip:
+	jmp 	end
+
+	mwr 	0x00, R0	
+	hlt

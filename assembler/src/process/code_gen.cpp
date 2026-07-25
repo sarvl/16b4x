@@ -101,6 +101,10 @@ void code_gen(
 		 //only few are allowed
 		if(t_Token::dir == tokens[tid].type) switch(static_cast<t_Directive::Type>(tokens[tid].val))
 		{
+		case t_Directive::org:
+			address = tokens[tid + 1].val;
+			tid += 2;
+			continue;
 		case t_Directive::adr:
 		{
 			//already verified
@@ -121,7 +125,7 @@ void code_gen(
 
 			while(address % alignment != 0)
 			{
-				result.emplace_back(0x0003);
+				result.emplace_back(0x0006 /*NOP*/);
 				address++;
 			}
 			tid++;
@@ -200,14 +204,14 @@ void code_gen(
 		//0 indicates that particular entry is NEVER to be used
 		//takes care of aligning opcode properly
 		constexpr static uint16_t instr_imm[] = {
-		//	iadd,  iand,  iann,  ical,  icmp,  icrd,  icwr,  idvu,
+		//	iadd,  iand,  iann,  ical,  icmp,  icrd,  icwr,  idvs,
 			0xC000,0xD000,0xD800,0xA800,0x8800,0x1200,0x1300,   0  ,
-		//	idvs,  ifls,  ihlt,  iint,  iirt,  ijmp,  imls,  imlu,  
-			 0    ,0x1900,0x0101,0x1000,0x0001,0x5000,0x9800,0x8000,
-		//	imov,  imrd,  imwr,  ineg,  inop,  inot,  iorr,  ipop,
-			0xA000,0x6000,0x6800,   0  ,0x0003,   0  ,0xE000,  0   ,
+		//	idvu,  ihlt,  iint,  iirt,  ijmp,  ilop,  imov,  imrd, 
+			   0  ,0x0104,0x1000,0x0004,0x5000,0x1F00,0xA000,0x6000,
+		//	imlu,  imls,   imwr,  ineg,  inop,  inot,  iorr,  ipop, 
+			0x8000,0x9800,0x6800,   0  ,0x0006,   0  ,0xE000,  0   ,
 		//	iprd,  iprf,  ipsh,  ipwr,  iret,  irng,  ishl,  ishr,  
-			0x4000,0x1800,   0  ,0x4800,0x0503,   0  ,0xF000,0xF800,
+			0x4000,   0  ,   0  ,0x4800,0x0506,   0  ,0xF000,0xF800,
 		//	isrd,  isub,  iswr,  itst,  ixor,  ixrd,  ixwr,
 			0x7000,0xC800,0x7800,0x9000,0xE800,   0  ,0x5800,
 
@@ -233,14 +237,14 @@ void code_gen(
 			   0  ,   0  ,   0  ,   0  ,   0  ,   0  
 		};
 		constexpr static uint16_t instr_reg[] = {
-		//	iadd,  iand,  iann,  ical,  icmp,  icrd,  icwr,  idvu,
-			0x0018,0x001A,0x001B,0x0403,0x0011,0x0015,0x0016,0x0006,
-		//	idvs,  ifls,  ihlt,  iint,  iirt,  ijmp,  imls,  imlu,  
-			0x0007,0x0104,   0  ,   0  ,   0  ,   0  ,0x0013,0x0010,
-		//	imov,  imrd,  imwr,  ineg,  inop,  inot,  iorr,  ipop,
-			0x0014,0x000C,0x000D,0x0703,   0  ,0x0603,0x001C,0x0303,
-		//	iprd,  iprf,  ipsh,  ipwr,  iret,  irng,  ishl,  ishr,  
-			0x0008,0x0004,0x0203,0x0009,   0  ,0x0103,0x001E,0x001F,
+		//	iadd,  iand,  iann,  ical,  icmp,  icrd,  icwr,  idvs,
+			0x0018,0x001A,0x001B,0x0406,0x0011,0x0015,0x0016,0x0003,
+		//	idvu,  ihlt,  iint,  iirt,  ijmp,  ilop  ,imov,  imwr,  
+			0x0002,0x0104,   0  ,0x0004,   0  ,   0  ,0x0014,0x000C,
+		//	imlu,  imls,  imwr,  ineg,  inop,  inot,  iorr,  ipop, 
+			0x0010,0x0013,0x000D,0x0706,0x0006,0x0606,0x001C,0x0306,
+		//	iprd,  iprf,  ipsh,  ipwr,  iret,  irng,  ishl,  ishr, 
+			0x0008,0x0007,0x0206,0x0009,0x0506,0x0106,0x001E,0x001F,
 		//	isrd,  isub,  iswr,  itst,  ixor,  ixrd,  ixwr,
 			0x000E,0x0019,0x000F,0x0012,0x001D,0x000A,0x000B,
 
@@ -259,9 +263,9 @@ void code_gen(
 			0xB804,0xB804,0xB806,0xB808,0xB80A,0xB80A,
 
 		//	isaa,  isbe,  isbz,  iscc,  isae,  isaz,  isge,  isgz,
-			0x0005,0x0105,0x0105,0x0205,0x0205,0x0205,0x0305,0x0305,
+			0x0001,0x0101,0x0101,0x0201,0x0201,0x0201,0x0301,0x0301,
 		//	isgg,  isle,  islz,  isll,  isnc,  isbb,  isno,  isns,
-			0x0405,0x0505,0x0505,0x0605,0x0705,0x0705,0x0017,0x0117,
+			0x0401,0x0501,0x0501,0x0601,0x0701,0x0701,0x0017,0x0117,
 		//	isnz,  isne,  isoo,  isss,  iszz,  isee
 			0x0217,0x0217,0x0317,0x0417,0x0517,0x0517
 		};
@@ -281,8 +285,8 @@ void code_gen(
 		switch(ins)
 		{
 		//ins reg reg/imm8
-		case iadd: case iand: case iann: case icmp: case imls: 
-		case imlu: case imov: case imrd: case iorr: case iprd: 
+		case iadd: case iand: case iann: case icmp: case imlu:
+		case imls: case imov: case imrd: case iorr: case iprd: 
 		case ishl: case ishr: case isrd: case isub: case itst: 
 		case ixor: case ixwr:
 			if(t_Token::reg == tokens[tid + 2].type)
@@ -398,50 +402,41 @@ void code_gen(
 			tid++;
 			ins_base = instr_imm[static_cast<int>(ins)];
 			goto encode_lo_r;
-		//ins reg/imm8
-		case iprf: case ifls:
-			if(t_Token::reg == tokens[tid + 1].type)
-			{
-		[[fallthrough]];
 		//ins reg
 		case isaa: case isbe: case isbz: case iscc: case isae:
 		case isaz: case isge: case isgz: case isgg: case isle:
 		case islz: case isll: case isnc: case isbb: case isno:
 		case isns: case isnz: case isne: case isoo: case isss:
 		case iszz: case isee: case ineg: case inot: case ipop:
-		case ipsh: case irng:
-				ins_base = instr_reg[static_cast<int>(ins)];
+		case ipsh: case irng: case iprf:
+			ins_base = instr_reg[static_cast<int>(ins)];
 
-				tid     += 1;
-				rf       = tokens[tid].val;
+			tid     += 1;
+			rf       = tokens[tid].val;
 
 			//technically, they are not the same format but ins_base takes care of that 
-				goto encode_lo_r;
-			}
-			else
-			{
-		[[fallthrough]];
+			goto encode_lo_r;
+
 		//ins imm8 with label
 		case ijaa: case ijbe: case ijbz: case ijcc: case ijae: 
 		case ijaz: case ijge: case ijgz: case ijgg: case ijle: 
 		case ijlz: case ijll: case ijnc: case ijbb: case ijno: 
 		case ijns: case ijnz: case ijne: case ijoo: case ijss:
-		case ijzz: case ijee:
-				ins_base = instr_imm[static_cast<int>(ins)];
+		case ijzz: case ijee: case ilop:
+			ins_base = instr_imm[static_cast<int>(ins)];
 
-				tid     += 1;
-				imm      = get_value(tokens, labels, tid, address);
+			tid     += 1;
+			imm      = get_value(tokens, labels, tid, address);
 			//technically, they are not the same format but ins_base takes care of that 
-				goto encode_mo_i;
+			goto encode_mo_i;
 		//ins imm8
 		case iint:
-				ins_base = instr_imm[static_cast<int>(ins)];
+			ins_base = instr_imm[static_cast<int>(ins)];
 
-				tid     += 1;
-				imm      = get_value(tokens, labels, tid);
+			tid     += 1;
+			imm      = get_value(tokens, labels, tid);
 			//technically, they are not the same format but ins_base takes care of that 
-				goto encode_mo_i;
-			}
+			goto encode_mo_i;
 
 		}
 
@@ -467,8 +462,7 @@ void code_gen(
 	encode_mo_i:
 		WARN_IMM_TOO_BIG(8)
 		res = ( ins_base                  )
-		    | ((imm    & 0b0111'1111) << 1)
-		    | ((imm    & 0b1000'0000) >> 7)
+		    | ((imm    & 0b1111'1111) << 0)
 		    ;
 
 		goto insert;
@@ -477,8 +471,7 @@ void code_gen(
 
 		res = ( ins_base                  )
 		    | ((rf     & 0b0000'0111) << 5) 
-		    | ((imm    & 0b0000'1111) << 1) 
-		    | ((imm    & 0b0001'0000) >> 4) 
+		    | ((imm    & 0b0001'1111) << 0) 
 		    ;
 
 		goto insert;
@@ -486,8 +479,7 @@ void code_gen(
 		WARN_IMM_TOO_BIG(11)
 
 		res = ( ins_base                       )
-		    | ((imm    &  0b11'1111'1111) <<  1)
-		    | ((imm    & 0b100'0000'0000) >> 10)
+		    | ((imm    & 0b111'1111'1111) <<  0)
 		    ;
 
 		goto insert;
@@ -496,9 +488,8 @@ void code_gen(
 
 		res = ( ins_base                   )
 		    | ((rf     &       0b111) <<  5)
-		    | ((imm    & 0b1000'0000) >>  7)
-		    | ((imm    & 0b0111'0000) <<  4)
-		    | ((imm    & 0b0000'1111) <<  1)
+		    | ((imm    & 0b1110'0000) <<  3)
+		    | ((imm    & 0b0001'1111) <<  0)
 		    ;
 		goto insert;
 	encode_so_rr:

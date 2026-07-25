@@ -24,6 +24,8 @@ int main()
 	};
 	std::string filename = "./tests/out/g00t00.out";
 
+	bool failed = false;
+
 	//assumes that files are correct
 	int test_group = 0;
 	while(test_group * 10 < file_list.size)
@@ -31,10 +33,10 @@ int main()
 		char const* const cur_data = file_list.data + test_group * 10;
 		printf("\033[1;38;5;55m%.7s\033[0m\n", cur_data);
 
-		commands[0][20] = test_group / 10 + '0';
-		commands[0][21] = test_group % 10 + '0';
-		filename[13]    = test_group / 10 + '0';
-		filename[14]    = test_group % 10 + '0';
+		commands[0][20] = cur_data[1];
+		commands[0][21] = cur_data[2];
+		filename[13]    = cur_data[1];
+		filename[14]    = cur_data[2];
 
 
 		int test_num = 0;
@@ -69,7 +71,10 @@ int main()
 
 			if(file_undertest.size != file_correct.size
 			|| 0 != memcmp(file_undertest.data, file_correct.data, file_correct.size))
+			{
 				printf("\033[1;38;5;1m[X] g%02dt%02d\n", test_group, test_num);
+				failed = true;
+			}
 			else
 				printf("\033[1;38;5;46m[V] g%02dt%02d\n", test_group, test_num);
 				
@@ -93,4 +98,7 @@ int main()
 
 exit:
 	File::destroy_error_handled(file_list);
+	
+	if(failed)
+		printf("\033[1;38;5;1mSOME TESTS FAILED\n");
 }

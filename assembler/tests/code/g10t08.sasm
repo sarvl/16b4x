@@ -1,28 +1,131 @@
+jaa 0
+jaa {0}
+jaa lab
+jaa #def
+jaa $var
+
+jbe 0
+jbe {0}
+jbe lab
+jbe #def
+jbe $var
+
+jbz 0
+jbz {0}
+jbz lab
+jbz #def
+jbz $var
+
 jcc 0
 jcc {0}
 jcc lab
 jcc #def
 jcc $var
 
-jaa 0
-jbe 0
-jbz 0
-jcc 0
 jae 0
+jae {0}
+jae lab
+jae #def
+jae $var
+
 jaz 0
+jaz {0}
+jaz lab
+jaz #def
+jaz $var
+
 jge 0
+jge {0}
+jge lab
+jge #def
+jge $var
+
 jgz 0
+jgz {0}
+jgz lab
+jgz #def
+jgz $var
+
 jgg 0
+jgg {0}
+jgg lab
+jgg #def
+jgg $var
+
 jle 0
+jle {0}
+jle lab
+jle #def
+jle $var
+
 jlz 0
+jlz {0}
+jlz lab
+jlz #def
+jlz $var
+
 jll 0
+jll {0}
+jll lab
+jll #def
+jll $var
+
 jnc 0
+jnc {0}
+jnc lab
+jnc #def
+jnc $var
+
 jbb 0
+jbb {0}
+jbb lab
+jbb #def
+jbb $var
+
 jno 0
+jno {0}
+jno lab
+jno #def
+jno $var
+
 jns 0
+jns {0}
+jns lab
+jns #def
+jns $var
+
 jnz 0
+jnz {0}
+jnz lab
+jnz #def
+jnz $var
+
 jne 0
+jne {0}
+jne lab
+jne #def
+jne $var
+
 joo 0
+joo {0}
+joo lab
+joo #def
+joo $var
+
 jss 0
+jss {0}
+jss lab
+jss #def
+jss $var
+
 jzz 0
+jzz {0}
+jzz lab
+jzz #def
+jzz $var
+
 jee 0
+jee {0}
+jee lab
+jee #def
+jee $var

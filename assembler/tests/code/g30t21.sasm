@@ -1,2 +1,2 @@
-tst R0, 0
-tst R0, R0
+tst R0, 1
+tst R0, R1

@@ -1,0 +1,25 @@
+;check whether cal with register works
+
+	mov 	R6, func
+	mov 	R7, func2
+
+	cal 	R6
+
+
+	mwr 	0x00, R0
+	hlt
+
+func:
+	mov 	R0, 0x14
+
+	cal  	R7
+
+	ret
+
+	hlt
+
+func2:
+	mov 	R0, 0x16
+
+	ret
+	hlt

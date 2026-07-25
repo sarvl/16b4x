@@ -55,13 +55,14 @@ std::string to_string(t_Token::Type          const  type)
 std::string to_string(t_Instruction_Id::Type const  instr)
 {
 	return (char const* const[]) {
-		"add", "and", "ann", "cal", "cmp", "crd",
-		"cwr", "dvu", "dvs", "fls", "hlt", "int",
-		"irt", "jmp", "mls", "mlu", "mov", "mrd", 
+		"add", "and", "ann", "cal", "cmp", "crd", 
+		"cwr", "dvs", "dvu", "hlt", "int", "irt", 
+		"jmp", "lop", "mov", "mrd", "mlu", "mls", 
 		"mwr", "neg", "nop", "not", "orr", "pop", 
 		"prd", "prf", "psh", "pwr", "ret", "rng", 
-		"shl", "shr", "srd", "sub", "swr", "tst",
+		"shl", "shr", "srd", "sub", "swr", "tst", 
 		"xor", "xrd", "xwr",
+
 
 		"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
 		"jge", "jgz", "jgg", "jle", "jlz", "jll",
@@ -85,7 +86,7 @@ std::string to_string(t_Directive::Type      const  dir)
 		"inc", "alg", "adr", "ddw", "rps", "rpe", "wst", 
 		"wns", "wes", "wph", "wpp", "def", "ass", "isd",
 		"cif", "cel", "cen", "cas", "inf", "war", "err", 
-		"tof", "isa", "sam", "cei", "tst"
+		"tof", "isa", "sam", "cei", "tst", "org"
 		} [dir];
 }
 
@@ -104,13 +105,14 @@ std::ostream&  operator<<(std::ostream& os, t_Instruction_Id::Type const instr)
 {
 	return
 	os << (char const* const[]) {
-		"add", "and", "ann", "cal", "cmp", "crd",
-		"cwr", "dvu", "dvs", "fls", "hlt", "int",
-		"irt", "jmp", "mls", "mlu", "mov", "mrd", 
+		"add", "and", "ann", "cal", "cmp", "crd", 
+		"cwr", "dvs", "dvu", "hlt", "int", "irt", 
+		"jmp", "lop", "mov", "mrd", "mlu", "mls",
 		"mwr", "neg", "nop", "not", "orr", "pop", 
 		"prd", "prf", "psh", "pwr", "ret", "rng", 
-		"shl", "shr", "srd", "sub", "swr", "tst",
+		"shl", "shr", "srd", "sub", "swr", "tst", 
 		"xor", "xrd", "xwr",
+
 
 		"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
 		"jge", "jgz", "jgg", "jle", "jlz", "jll",
@@ -136,7 +138,7 @@ std::ostream&  operator<<(std::ostream& os, t_Directive::Type const dir)
 		"inc", "alg", "adr", "ddw", "rps", "rpe",
 		"wst", "wns", "wes", "wph", "wpp", "def", "ass", 
 		"isd", "cif", "cel", "cen", "cas", "inf", "war",
-		"err", "tof", "isa", "sam", "cei", "tst"
+		"err", "tof", "isa", "sam", "cei", "tst", "org"
 		} [dir];
 }
 #pragma GCC diagnostic pop

@@ -1,0 +1,15 @@
+;like g00t00 but with registers as addresses
+
+	mov 	R0, 0xAB
+	mov 	R1, 0xFF
+
+	mov 	R2, 0x00
+	mov 	R3, 0x10
+	mov 	R4, 0x20
+
+	mwr 	R2, R0
+	mwr 	R3, R0
+	mwr 	R4, R1
+
+
+	hlt

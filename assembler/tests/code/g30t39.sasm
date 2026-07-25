@@ -1,2 +1,5 @@
 mlu R0, 0
 mlu R0, R0
+
+mls R0, 0
+mls R0, R0

@@ -39,12 +39,12 @@ struct t_Token{
 
 namespace t_Instruction_Id {
 	enum Type{
-		iadd, iand, iann, ical, icmp, icrd,
-		icwr, idvu, idvs, ifls, ihlt, iint,
-		iirt, ijmp, imls, imlu, imov, imrd, 
+		iadd, iand, iann, ical, icmp, icrd, 
+		icwr, idvs, idvu, ihlt, iint, iirt, 
+		ijmp, ilop, imov, imrd, imlu, imls,
 		imwr, ineg, inop, inot, iorr, ipop, 
 		iprd, iprf, ipsh, ipwr, iret, irng, 
-		ishl, ishr, isrd, isub, iswr, itst,
+		ishl, ishr, isrd, isub, iswr, itst, 
 		ixor, ixrd, ixwr,
 
 		ijaa, ijbe, ijbz, ijcc, ijae, ijaz,
@@ -69,7 +69,7 @@ namespace t_Directive{
 		inc, alg, adr, ddw, rps, rpe, wst, 
 		wns, wes, wph, wpp, def, ass, isd, 
 		cif, cel, cen, cas, inf, war, err, 
-		tof, isa, sam, cei, tst
+		tof, isa, sam, cei, tst, org
 	};
 };
 

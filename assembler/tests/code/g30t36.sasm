@@ -1,2 +1,2 @@
-xor R0, 0
-xor R0, R1
+orr R0, 1
+orr R0, R1

@@ -7,21 +7,17 @@ void disassemble(uint16_t const instruction)
 	unsigned const rs           = (instruction >>  8) & 0x07;
 
 	unsigned const imm8_long_t  = 0
-		| ((instruction & 0x0001) <<  7)
-		| ((instruction & 0x00FE) >>  1)
+		| ((instruction & 0x00FF) >> 0)
 		;
 	unsigned const imm5_long_t  = 0
-		| ((instruction & 0x0001) <<  4)
-		| ((instruction & 0x001E) >>  1)
+		| ((instruction & 0x001F) >> 0)
 		;
 	unsigned const imm8_t    = 0
-		| ((instruction & 0x0001) <<  7)
-		| ((instruction & 0x0700) >>  4)
-		| ((instruction & 0x001E) >>  1)
+		| ((instruction & 0x0700) >> 3)
+		| ((instruction & 0x001F) >> 0)
 		;
 	unsigned const imm11_t      = 0
-		| ((instruction & 0x0001) << 10)
-		| ((instruction & 0x07FE) >>  1)
+		| ((instruction & 0x07FF) >> 0)
 		;
 	  signed const imm11  = static_cast<  signed>(imm11_t     << 21) >> 21;
 	unsigned const imm8_l = static_cast<unsigned>(imm8_long_t << 24) >> 24;
@@ -31,9 +27,9 @@ void disassemble(uint16_t const instruction)
 
 
 	constexpr static char xrd_str[8][3] = {
-		"IP", "--", "SP", "FL", "--", "--", "--", "--"};
+		"IP", "LC", "--", "SP", "FL", "AR", "--", "--"};
 	constexpr static char xwr_str[8][3] = {
-		"IP", "UI", "SP", "FL", "--", "--", "--", "--"};
+		"IP", "LC", "UI", "SP", "FL", "AR", "--", "--"};
 
 	char const* const xrd_xr = xrd_str[rs];
 	char const* const xwr_xr = xwr_str[rf];
@@ -43,41 +39,7 @@ void disassemble(uint16_t const instruction)
 	case 0b00000: switch(instruction & 0b11111)
 	{
 		case 0b00000:   printf("INVALID");                   break;
-		case 0b00001:   switch((instruction >> 8) & 0b111)
-		{
-			case 0b000: printf("irt");                       break;
-			case 0b001: printf("hlt");                       break;
-			case 0b010: printf("INVALID");                   break;
-			case 0b011: printf("INVALID");                   break;
-			case 0b100: printf("INVALID");                   break;
-			case 0b101: printf("INVALID");                   break;
-			case 0b110: printf("INVALID");                   break;
-			case 0b111: printf("INVALID");                   break;
-		}  /*0b00001 end*/                                   break;
-		case 0b00010:   printf("INVALID");                   break;
-		case 0b00011:   switch((instruction >> 8) & 0b111)
-		{
-			case 0b000: printf("nop");                       break;
-			case 0b001: printf("rng R%d", rf);               break;
-			case 0b010: printf("psh R%d", rf);               break;
-			case 0b011: printf("pop R%d", rf);               break;
-			case 0b100: printf("cal R%d", rf);               break;
-			case 0b101: printf("ret");                       break;
-			case 0b110: printf("not R%d", rf);               break;
-			case 0b111: printf("neg R%d", rf);               break;
-		}  /*0b00011 end*/                                   break;
-		case 0b00100:   switch((instruction >> 8) & 0b111)
-		{
-			case 0b000: printf("prf R%d", rf);               break;
-			case 0b001: printf("fls R%d", rf);               break;
-			case 0b010: printf("INVALID");                   break;
-			case 0b011: printf("INVALID");                   break;
-			case 0b100: printf("INVALID");                   break;
-			case 0b101: printf("INVALID");                   break;
-			case 0b110: printf("INVALID");                   break;
-			case 0b111: printf("INVALID");                   break;
-		}  /*0b00100 end*/                                   break;
-		case 0b00101:   switch((instruction >> 8) &  0b111)
+		case 0b00001:   switch((instruction >> 8) &  0b111)
 		{
 			case 0b000: printf("saa R%d", rf);               break;
 			case 0b001: printf("sbe R%d", rf);               break;
@@ -87,21 +49,55 @@ void disassemble(uint16_t const instruction)
 			case 0b101: printf("sle R%d", rf);               break;
 			case 0b110: printf("sll R%d", rf);               break;
 			case 0b111: printf("snc R%d", rf);               break;
-		}  /*0b00101 end*/                                   break;
-		case 0b00110:   printf("dvu R%d, R%d", rf, rs);      break;
-		case 0b00111:   printf("dvs R%d, R%d", rf, rs);      break;
+		}  /*0b00001 end*/                                   break;
+		case 0b00010:   printf("dvu R%d, R%d", rf, rs);      break;
+		case 0b00011:   printf("dvs R%d, R%d", rf, rs);      break;
+		case 0b00100:   switch((instruction >> 8) & 0b111)
+		{
+			case 0b000: printf("irt");                       break;
+			case 0b001: printf("hlt");                       break;
+			case 0b010: printf("INVALID");                   break;
+			case 0b011: printf("INVALID");                   break;
+			case 0b100: printf("nop/RESERVED");              break;
+			case 0b101: printf("nop/RESERVED");              break;
+			case 0b110: printf("INVALID");                   break;
+			case 0b111: printf("INVALID");                   break;
+		}  /*0b00100 end*/                                   break;
+		case 0b00101:   printf("INVALID");                   break;
+		case 0b00110:   switch((instruction >> 8) & 0b111)
+		{
+			case 0b000: printf("nop");                       break;
+			case 0b001: printf("rng R%d", rf);               break;
+			case 0b010: printf("psh R%d", rf);               break;
+			case 0b011: printf("pop R%d", rf);               break;
+			case 0b100: printf("cal R%d", rf);               break;
+			case 0b101: printf("ret");                       break;
+			case 0b110: printf("not R%d", rf);               break;
+			case 0b111: printf("neg R%d", rf);               break;
+		}  /*0b00110 end*/                                   break;
+		case 0b00111:   switch((instruction >> 8) & 0b111)
+		{
+			case 0b000: printf("prf R%d", rf);               break;
+			case 0b001: printf("nop/RESERVED");              break;
+			case 0b010: printf("nop/RESERVED");              break;
+			case 0b011: printf("nop/RESERVED");              break;
+			case 0b100: printf("nop/RESERVED");              break;
+			case 0b101: printf("INVALID");                   break;
+			case 0b110: printf("INVALID");                   break;
+			case 0b111: printf("INVALID");                   break;
+		}  /*0b00111 end*/                                   break;
 		case 0b01000:   printf("prd R%d, R%d", rf, rs);      break;
 		case 0b01001:   printf("pwr R%d, R%d", rs, rf);      break;
 		case 0b01010:   printf("xrd R%d, %.2s", rf, xrd_xr); break;
 		case 0b01011:   printf("xwr %.2s, R%d", xwr_xr, rs); break;
 		case 0b01100:   printf("mrd R%d, R%d", rf, rs);      break;
 		case 0b01101:   printf("mwr R%d, R%d", rs, rf);      break;
-		case 0b01110:   printf("srd R%d, R%d", rf, rs);      break;
-		case 0b01111:   printf("swr R%d, R%d", rs, rf);      break;
-		case 0b10000:   printf("mlu R%d, R%d", rf, rs);      break;
+		case 0b01110:   printf("RESERVED");                  break;
+		case 0b01111:   printf("RESERVED");                  break;
+		case 0b10000:   printf("mul R%d, R%d", rf, rs);      break;
 		case 0b10001:   printf("cmp R%d, R%d", rf, rs);      break;
 		case 0b10010:   printf("tst R%d, R%d", rf, rs);      break;
-		case 0b10011:   printf("mls R%d, R%d", rf, rs);      break;
+		case 0b10011:   printf("INVALID");                   break;
 		case 0b10100:   printf("mov R%d, R%d", rf, rs);      break;
 		case 0b10101:   printf("crd R%d, R%d", rf, rs);      break;
 		case 0b10110:   printf("cwr R%d, R%d", rs, rf);      break;
@@ -113,8 +109,8 @@ void disassemble(uint16_t const instruction)
 			case 0b011: printf("soo R%d", rf);               break;
 			case 0b100: printf("sss R%d", rf);               break;
 			case 0b101: printf("szz R%d", rf);               break;
-			case 0b110: printf("INVALID");                   break;
-			case 0b111: printf("INVALID");                   break;
+			case 0b110: printf("SCC INVALID");               break;
+			case 0b111: printf("SCC INVALID");               break;
 		}  /*0b10111 end*/                                   break;
 		case 0b11000:   printf("add R%d, R%d", rf, rs);      break;
 		case 0b11001:   printf("sub R%d, R%d", rf, rs);      break;
@@ -125,7 +121,7 @@ void disassemble(uint16_t const instruction)
 		case 0b11110:   printf("shl R%d, R%d", rf, rs);      break;
 		case 0b11111:   printf("shr R%d, R%d", rf, rs);      break;
 	}   /*0b00000 end*/                                      break;
-	case 0b00001:       printf("INVALID");                   break;
+	case 0b00001:       printf("INVALID (SW DEFINED)");      break;
 	case 0b00010:       switch((instruction >> 8) & 0b111)
 	{
 		case 0b000: printf("int %d", imm8_l);                break;
@@ -139,14 +135,14 @@ void disassemble(uint16_t const instruction)
 	}  /*0b00010 end*/                                       break;
 	case 0b00011:       switch((instruction >> 8) & 0b111)
 	{
-		case 0b000: printf("prf %d", imm8_l);                break;
-		case 0b001: printf("fls %d", imm8_l);                break;
-		case 0b010: printf("INVALID");                       break;
-		case 0b011: printf("INVALID");                       break;
-		case 0b100: printf("INVALID");                       break;
+		case 0b000: printf("nop/RESERVED");                  break;
+		case 0b001: printf("nop/RESERVED");                  break;
+		case 0b010: printf("nop/RESERVED");                  break;
+		case 0b011: printf("nop/RESERVED");                  break;
+		case 0b100: printf("nop/RESERVED");                  break;
 		case 0b101: printf("INVALID");                       break;
 		case 0b110: printf("INVALID");                       break;
-		case 0b111: printf("INVALID");                       break;
+		case 0b111: printf("lop %d", imm8_j);                break;
 	}  /*0b00011 end*/                                       break;
 	case 0b00100: case 0b00101: switch((instruction >> 8) & 0b1111)
 	{
@@ -164,9 +160,9 @@ void disassemble(uint16_t const instruction)
 		case 0b1011: printf("joo %d", imm8_j);               break;
 		case 0b1100: printf("jss %d", imm8_j);               break;
 		case 0b1101: printf("jzz %d", imm8_j);               break;
-		case 0b1110: printf("INVALID");                      break; 
-		case 0b1111: printf("INVALID");                      break; 
-	}  /*0b0010- end*/                                       break;
+		case 0b1110: printf("JCC INVALID");                  break; 
+		case 0b1111: printf("JCC INVALID");                  break; 
+	}  /*0b0010X end*/                                       break;
 	case 0b00110: printf("INVALID");                         break;
 	case 0b00111: printf("INVALID");                         break;
 	case 0b01000: printf("prd R%d, %d", rf, imm8);           break;
@@ -193,7 +189,7 @@ void disassemble(uint16_t const instruction)
 		case 0b101: printf("mle R%d, R%d", rf, rs);          break;
 		case 0b110: printf("mll R%d, R%d", rf, rs);          break;
 		case 0b111: printf("mnc R%d, R%d", rf, rs);          break;
-	}  /*0b00110 end*/                                       break;
+	}  /*0b10110 end*/                                       break;
 	case 0b10111: switch((instruction >> 1) & 0b111) 
 	{
 		case 0b000: printf("mno R%d, R%d", rf, rs);          break;
@@ -202,17 +198,17 @@ void disassemble(uint16_t const instruction)
 		case 0b011: printf("moo R%d, R%d", rf, rs);          break;
 		case 0b100: printf("mss R%d, R%d", rf, rs);          break;
 		case 0b101: printf("mzz R%d, R%d", rf, rs);          break;
-		case 0b110: printf("INVALID");                       break;
-		case 0b111: printf("INVALID");                       break;
-	}  /*0b00111 end*/                                       break;
-	case 0b11000: printf("add R%d, %d", rf, imm8);           break;
-	case 0b11001: printf("sub R%d, %d", rf, imm8);           break;
-	case 0b11010: printf("and R%d, %d", rf, imm8);           break;
-	case 0b11011: printf("ann R%d, %d", rf, imm8);           break;
-	case 0b11100: printf("orr R%d, %d", rf, imm8);           break;
-	case 0b11101: printf("xor R%d, %d", rf, imm8);           break;
-	case 0b11110: printf("shl R%d, %d", rf, imm8);           break;
-	case 0b11111: printf("shr R%d, %d", rf, imm8);           break;
+		case 0b110: printf("MCC INVALID");                   break;
+		case 0b111: printf("MCC INVALID");                   break;
+	}  /*0b10111 end*/                                        break;
+	case 0b11000: printf("add R%d, %d", rf, imm8);            break;
+	case 0b11001: printf("sub R%d, %d", rf, imm8);            break;
+	case 0b11010: printf("and R%d, %d", rf, imm8);            break;
+	case 0b11011: printf("RESERVED");                         break;
+	case 0b11100: printf("orr R%d, %d", rf, imm8);            break;
+	case 0b11101: printf("xor R%d, %d", rf, imm8);            break;
+	case 0b11110: printf("shl R%d, %d", rf, imm8);            break;
+	case 0b11111: printf("shr R%d, %d", rf, imm8);            break;
 	}
 	printf("\n");
 

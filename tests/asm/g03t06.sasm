@@ -1,0 +1,16 @@
+;ensure jmp to next instruction works properly
+;aligned
+
+	mov 	R0, 1
+	mov 	R1, 2
+	mov 	R2, 4
+
+	jmp 	next
+next:
+
+	mwr 	100, R0
+	mwr 	101, R1
+	mwr 	102, R2
+
+	hlt
+	

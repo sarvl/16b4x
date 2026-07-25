@@ -1,2 +1,3 @@
-cal IP  
-cal R0, R0
+lop 
+lop IP
+lop R0 R0

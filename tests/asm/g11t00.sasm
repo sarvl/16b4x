@@ -1,0 +1,8 @@
+;check whether memory is NOT executed after jump
+
+	mov 	R0, 1
+
+	jmp 	skip
+	mwr 	0, R0
+skip:
+	hlt

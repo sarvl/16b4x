@@ -1,4 +1,6 @@
 srd R0,IP  
+srd R0,lab  
+srd R0,R0
 srd 0,0
 srd IP,0
 srd {0},0

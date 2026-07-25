@@ -1,0 +1,13 @@
+;check whether procedure calls work
+
+	cal 	func
+
+
+	mwr 	0x00, R0
+	hlt
+
+func:
+	mov 	R0, 0x14
+	ret
+
+	hlt

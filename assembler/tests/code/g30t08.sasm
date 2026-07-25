@@ -1,4 +1,67 @@
 lab:
-jcc 3
-jzz 3
+
+jaa 12
 jaa lab
+
+jbe 12
+jbe lab
+
+jbz 12
+jbz lab
+
+jcc 12
+jcc lab
+
+jae 12
+jae lab
+
+jaz 12
+jaz lab
+
+jge 12
+jge lab
+
+jgz 12
+jgz lab
+
+jgg 12
+jgg lab
+
+jle 12
+jle lab
+
+jlz 12
+jlz lab
+
+jll 12
+jll lab
+
+jnc 12
+jnc lab
+
+jbb 12
+jbb lab
+
+jno 12
+jno lab
+
+jns 12
+jns lab
+
+jnz 12
+jnz lab
+
+jne 12
+jne lab
+
+joo 12
+joo lab
+
+jss 12
+jss lab
+
+jzz 12
+jzz lab
+
+jee 12
+jee lab

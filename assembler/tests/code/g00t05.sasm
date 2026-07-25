@@ -7,7 +7,6 @@ crd
 cwr
 dvu
 dvs
-fls
 hlt
 int
 irt
@@ -30,6 +29,7 @@ jss
 jzz
 jee
 jmp
+lop 
 maa
 mbe
 mcc
@@ -48,8 +48,8 @@ moo
 mss
 mzz
 mee
-mls
 mlu
+mls
 mov
 mrd
 mwr
@@ -59,6 +59,7 @@ not
 orr
 pop
 prd
+prf
 psh
 pwr
 ret

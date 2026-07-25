@@ -1,0 +1,21 @@
+;check whether SWR works 
+
+	xwr 	SP, 0x00
+
+	mov 	R0, 0x12
+	psh 	R0 
+
+	xwr 	UI, 0x12
+	mov 	R0, 0x34
+	psh 	R0 
+
+	mov 	R4, 0x10
+	swr 	0x00, R4
+
+	pop 	R6
+	pop 	R7 
+
+	mwr 	0x00, R6
+	mwr 	0x01, R7
+
+	hlt

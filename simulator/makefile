@@ -2,11 +2,11 @@ CD := '\033[0m'    #color default
 CR := '\033[0;31m' #color red
 CY := '\033[0;33m' #color yellow 
 
-FILES_LOCAL := out/main.o
-FILES_UTIL  := ../utility/out/log.o ../utility/out/file.o
+FILES_LOCAL := out/cr.o  out/helper.o  out/instruction.o  out/interrupt.o  out/io.o  out/main.o  out/memory.o  out/privilege.o out/internal_state.o 
+FILES_UTIL  := ../utility/out/log.o 
 FILES := ${FILES_LOCAL} ${FILES_UTIL}
 
-debug :=
+debug := 
 SAN := $(if ${debug}, -g -fsanitize=undefined -fsanitize=address,                  )
 OPT := $(if ${debug}, -Og                                       , -O3 -march=native)
 LTO := $(if ${debug},                                           , -flto            )

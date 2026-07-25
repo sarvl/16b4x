@@ -1,0 +1,7 @@
+;check whether LC works 
+	
+	xwr 	LC, 0x12
+	xrd 	R0, LC
+
+	mwr 	0x00, R0
+	hlt

@@ -1,0 +1,16 @@
+;this test ensures that reading from memory works 
+
+	mov 	R0, 0xAB
+	mov 	R1, 0xFF
+
+	mwr 	0x00, R0
+	mwr 	0x10, R0
+	mwr 	0x20, R1
+
+	mrd 	R2, 0x20
+	mrd 	R3, 0x10
+
+	mwr 	0x21, R2
+	mwr 	0x22, R3
+
+	hlt

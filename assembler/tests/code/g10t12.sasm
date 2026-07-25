@@ -1,3 +1,4 @@
 xrd R0, IP
+xrd R0, LC
 xrd R0, SP
 xrd R0, FL

@@ -67,5 +67,5 @@ start:
 	mwr 	105, R5
 	mwr 	106, R6
 	mwr 	107, R7
-	hcf
+	hlt
 	

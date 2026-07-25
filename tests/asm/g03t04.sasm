@@ -1,0 +1,27 @@
+;check whether IP can be modified with register to switch instruction 
+;aligned
+
+	mov 	R2, skip
+	mov 	R3, end
+
+	mov 	R0, 0x12
+
+	xwr 	IP, R2
+
+	mov 	R0, 0x13
+	
+	mwr 	0x00, R0	
+	hlt
+
+%align 4
+end:
+	mov 	R0, 0x14
+	mwr 	0x00, R0	
+	hlt
+
+%align 4
+skip:
+	xwr 	IP, R3
+
+	mwr 	0x00, R0	
+	hlt

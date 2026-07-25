@@ -1,6 +1,4 @@
 srd R0, 0
-srd R0, R0
 srd R0, {0}
-srd R0, lab
 srd R0, #def
 srd R0, $var

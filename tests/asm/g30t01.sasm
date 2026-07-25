@@ -1,0 +1,14 @@
+;this test checks whether there is at least 32 frames available
+
+	; check if catalyst works 
+	xwr 	UI, 0x01
+	mov 	R0, 0x02
+	pwr 	0x00, R0
+	prd 	R0, 0x00
+
+	;if version is anything other than zero, sets the r0
+	cmp 	R0, 0x20
+	sae 	R0
+	mwr 	0x00, R0
+
+	hlt

@@ -1,1 +1,11 @@
-optimized VERY SIMPLE cpu to maximize clock speed 
+optimized to maximize clock speed 
+
+speed demon 
+
+caches
+deep pipeline
+branch prediction
+
+
+if not significant degradation to clock speed:
+	2instr/cycle static scheduling

@@ -1,0 +1,32 @@
+;test of factorial
+
+
+	jmp 	start
+
+; returns factorial in R0
+; takes n in R0
+fact:
+	cmp 	R0, 1
+	jle 	.ret
+
+	psh 	R0
+
+	sub 	R0, 1
+	cal 	fact
+
+	pop 	R1
+	mlu 	R0, R1
+
+	ret
+
+.ret:
+	mov 	R0, 1
+	ret
+
+start:
+	mov 	R0, 6
+	cal 	fact
+
+	mwr 	80, R0
+	hlt
+	

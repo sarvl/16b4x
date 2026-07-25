@@ -1,0 +1,14 @@
+;simple loop with lop
+
+	xwr 	LC, 5
+
+	mov 	R0, 0
+
+loop:
+	add 	R0, 1
+
+	lop 	loop
+
+	mwr 	0x00, R0
+	
+	hlt

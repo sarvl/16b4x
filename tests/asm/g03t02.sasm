@@ -1,0 +1,25 @@
+;check whether IP can be modified to switch instruction 
+;misaligned
+
+
+	mov 	R0, 0x12
+
+	xwr 	IP, skip
+
+	mov 	R0, 0x13
+	
+	mwr 	0x00, R0	
+	hlt
+
+end:
+	mov 	R0, 0x14
+	mwr 	0x00, R0	
+	hlt
+
+
+	nop
+skip:
+	xwr 	IP, end
+
+	mwr 	0x00, R0	
+	hlt

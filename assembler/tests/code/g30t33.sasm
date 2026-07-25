@@ -1,1 +1,2 @@
-not R0
+sub R0, 1
+sub R0, R1

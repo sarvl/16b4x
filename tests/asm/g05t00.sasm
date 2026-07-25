@@ -1,0 +1,9 @@
+;check whether FL register can be modified
+
+ 	xwr 	FL, 0b11111
+
+	xrd 	R0, FL
+
+	mwr 	0x00, R0
+
+	hlt

@@ -1,0 +1,17 @@
+;finally, check whether jcc backwards works 
+
+	jmp 	skip
+
+back:
+	mov 	R0, 0x14
+	mwr 	0x00, R0
+	hlt
+
+skip:
+	mov 	R0, 0x12
+	mwr 	0x00, R0
+
+	xwr 	FL, 0b0000
+	jnc 	back
+
+	hlt

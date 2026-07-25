@@ -1,2 +1,2 @@
-orr R0, 11
-orr R0, R1
+and R0, 1
+and R0, R1

@@ -1,4 +1,109 @@
+jaa
+jaa R0
+jaa IP
+jaa 0,0  
+   
+jbe
+jbe R0
+jbe IP
+jbe 0,0  
+   
+jbz
+jbz R0
+jbz IP
+jbz 0,0  
+   
 jcc
 jcc R0
 jcc IP
 jcc 0,0  
+   
+jae
+jae R0
+jae IP
+jae 0,0  
+   
+jaz
+jaz R0
+jaz IP
+jaz 0,0  
+   
+jge
+jge R0
+jge IP
+jge 0,0  
+   
+jgz
+jgz R0
+jgz IP
+jgz 0,0  
+   
+jgg
+jgg R0
+jgg IP
+jgg 0,0  
+   
+jle
+jle R0
+jle IP
+jle 0,0  
+   
+jlz
+jlz R0
+jlz IP
+jlz 0,0  
+   
+jll
+jll R0
+jll IP
+jll 0,0  
+   
+jnc
+jnc R0
+jnc IP
+jnc 0,0  
+   
+jbb
+jbb R0
+jbb IP
+jbb 0,0  
+   
+jno
+jno R0
+jno IP
+jno 0,0  
+   
+jns
+jns R0
+jns IP
+jns 0,0  
+  
+jnz
+jnz R0
+jnz IP
+jnz 0,0  
+  
+jne
+jne R0
+jne IP
+jne 0,0  
+  
+joo
+joo R0
+joo IP
+joo 0,0  
+  
+jss
+jss R0
+jss IP
+jss 0,0  
+  
+jzz
+jzz R0
+jzz IP
+jzz 0,0  
+  
+jee
+jee R0
+jee IP
+jee 0,0  

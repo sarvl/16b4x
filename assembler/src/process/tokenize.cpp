@@ -386,10 +386,10 @@ void tokenize(
 
 			constexpr static char const*             arr_3_c[] = 
 				{"inc", "adr", "end", "wes", "wns", "rpe",
-				 "rps"};
+				 "rps", "org"};
 			constexpr static t_Directive::Type const arr_3_d[] = 
 				{inc, adr, cen, wes, wns, rpe,
-				 rps };
+				 rps, org };
 			
 			constexpr static char const*             arr_4_c[] = 
 				{"wpsh", "wpop", "warn", "else", "info", "same"};
@@ -605,13 +605,14 @@ void tokenize(
 				int instr_id = -1;
 
 				constexpr static char const* const to_compare[] = {
-					"add", "and", "ann", "cal", "cmp", "crd",
-					"cwr", "dvu", "dvs", "fls", "hlt", "int",
-					"irt", "jmp", "mls", "mlu", "mov", "mrd", 
+					"add", "and", "ann", "cal", "cmp", "crd", 
+					"cwr", "dvs", "dvu", "hlt", "int", "irt", 
+					"jmp", "lop", "mov", "mrd", "mlu", "mls",
 					"mwr", "neg", "nop", "not", "orr", "pop", 
 					"prd", "prf", "psh", "pwr", "ret", "rng", 
-					"shl", "shr", "srd", "sub", "swr", "tst",
+					"shl", "shr", "srd", "sub", "swr", "tst", 
 					"xor", "xrd", "xwr",
+
 
 					"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
 					"jge", "jgz", "jgg", "jle", "jlz", "jll",
@@ -648,10 +649,12 @@ void tokenize(
 			if(off - beg == 2)
 			{
 				int external_id  = -1;
-				if(0 == strncmp(data + beg, "IP", 2)) external_id = 0;
-				if(0 == strncmp(data + beg, "UI", 2)) external_id = 1;
-				if(0 == strncmp(data + beg, "SP", 2)) external_id = 2;
-				if(0 == strncmp(data + beg, "FL", 2)) external_id = 3;
+				     if(0 == strncmp(data + beg, "IP", 2)) external_id = 0;
+				else if(0 == strncmp(data + beg, "LC", 2)) external_id = 1;
+				else if(0 == strncmp(data + beg, "UI", 2)) external_id = 2;
+				else if(0 == strncmp(data + beg, "SP", 2)) external_id = 3;
+				else if(0 == strncmp(data + beg, "FL", 2)) external_id = 4;
+				else if(0 == strncmp(data + beg, "AR", 2)) external_id = 5;
 					
 				if(-1 == external_id)
 					goto insert_string;

@@ -1,2 +1,2 @@
-cmp R0, 0
-cmp R0, R0
+cmp R0, 1
+cmp R0, R1

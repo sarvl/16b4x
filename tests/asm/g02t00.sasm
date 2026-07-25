@@ -1,0 +1,38 @@
+;test add
+
+%assign $addr {0x1000 1 -}
+
+%assign $iter 0
+%rps 2 
+	%assign $iter {$iter 1 +}
+
+	%assign $a 0 
+
+	%rps 5
+		%assign $a {$a 1 + 13 *}
+
+		%assign $b 0 
+		%rps 7
+			%assign $b {$b 1 + 7 *}
+
+			%assign $addr {$addr 1 +}
+
+			xwr 	UI, {$a 8 > 0xFF &}
+			mov 	R0, {$a 0xFF &}
+
+			%if {$iter 1 =} 
+				xwr 	UI, {$b 8 > 0xFF &}
+				add 	R0, {$b 0xFF &}
+			%else
+				xwr 	UI, {$b 8 > 0xFF &}
+				mov 	R1, {$b 0xFF &}
+				add 	R0, R1
+			%end
+		
+			xwr 	UI, {$addr 8 > 0xFF &} 
+			mwr 	{$addr 0xFF &}, R0	
+		%rpe 
+	%rpe 
+%rpe 
+
+	hlt

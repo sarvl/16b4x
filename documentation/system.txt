@@ -1,0 +1,71 @@
+[TABLE_OF_CONTENTS]
+	[OVERVIEW]
+		[GENERAL]
+		[SYSTEM_ORGANIZATION]
+	[SPECIFIC_VERSIONS]
+		[SUBSTRATE]
+			[S0V0]
+
+	To navigate to particular section concatenate sections to one long tag with colons as separators
+	for example to move to SYSTEM_ORGANIZATION search for [OVERVIEW:SYSTEM_ORGANIZATION]
+	
+
+[OVERVIEW]
+	[OVERVIEW:GENERAL]
+		This manual describes the system organization and behavior for 16b4x ISA processor
+		for specific features, check the corresponding docs in parentheses
+
+	[OVERVIEW:SYSTEM_ORGANIZATION]
+
+		The base of all components is Substrate (substrate.txt) motherboard, defining layout and physical connections 
+
+		System control module - Catalyst (catalyst.txt and substrate.txt) is tightly integrated with specific Substrate, it is responsible for 
+			- providing unified RAM and IO interface regardless of physical connection 
+			- negotiating IO layout of directly connected devices
+			- managing interrupts
+			- managing power 
+			- interprocessor communication
+		The software interface of Catalyst is provided in catalyst.txt
+		 Catalyst is required to work hardware-wise and instruction-wise with all 16b4x ISA implementations
+		  but the software interface may change 
+		  meaning that it is possible to freely connect any 16b4x ISA implementation with any Catalyst version 
+		  the only thing that needs to be matched is software, version of which can be determined by reading specific control registers
+		With that in mind, the interface may change in the future, but it MUST be done in a way providing full backwards compatibility on both sides
+
+		Currently the only physical implementation of Catalyst is Substrate board, documentation of which can be found in substrate.txt
+
+		16b4x ISA (isa.txt) processors are connected to Catalyst
+			all microarchitecture variants are required to work with all Catalyst implementations
+			all microarchitecture variants are required to support all software
+
+		For current 16b4x implementations see ./microarchitectures/list.txt
+
+		On the software level, there are
+			Assembler (Synthesizing ASseMbler, interface documentation available with "sasm -h")
+			Simulator (COmbustion SImulator, interface documentation available with "cosi -h")
+			Operating System (currently, no version is available)
+
+[SPECIFIC_VERSIONS]
+	[SPECIFIC_VERSIONS:SUBSTRATE]
+		[SPECIFIC_VERSIONS:SUBSTRATE:S0V0]
+			Substrate 0.0 (S0V0) uses C0V0 as both hardware and software interface
+			it is tailored for Tang Nano 9k but other boards/FPGAs can be used, provided that the physical connections and layout are properly modified
+
+			specific features include:
+				- 1x 16b4x processor
+				- 1x RAM controller Water (water.txt, HW version 0.0) 
+				- 1x Video Card ???
+				- 1x Flash controller Amber (amber.txt, HW version 0.0), containing init code
+				- 2x 4bit SPI controllers Thymine (thymine.txt, HW version 0v0)
+				- 8x LEDs
+				- 4x board config switches
+
+			the device id assignment is:
+				0x00 - catalyst
+				0x01 - external LEDs 
+				0x02 - board config switches
+				0x03 - video card
+				0x04 - memory controller
+				0x05 - flash controller 
+				0x06 - spi controller 0 
+				0x07 - spi controller 1 

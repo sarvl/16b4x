@@ -1,0 +1,19 @@
+;check whether ret works 
+
+	jmp 	func
+
+return:
+	mov 	R0, 0x14
+	mwr 	0x00, R0
+	hlt
+
+func:	
+	mov 	R0, 0x12
+	mwr 	0x00, R0
+
+	mov 	R0, return
+	psh 	R0
+
+	ret
+
+	hlt

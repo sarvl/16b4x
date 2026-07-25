@@ -1,2 +1,2 @@
-sub R0, 0
-sub R0, R1
+add R0, 1
+add R0, R1

@@ -1,0 +1,8 @@
+;check whether LC works with reg
+	
+	mov 	R1, 0x12
+	xwr 	LC, R1
+	xrd 	R0, LC
+
+	mwr 	0x00, R0
+	hlt

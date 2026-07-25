@@ -1,1 +1,5 @@
-cal R0
+lop 0
+lop {0}
+lop lab
+lop #def
+lop $var

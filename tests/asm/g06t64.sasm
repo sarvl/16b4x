@@ -1,0 +1,18 @@
+; check all combinations for MZZ 
+	
+%assign $fl   0
+%assign $addr 1000
+%rps 16
+	xwr 	FL, $fl
+	%assign $fl {$fl 1 +}
+
+	mov 	R0, 0
+	mov	 	R1, 1
+	mzz 	R0, R1
+
+	xwr 	UI, {$addr 8 > 0xFF &}
+	mwr 	{$addr 0xFF &}, R0
+	%assign $addr {$addr 1 +}	
+%rpe
+
+	hlt

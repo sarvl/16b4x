@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <cstdint>
+
 #include "top/gen_utils/log.h"
 #include "top/utils.h"
 
@@ -130,7 +132,7 @@ int evaluate_const_expr(
 			 ARGS2\
 			 stack.emplace_back(a op b);
 			
-			int a = 0, b = 0;
+			uint16_t a = 0, b = 0;
 			switch(tokens[tid].val)
 			{
 			case '+': OP2(+) ; break;
@@ -165,13 +167,13 @@ int evaluate_const_expr(
 			case '<': 
 				ARGS2
 				if(b >= 16) a = 0;
-				else        a <<= b;
+				else        a = a << b;
 				stack.emplace_back(a);
 				break;
 			case '>':
 				ARGS2
 				if(b >= 16) a = 0;
-				else        a >>= b;
+				else        a = a >> b;
 				stack.emplace_back(a);
 				break;
 			case '$': 

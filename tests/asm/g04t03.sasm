@@ -1,0 +1,18 @@
+;check whether SRD works 
+
+	xwr 	SP, 0x00
+
+	mov 	R0, 0x12
+	psh 	R0 
+
+	xwr 	UI, 0x12
+	mov 	R0, 0x34
+	psh 	R0 
+
+	srd 	R6, 0x00
+	srd 	R7, 0x01
+
+	mwr 	0x00, R6
+	mwr 	0x01, R7
+
+	hlt

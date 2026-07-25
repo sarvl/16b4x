@@ -1,4 +1,6 @@
 swr IP,R0  
+swr R0,R0  
+swr lab,R0  
 
 swr 0,0
 swr 0,IP

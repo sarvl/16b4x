@@ -1,1 +1,2 @@
-ret
+shr R0, 1
+shr R0, R1

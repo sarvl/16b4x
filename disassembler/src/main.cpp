@@ -43,15 +43,15 @@ int main(int const argc, char const* const argv[])
 			|| (instr[3] = getchar()) == EOF
 			||  instr[3] == '\n')
 			{
-				Log::error("line does not contain full instruction, aborting");
-				return -1;	
+				Log::error("line does not contain full instruction");
+				continue;
 			}
 
 			if((instr[4] = getchar()) != EOF
 			&&  instr[4] != '\n')
 			{
-				Log::error("line contains too many characters, aborting");
-				return -2;
+				Log::error("line contains too many characters");
+				continue;
 			}
 
 			int const parts[4] = {
@@ -65,8 +65,8 @@ int main(int const argc, char const* const argv[])
 			|| -1 == parts[2]
 			|| -1 == parts[3])
 			{
-				Log::error("line contains character that is not hexadecimal digit, aborting");
-				return -3;
+				Log::error("line contains character that is not hexadecimal digit");
+				continue;
 			}
 
 			unsigned const instruction = 0
@@ -94,7 +94,7 @@ int main(int const argc, char const* const argv[])
 	int off = 0;
 	while(off < size)
 	{
-		if(off + 5 > size
+		if(off + 4 > size
 		|| data[off + 0] == '\n'
 		|| data[off + 1] == '\n'
 		|| data[off + 2] == '\n'
@@ -110,7 +110,8 @@ int main(int const argc, char const* const argv[])
 			(void)File::destroy(file);
 			return -2;
 		}
-		if(data[off + 4] != '\n')
+		if(data[off + 4] != '\n'
+		&& off + 4 < size)
 		{
 			Log::error(
 				"line contains too many characters, aborting",

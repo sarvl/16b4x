@@ -1,0 +1,13 @@
+;ensure that jump between instruction and xwr works properly
+;prevents possible cheat by uarch of always merging xwr and successive instr
+
+	nop
+	jmp 	skip
+	
+	xwr 	UI, 0x12
+skip:
+	mov 	R0, 0x34
+
+	mwr 	0x00, R0
+
+	hlt

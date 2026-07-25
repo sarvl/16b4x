@@ -1,0 +1,26 @@
+;test not
+
+%assign $addr {0x1000 1 -}
+
+%assign $iter 0
+%assign $iter {$iter 1 +}
+
+%assign $b 0 
+%rps 70
+	%assign $b {$b 1 + 7 *}
+
+	%assign $addr {$addr 1 +}
+
+	xwr 	UI, {$b 8 > 0xFF &}
+	mov 	R0, {$b 0xFF &}
+
+	not 	R0
+
+	xrd 	R0, FL
+	and 	R0, 0b1001
+
+	xwr 	UI, {$addr 8 > 0xFF &} 
+	mwr 	{$addr 0xFF &}, R0	
+%rpe 
+
+	hlt

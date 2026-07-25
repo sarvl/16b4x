@@ -1,2 +1,2 @@
-mov R0, 0
-mov R0, R0
+mov R0, 1
+mov R0, R1

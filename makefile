@@ -11,4 +11,10 @@ fost: bogus
 gen: bogus 
 	@$(MAKE) -C ./tests/generator/ $(if ${remake}, remake, gen)
 
+
+
+tests: bogus
+	@./tests/generator/gen
+
+
 bogus:

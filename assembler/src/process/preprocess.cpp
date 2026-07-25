@@ -281,6 +281,22 @@ void preprocess(
 				address = to_get_to;
 				break;
 			}
+			case org:
+			{
+				std::string_view const file_name = tokens[tid].file_name;
+				int              const line_num  = tokens[tid].line_num;
+				output.emplace_back(tokens[tid]);
+				tid++;
+				int const to_get_to = get_const_val(tokens, variables, defines, tid);
+				output.emplace_back(t_Token::num, to_get_to, tokens[tid - 1].file_name, tokens[tid - 1].line_num);
+				
+				if(to_get_to < address)
+					Log::warning("desired address ("s + std::to_string(to_get_to) + ") is smaller than current address ("s + std::to_string(address) + "), this might be an error", 
+					file_name, line_num);
+
+				address = to_get_to;
+				break;
+			}
 			case alg:
 			{
 				std::string_view const file_name = tokens[tid].file_name;

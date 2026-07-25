@@ -1,0 +1,22 @@
+;check whether nested procedure calls work
+
+	cal 	func
+
+
+	mwr 	0x00, R0
+	hlt
+
+func:
+	mov 	R0, 0x14
+
+	cal  	func2
+
+	ret
+
+	hlt
+
+func2:
+	mov 	R0, 0x16
+
+	ret
+	hlt

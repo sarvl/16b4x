@@ -14,9 +14,8 @@ int main()
 	if(-1 == File::create_error_handled(&file_list, "./tests/test_groups.txt"))
 		return -1;
 
-
 	std::string commands[] = {
-		"./sasm ./tests/asm/g00t00.asm -o ./tests/bin/g00t00.bin\n",
+		"./sasm ./tests/asm/g00t00.sasm -o ./tests/bin/g00t00.bin\n",
 		"./cosi ./tests/bin/g00t00.bin\n",
 		"mv dump.txt ./tests/out/g00t00.out\n"
 	};
@@ -31,14 +30,14 @@ int main()
 		char const* const cur_data = file_list.data + test_group * 10;
 		printf("\033[1;38;5;55m%.7s\033[0m\n", cur_data);
 
-		commands[0][20] = test_group / 10 + '0';
-		commands[0][21] = test_group % 10 + '0';
-		commands[0][46] = test_group / 10 + '0';
-		commands[0][47] = test_group % 10 + '0';
-		commands[1][20] = test_group / 10 + '0';
-		commands[1][21] = test_group % 10 + '0';
-		commands[2][25] = test_group / 10 + '0';
-		commands[2][26] = test_group % 10 + '0';
+		commands[0][20] = cur_data[1];
+		commands[0][21] = cur_data[2];
+		commands[0][47] = cur_data[1];
+		commands[0][48] = cur_data[2];
+		commands[1][20] = cur_data[1];
+		commands[1][21] = cur_data[2];
+		commands[2][25] = cur_data[1];
+		commands[2][26] = cur_data[2];
 
 
 		int test_num = 0;
@@ -50,8 +49,8 @@ int main()
 		{
 			commands[0][23] = test_num / 10 + '0';
 			commands[0][24] = test_num % 10 + '0';
-			commands[0][49] = test_num / 10 + '0';
-			commands[0][50] = test_num % 10 + '0';
+			commands[0][50] = test_num / 10 + '0';
+			commands[0][51] = test_num % 10 + '0';
 			commands[1][23] = test_num / 10 + '0';
 			commands[1][24] = test_num % 10 + '0';
 			commands[2][28] = test_num / 10 + '0';

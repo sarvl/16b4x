@@ -1,4 +1,10 @@
-fls IP
+prf IP
 
-fls 
-fls R0 R0
+prf 
+prf R0 R0
+
+prf 0
+prf {0}
+prf lab
+prf #def
+prf $var

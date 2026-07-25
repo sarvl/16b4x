@@ -1,0 +1,10 @@
+;check IP reading
+
+	nop
+	nop
+	nop
+
+	xrd 	R0, IP 
+	mwr 	0, R0
+
+	hlt

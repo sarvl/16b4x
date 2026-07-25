@@ -274,7 +274,6 @@ void verify(
 		   && tokens[tid].line_num == cur_line_num)\
 		  	tid++;
 
-	int address = 0;
 	int tid = 0;
 	//2B tokens is unlikely
 	int const size = tokens.size();
@@ -321,8 +320,8 @@ void verify(
 				"fi","ri","d ","i ","  ","  ",
 			//	 cas, inf, war, err  tof, isa
 				"vs","s ","s ","s ","x ","a ",
-			//	 sam  cei  tst
-				"xx","i ","x "
+			//	 sam  cei  tst, org
+				"xx","i ","x ", "i "
 				};
 
 			const char* pattern = pattern_table[tokens[tid].val];
@@ -592,16 +591,16 @@ void verify(
 			 * but ' ' indicates that no more need to be parsed
 			 */
 			constexpr static char const* const pattern_table[] = {
-			//	add, and, ann, cal, cmp, crd, cwr, dvu,
-				"ro","ro","ro","o ","ro","ra","ar","rr",
-			//  dvs, fls, hlt, int, irt, jmp, mls, mlu, 
-				"rr","o ","  ","i ","  ","v ","ro","ro",
+			//	add, and, ann, cal, cmp, crd, cwr, dvs,
+				"ro","ro","rr","o ","ro","ra","ar","rr",
+			//  dvu, hlt, int, irt, jmp, lop, mlu, mls, 
+				"rr","  ","i ","  ","v ","v ","ro","ro",
 			//  mov, mrd, mwr, neg, nop, not, orr, pop, 
 				"ro","ro","or","r ","  ","r ","ro","r ",
 			//	prd, prf, psh, pwr, ret, rng, shl, shr, 
-				"ra","o ","r ","ar","  ","r ","ro","ro",
+				"ra","r ","r ","ar","  ","r ","ro","ro",
 			//	srd, sub, swr, tst, xor, xrd, xwr,
-				"ro","ro","or","ro","ro","rx","xo",
+				"ri","ro","ir","ro","ro","rx","xo",
 
 			//	jaa, jbe, jbz, jcc, jae, jaz, jge, jgz, 
 				"v ","v ","v ","v ","v ","v ","v ","v ",
@@ -627,7 +626,6 @@ void verify(
 			
 			auto const ins = static_cast<t_Instruction_Id::Type>(tokens[tid].val);
 			const char* pattern = pattern_table[tokens[tid].val];
-			address++;
 
 			int const first_line = tokens[tid].line_num;
 
@@ -682,7 +680,7 @@ void verify(
 					if(t_Token::ext == tokens[tid].type) 
 					{
 						if(t_Instruction_Id::ixrd == ins
-						&& tokens[tid].val == 1) //UI
+						&& tokens[tid].val == 2) //UI
 						{
 							Log::error("UI cannot be read from", tokens[tid].file_name, tokens[tid].line_num);
 							tid++;

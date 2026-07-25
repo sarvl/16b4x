@@ -1,0 +1,528 @@
+;this is a sample implementation of an OS
+;the features here might not be fully functional *yet*  but they demonstrate how the entire ISA is supposed to cooperate to create mulitiuser environment
+
+;the address map created here is:
+;[0x0000 ; 0x7FFF] - program 
+;[0x8000 ; 0x88
+
+	; check if catalyst works 
+	xwr 	UI, 0x01
+	mov 	R0, 0x01
+	pwr 	0x00, R0
+	prd 	R1, 0x00
+
+	;if version is 0x0000 then does not work
+	cmp 	R1, 0x00
+	jne 	.>
+	hlt
+.,
+
+; start by reading relevant data from the catalyst
+
+	;  memory
+	xwr 	UI, 0x01
+	mov 	R0, 0x02
+	pwr 	0x00, R0
+	
+	prd 	R0, 0x00
+
+	; put it into substrate info reg 0
+	xwr 	UI, 0x01
+	mov 	R1, 0x10
+	cwr 	R1, R0
+
+
+; read the partition table from the drive
+; for now, use this interface as it should work always
+; only first partition is readable
+; see storage_format.txt for details on the table format
+	
+	;get type
+	xwr 	UI, 0x07
+	mov 	R0, 0xD0
+	pwr 	0x0E, R0
+	prd 	R1, 0x0F
+	
+	;if type is not raw, halt 
+	cmp 	R1, 0x01
+	jee 	.>
+	hlt
+.,
+	
+	;get size 
+	add 	R0, 0x07	
+	pwr 	0x0E, R0
+	prd 	R0, 0x0F
+
+	;if 0, exit
+	cmp 	R0, 0x00
+	jne 	.>
+	hlt
+.,
+
+	;limit the size to be read to 16
+	mov 	R1, 16
+	cmp 	R0, 16
+	maa 	R0, R1
+
+	;copy data to upper half of VRAM
+	;each frame is 2kiW = 2048 words
+	;2048 = 2**11
+	shl 	R0, 11
+	xwr 	LC, R0
+
+	;disk addr
+	xwr 	UI, 0x08
+	mov 	R0, 0x00
+	;mem dest addr
+	xwr 	UI, 0x80
+	mov 	R1, 0x00
+
+.,
+	pwr 	0x0E, R0
+	prd 	R7, 0x0F
+	mwr 	R1, R7
+
+	add 	R0, 1
+	add 	R1, 1
+	lop 	.<
+
+	xwr 	UI, 0xFF
+	xwr 	SP, 0x00
+
+	; reload IHT
+	mov 	R0, 0b01
+	cwr 	0x0F, R0
+
+	; jump to OS code
+	xwr 	UI, 0x80
+	xwr 	IP, 0x00
+
+%adr 0x100
+IHT:
+%rps 8
+	%dw 	{ISR_INVALID}        ;entry   0 to   7
+%rpe
+	%dw 	{ISR_INT_PGF}        ;entry   8
+	%dw 	{ISR_INT_PRV}        ;entry   9
+	%dw 	{ISR_INT_PEV}        ;entry  10
+	%dw 	{ISR_INT_INS}        ;entry  11
+	%dw 	{ISR_INT_INA}        ;entry  12
+%rps 19
+	%dw 	{ISR_INVALID}        ;entry  13 to  31
+%rpe
+	%dw 	{ISR_INT_TMR}        ;entry  32
+	%dw 	{ISR_INT_DIV}        ;entry  33
+%rps 30
+	%dw 	{ISR_INVALID}        ;entry  34 to  64
+%rpe
+	%dw 	{ISR_IO_CATALYST }   ;entry  64        io id 0
+	%dw 	{ISR_IO_LED      }   ;entry  65        io id 1 
+	%dw 	{ISR_IO_BOARDCONF}   ;entry  66        io id 2 
+	%dw 	{ISR_IO_VIDEO    }   ;entry  67        io id 3 
+	%dw 	{ISR_IO_MEMORY   }   ;entry  68        io id 4 
+	%dw 	{ISR_IO_FLASH    }   ;entry  69        io id 5 
+	%dw 	{ISR_IO_SPI_0    }   ;entry  70        io id 6 
+	%dw 	{ISR_IO_SPI_1    }   ;entry  71        io id 7 
+%rps 56
+	%dw 	{ISR_INVALID}        ;entry  72 to 127
+%rpe
+	%dw 	{ISR_SW_EXIT}        ;entry 128        sw id 0
+	%dw 	{ISR_SW_PRINT}       ;entry 129        sw id 1
+%rps 126
+	%dw 	{ISR_INVALID}        ;entry 130 to 256
+%rpe
+
+	
+;disk table is created here
+%adr 0x7C0
+;disk info
+%adr 0x7C1 
+	%dw 0xAA55
+%adr 0x7CF 
+	%dw 0x0001
+
+;partition 0
+%adr 0x7D0
+	%dw 0x0001
+%adr 0x7D7
+	%dw 0x0001
+%adr 0x7DF
+	%dw 0x0010
+
+;partition 1 
+%adr 0x7E0
+	%dw 0x0001
+%adr 0x7E7
+	%dw 0x0011
+%adr 0x7EF
+	%dw 0x0001
+
+;partition 2 
+%adr 0x7F0
+	%dw 0x0001
+%adr 0x7F7
+	%dw 0x0012
+%adr 0x7FF
+	%dw 0x0001
+
+; no more entries
+%adr 0x800
+
+%org 0x8000
+kernel:
+.start:
+	
+	; initialize interrupts somehow here but ignore this problem for now 
+
+	; initialize virtual memory to include proper memory map 
+	; kernel has maps everywhere
+	xwr 	UI, 0b10011100
+	mov 	R1, 0b00000000
+
+	xwr 	UI, {pt0 8 > 0xFF &}
+	mov 	R0, {pt0 0 > 0xFF &}
+
+	xwr 	LC, 32
+.,
+	mwr 	R0, R1
+	add 	R0, 1
+	add 	R1, 1
+	lop 	.<
+
+	; initialize the screen driver (not available yet)
+
+	; initialize disk driver 
+	xwr 	UI, {driver_disk.init 8 > 0xFF &}
+	mov 	R0, {driver_disk.init 0 > 0xFF &}
+	cal 	R0
+	
+	; currently program 0 is in partition 1 
+	;           program 1 is in partition 2 
+	; load program 0 to 0x0000
+	; load program 1 to 0x2000
+	; set PT such that they both think they are at 0x0000
+
+	xwr 	UI, 0x00
+	mov 	R0, 0x00 
+	mov 	R1, 1
+	xwr 	UI, 0xF0
+	mov 	R2, 0x00
+	xwr 	UI, {pt1 8 > 0xFF &}
+	mov 	R3, {pt1 0 > 0xFF &}
+	cal 	.create_process
+
+	xwr 	UI, 0x20
+	mov 	R0, 0x00 
+	mov 	R1, 2
+	xwr 	UI, 0xF0
+	mov 	R2, 0x08
+	xwr 	UI, {pt2 8 > 0xFF &}
+	mov 	R3, {pt2 0 > 0xFF &}
+	cal 	.create_process
+
+	;disable interrupt and leave
+	crd 	R7, 0x0E
+	xwr 	UI, 0xFF
+	and 	R7, 0xFE
+	cwr 	0x0E, R7
+	hlt
+
+; physical memory destination in R0
+; partition to get it from in R1
+; save return registers in R2
+; page table address in R3 
+.create_process:
+	psh 	R2
+
+	psh 	R3
+	psh 	R0
+
+	psh 	R3
+	psh 	R0
+	
+	mov 	R2, 1
+	;load from disk
+	xwr 	UI, {driver_disk.copy_partition_to_mem 8 > 0xFF &}
+	mov 	R7, {driver_disk.copy_partition_to_mem 0 > 0xFF &}
+	cal 	R7
+	
+	pop 	R4
+	;create pt
+	pop 	R3
+	; first page maps to physical mem
+	shr 	R4, 11
+	xwr 	UI, 0b10011100
+	add 	R4, 0b00000000
+
+	mwr 	R3, R4
+	add 	R3, 1
+	;next 15 map to nothing
+	mov 	R4, 0
+	xwr 	LC, 15
+.,
+	mwr 	R3, R4
+	add 	R3, 1
+	lop 	.<
+
+	;next 16 map to kernel
+	xwr 	UI, 0b11011100
+	mov 	R4, 0b00010000
+
+	xwr 	LC, 16
+.,
+	mwr 	R3, R4
+	add 	R3, 1
+	add 	R4, 1
+	lop 	.<
+
+	pop 	R0
+
+	;set pid
+	cwr 	0x00, R0
+
+	;set tlb 
+	pop 	R7
+	cwr 	0x01, R7
+	mov 	R7, 0b10
+	cwr 	0x0F, R7
+
+	;save SP
+	xrd 	R1, SP
+	xwr 	UI, {scratchpad.sp 8 > 0xFF &}
+	mwr 	{scratchpad.sp 0 > 0xFF &}, R1
+	;set to new 
+	xwr 	UI, 0x80
+	xwr 	SP, 0x00
+
+	xwr 	UI, {rt 8 > 0xFF &}
+	mov 	R7, {rt 0 > 0xFF &}
+	xwr 	UI, {scratchpad.ret 8 > 0xFF &}
+	mwr 	{scratchpad.ret 0 > 0xFF &}, R7
+
+	;use IRT to jump to next instruction
+	;set the IP
+	mov 	R7, 0
+	cwr 	0x11, R7
+	;set privileges to none
+	cwr 	0x12, R7
+	cwr 	0x13, R7
+	;abuse instruction
+	irt
+rt:
+
+	xwr 	LC, R7
+
+	; reset tlb
+	xwr 	UI, {pt0 8 > 0xFF &}
+	mov 	R7, {pt0 0 > 0xFF &}
+	cwr 	0x01, R7
+	mov 	R7, 0b10
+	cwr 	0x0F, R7
+
+	xwr 	UI, {scratchpad.sp 8 > 0xFF &}
+	mrd 	R7, {scratchpad.sp 0 > 0xFF &}
+	xwr 	SP, R7
+
+	pop 	R7
+
+	mwr 	R7, R0
+	add 	R7, 1
+	mwr 	R7, R1
+	add 	R7, 1
+	mwr 	R7, R2
+	add 	R7, 1
+	mwr 	R7, R3
+	add 	R7, 1
+	mwr 	R7, R4
+	add 	R7, 1
+	mwr 	R7, R5
+	add 	R7, 1
+	mwr 	R7, R6
+	add 	R7, 1
+
+	mov 	R6, R7
+	xrd 	R7, LC
+	mwr 	R6, R7
+
+	ret
+
+.end:
+
+%adr 0x9000
+ISR:
+ISR_INVALID:
+	;set error on LEDs 
+	xwr 	UI, 0x02
+	mov 	R0, 0xFF
+	pwr 	0x00, R0
+	hlt
+;these interrupts should never occur for now 
+ISR_INT_PGF:
+ISR_INT_PRV:
+ISR_INT_PEV:
+ISR_INT_INS:
+ISR_INT_INA:
+ISR_INT_TMR:
+ISR_INT_DIV:
+ISR_IO_CATALYST:
+ISR_IO_LED:
+ISR_IO_BOARDCONF:
+ISR_IO_VIDEO:
+ISR_IO_MEMORY:
+ISR_IO_FLASH:
+ISR_IO_SPI_0:
+ISR_IO_SPI_1:
+ISR_SW_PRINT:
+	;set error on LEDs 
+	xwr 	UI, 0x02
+	mov 	R0, 0xFE
+	pwr 	0x00, R0
+	irt
+
+ISR_SW_EXIT:
+	;set next instr address
+	xwr 	UI, {scratchpad.ret 8 > 0xFF &}
+	mrd 	R7, {scratchpad.ret 0 > 0xFF &}
+	cwr 	0x11, R7
+	;set privileges to max
+	xwr 	UI, 0xFF
+	mov 	R7, 0xFF
+	cwr 	0x12, R7
+	cwr 	0x13, R7
+	;return
+	irt
+	
+
+
+%adr 0xEF00
+driver_disk:
+.init:
+	;read partition table and put it simplified into memory
+	xwr 	UI, 0x07
+	mov 	R0, 0xD0
+
+	xwr 	UI, {driver_disk.data 8 > 0xFF &}
+	mov 	R7, {driver_disk.data 0 > 0xFF &}
+
+	xwr 	LC, 3
+
+.init_loop:
+	;first entry
+	;type
+	pwr 	0x0E, R0
+	prd 	R1, 0x0F
+	mwr 	R7, R1
+
+	;start addr
+	add 	R0, 7
+	add 	R7, 1
+
+	pwr 	0x0E, R0
+	prd 	R1, 0x0F
+
+	shl 	R1, 11
+
+	mwr 	R7, R1
+
+	;size
+	add 	R0, 8
+	add 	R7, 1
+
+	pwr 	0x0E, R0
+	prd 	R1, 0x0F
+
+	shl 	R1, 11
+
+	mwr 	R7, R1
+
+	;padding
+	add 	R0, 1
+	add 	R7, 2 
+
+	lop 	.init_loop
+
+	ret
+
+
+;takes mem dest in R0
+;takes partition id in R1
+;takes frame count in R2
+.copy_partition_to_mem:
+	
+	;convert partition id to start addr
+	shl 	R1, 2
+	xwr 	UI, {driver_disk.data 8 > 0xFF &}
+	add 	R1, {driver_disk.data 0 > 0xFF & 1 +}
+	mrd 	R1, R1
+
+	shl 	R2, 11
+	xwr 	LC, R2
+..
+	pwr 	0x0E, R1
+	prd 	R2, 0x0F
+	mwr 	R0, R2
+
+	add 	R0, 1
+	add 	R1, 1
+
+	lop 	.<
+
+	ret
+
+
+%adr 0xEFC0
+.data:
+;type - start ADDRESS - size in WORDS - padding
+.data_partition_0:
+	%dw 0x0000
+	%dw 0x0000
+	%dw 0x0000
+	%dw 0x0000
+.data_partition_1:
+	%dw 0x0000
+	%dw 0x0000
+	%dw 0x0000
+	%dw 0x0000
+.data_partition_2:
+	%dw 0x0000
+	%dw 0x0000
+	%dw 0x0000
+	%dw 0x0000
+
+%adr 0xFF00 
+;initialize to reflect regular memory
+pt0:
+%adr 0xFF20 
+pt1:
+%adr 0xFF40 
+pt2:
+%adr 0xFFF0
+scratchpad:
+.sp:
+%dw 0x0000
+.ret:
+%dw 0x0000
+%adr 0xFFFF
+%dw 0x0000
+
+%org 0x0000
+prog_0:
+.start:
+	mov 	R0, 0x11
+	mrd 	R1, 0x00
+	int 	0x80
+
+%adr 0x0800
+
+
+%org 0x0000
+prog_1:
+.start:
+	mov 	R0, 0x22
+	mrd 	R1, 0x00
+	int 	0x80
+
+%adr 0x0800
+
+

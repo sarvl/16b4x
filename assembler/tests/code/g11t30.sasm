@@ -4,14 +4,364 @@ mcc {0} ,R0
 mcc #def,R0
 mcc $var,R0
 mcc lab ,R0
-
 mcc R0,0   
 mcc R0,IP  
 mcc R0,{0} 
 mcc R0,#def
 mcc R0,$var
 mcc R0,lab 
-
 mcc R0,R0,R0
 mcc R0
 mcc 
+
+maa 0   ,R0
+maa IP  ,R0
+maa {0} ,R0
+maa #def,R0
+maa $var,R0
+maa lab ,R0
+maa R0,0   
+maa R0,IP  
+maa R0,{0} 
+maa R0,#def
+maa R0,$var
+maa R0,lab 
+maa R0,R0,R0
+maa R0
+maa 
+
+mbe 0   ,R0
+mbe IP  ,R0
+mbe {0} ,R0
+mbe #def,R0
+mbe $var,R0
+mbe lab ,R0
+mbe R0,0   
+mbe R0,IP  
+mbe R0,{0} 
+mbe R0,#def
+mbe R0,$var
+mbe R0,lab 
+mbe R0,R0,R0
+mbe R0
+mbe 
+
+mbz 0   ,R0
+mbz IP  ,R0
+mbz {0} ,R0
+mbz #def,R0
+mbz $var,R0
+mbz lab ,R0
+mbz R0,0   
+mbz R0,IP  
+mbz R0,{0} 
+mbz R0,#def
+mbz R0,$var
+mbz R0,lab 
+mbz R0,R0,R0
+mbz R0
+mbz 
+
+mcc 0   ,R0
+mcc IP  ,R0
+mcc {0} ,R0
+mcc #def,R0
+mcc $var,R0
+mcc lab ,R0
+mcc R0,0   
+mcc R0,IP  
+mcc R0,{0} 
+mcc R0,#def
+mcc R0,$var
+mcc R0,lab 
+mcc R0,R0,R0
+mcc R0
+mcc 
+
+mae 0   ,R0
+mae IP  ,R0
+mae {0} ,R0
+mae #def,R0
+mae $var,R0
+mae lab ,R0
+mae R0,0   
+mae R0,IP  
+mae R0,{0} 
+mae R0,#def
+mae R0,$var
+mae R0,lab 
+mae R0,R0,R0
+mae R0
+mae 
+
+maz 0   ,R0
+maz IP  ,R0
+maz {0} ,R0
+maz #def,R0
+maz $var,R0
+maz lab ,R0
+maz R0,0   
+maz R0,IP  
+maz R0,{0} 
+maz R0,#def
+maz R0,$var
+maz R0,lab 
+maz R0,R0,R0
+maz R0
+maz 
+
+mge 0   ,R0
+mge IP  ,R0
+mge {0} ,R0
+mge #def,R0
+mge $var,R0
+mge lab ,R0
+mge R0,0   
+mge R0,IP  
+mge R0,{0} 
+mge R0,#def
+mge R0,$var
+mge R0,lab 
+mge R0,R0,R0
+mge R0
+mge 
+
+mgz 0   ,R0
+mgz IP  ,R0
+mgz {0} ,R0
+mgz #def,R0
+mgz $var,R0
+mgz lab ,R0
+mgz R0,0   
+mgz R0,IP  
+mgz R0,{0} 
+mgz R0,#def
+mgz R0,$var
+mgz R0,lab 
+mgz R0,R0,R0
+mgz R0
+mgz 
+
+mgg 0   ,R0
+mgg IP  ,R0
+mgg {0} ,R0
+mgg #def,R0
+mgg $var,R0
+mgg lab ,R0
+mgg R0,0   
+mgg R0,IP  
+mgg R0,{0} 
+mgg R0,#def
+mgg R0,$var
+mgg R0,lab 
+mgg R0,R0,R0
+mgg R0
+mgg 
+
+mle 0   ,R0
+mle IP  ,R0
+mle {0} ,R0
+mle #def,R0
+mle $var,R0
+mle lab ,R0
+mle R0,0   
+mle R0,IP  
+mle R0,{0} 
+mle R0,#def
+mle R0,$var
+mle R0,lab 
+mle R0,R0,R0
+mle R0
+mle 
+
+mlz 0   ,R0
+mlz IP  ,R0
+mlz {0} ,R0
+mlz #def,R0
+mlz $var,R0
+mlz lab ,R0
+mlz R0,0   
+mlz R0,IP  
+mlz R0,{0} 
+mlz R0,#def
+mlz R0,$var
+mlz R0,lab 
+mlz R0,R0,R0
+mlz R0
+mlz 
+
+mll 0   ,R0
+mll IP  ,R0
+mll {0} ,R0
+mll #def,R0
+mll $var,R0
+mll lab ,R0
+mll R0,0   
+mll R0,IP  
+mll R0,{0} 
+mll R0,#def
+mll R0,$var
+mll R0,lab 
+mll R0,R0,R0
+mll R0
+mll 
+
+mnc 0   ,R0
+mnc IP  ,R0
+mnc {0} ,R0
+mnc #def,R0
+mnc $var,R0
+mnc lab ,R0
+mnc R0,0   
+mnc R0,IP  
+mnc R0,{0} 
+mnc R0,#def
+mnc R0,$var
+mnc R0,lab 
+mnc R0,R0,R0
+mnc R0
+mnc 
+
+mbb 0   ,R0
+mbb IP  ,R0
+mbb {0} ,R0
+mbb #def,R0
+mbb $var,R0
+mbb lab ,R0
+mbb R0,0   
+mbb R0,IP  
+mbb R0,{0} 
+mbb R0,#def
+mbb R0,$var
+mbb R0,lab 
+mbb R0,R0,R0
+mbb R0
+mbb 
+
+mno 0   ,R0
+mno IP  ,R0
+mno {0} ,R0
+mno #def,R0
+mno $var,R0
+mno lab ,R0
+mno R0,0   
+mno R0,IP  
+mno R0,{0} 
+mno R0,#def
+mno R0,$var
+mno R0,lab 
+mno R0,R0,R0
+mno R0
+mno 
+
+mns 0   ,R0
+mns IP  ,R0
+mns {0} ,R0
+mns #def,R0
+mns $var,R0
+mns lab ,R0
+mns R0,0   
+mns R0,IP  
+mns R0,{0} 
+mns R0,#def
+mns R0,$var
+mns R0,lab 
+mns R0,R0,R0
+mns R0
+mns 
+
+mnz 0   ,R0
+mnz IP  ,R0
+mnz {0} ,R0
+mnz #def,R0
+mnz $var,R0
+mnz lab ,R0
+mnz R0,0   
+mnz R0,IP  
+mnz R0,{0} 
+mnz R0,#def
+mnz R0,$var
+mnz R0,lab 
+mnz R0,R0,R0
+mnz R0
+mnz 
+
+mne 0   ,R0
+mne IP  ,R0
+mne {0} ,R0
+mne #def,R0
+mne $var,R0
+mne lab ,R0
+mne R0,0   
+mne R0,IP  
+mne R0,{0} 
+mne R0,#def
+mne R0,$var
+mne R0,lab 
+mne R0,R0,R0
+mne R0
+mne 
+
+moo 0   ,R0
+moo IP  ,R0
+moo {0} ,R0
+moo #def,R0
+moo $var,R0
+moo lab ,R0
+moo R0,0   
+moo R0,IP  
+moo R0,{0} 
+moo R0,#def
+moo R0,$var
+moo R0,lab 
+moo R0,R0,R0
+moo R0
+moo 
+
+mss 0   ,R0
+mss IP  ,R0
+mss {0} ,R0
+mss #def,R0
+mss $var,R0
+mss lab ,R0
+mss R0,0   
+mss R0,IP  
+mss R0,{0} 
+mss R0,#def
+mss R0,$var
+mss R0,lab 
+mss R0,R0,R0
+mss R0
+mss 
+
+mzz 0   ,R0
+mzz IP  ,R0
+mzz {0} ,R0
+mzz #def,R0
+mzz $var,R0
+mzz lab ,R0
+mzz R0,0   
+mzz R0,IP  
+mzz R0,{0} 
+mzz R0,#def
+mzz R0,$var
+mzz R0,lab 
+mzz R0,R0,R0
+mzz R0
+mzz 
+
+mee 0   ,R0
+mee IP  ,R0
+mee {0} ,R0
+mee #def,R0
+mee $var,R0
+mee lab ,R0
+mee R0,0   
+mee R0,IP  
+mee R0,{0} 
+mee R0,#def
+mee R0,$var
+mee R0,lab 
+mee R0,R0,R0
+mee R0
+mee 

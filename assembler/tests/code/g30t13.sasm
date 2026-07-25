@@ -1,2 +1,10 @@
 xwr IP, 0
 xwr IP, R0
+xwr LC, 0
+xwr LC, R0
+xwr UI, 0
+xwr UI, R0
+xwr FL, 0
+xwr FL, R0
+xwr SP, 0
+xwr SP, R0

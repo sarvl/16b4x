@@ -1,0 +1,256 @@
+[TABLE_OF_CONTENTS]
+	[OVERVIEW]
+	[BOOT]
+		[OVERVIEW]
+		[POST]
+		[INIT]
+	[MEMORY]
+	[IO]
+		[OVERVIEW]
+		[INIT]
+		[DISCOVERY]
+		[PORTS]
+		[INTERRUPTS]
+	[COMMANDS]
+		[OVERVIEW]
+		[LIST]
+	[ERROR_CODES]
+
+	To navigate to particular section concatenate sections to one long tag with colons as separators
+	for example to move to PORTS search for [IO:PORTS]
+
+[OVERVIEW]
+	version          : 0.0
+	codename         : C0V0
+	this doc revision: 0
+	
+	This manual describes software interface of system control module - Catalyst
+	For the hardware behavior check specific board documentation (eg substrate.txt)
+
+	All errors are displayed with the set of 6 LEDs, b100000 indicates no detected errors and Catalyst running
+	 the errors are mentioned as needed but the full list can be found in [ERROR_CODES]
+	Later, OS can utilize Catalyst error function to display its own errors in the range b100001 to b111111
+	
+	After POST, CPU may communicate with Catalyst via commands issued using PWR and PRD (isa.txt) 
+	 these commands are mentioned as needed but also are fully described in [COMMANDS]
+
+[BOOT]
+	[BOOT:OVERVIEW]
+		Catalyst module is the one responsible for initialization of hardware - RAM, CPU, and IO
+		As a first step, POST is performed to check for basic functionality errors
+		Then control is passed to CPU which, when ready, asks Catalyst for basic identification info
+		Finally IO can be configured, see [IO:INIT]
+
+	[BOOT:POST]	
+		entries below are listed as "number  name  error code on failure"
+
+		1. Self Test                       ; b000001
+		2. CPU present                     ; b000010
+		3. RAM present                     ; b000011
+		4. RAM RW test                     ; b000100
+		5. Primary Drive present           ; b000101
+		6. Primary Drive R test            ; b000110 
+		7. Primary Drive magic number test ; b000111 
+
+		once POST is complete, the control is transfered to CPU
+
+	[BOOT:INIT]
+		Before the code starts executing, CPU must 
+			1. Request Catalyst version (see [COMMANDS]) and put it into CR x1002
+			2. Copy first page from primary drive to RAM
+		 This job should be generally performed by the microarchitecture internal control
+
+		Then once the control is passed to OS, it can fetch more info about hardware
+		It is advised to store this data into CR registers x1010 to x101F according to isa.txt [REGISTERS:CONTROL:LIST]
+
+[MEMORY]
+	After initial basic checks, the Catalyst does not alter the data and forwards requests/responses directly to/from Water memory controller (water.txt)
+
+	As of now, no configuration is possible, if such configuration ever becomes possible, it will be most likely implemented via IO ports
+
+[IO]
+	[IO:OVERVIEW]
+		IO is set up by Catalyst after IO_INIT request
+			see [IO:INIT]
+
+		Main communication takes place using ports
+			see [IO:PORTS]
+		Rare communication and communication inits use interrupts
+			see [IO:INTERRUPTS]
+
+		Each connected device is assigned unique ID in range 1 to 63 (inclusive)
+		to communicate with device with ID N use ports which have first 6 bits of port address set to that ID
+			for example to communicate with device ID 42 = x2A = b101010, use ports xA800 to xABFF (xA800 + x03FF)
+		ID 0 is assigned to catalyst
+
+		whenever there is reference to "IO port n" this means port address ((ID << 10) | n) NOT port address n
+			eg IO port x12 for IO 42 is port xA812
+
+		First port of a device is always used for basic commands
+		 see [IO:PORTS]
+		
+		basic interfaces are predefined in [IO:PREDEFINED]
+		for more complex devices the driver is needed, see [IO:PORTS] command x0001
+		if a device provides a predefined interface then its specific (driver) interface must not conflict with it
+
+	[IO:INIT]
+		By issuing IO_INIT command, the Catalyst does whatever is necessary to initialize IO
+		After that, some IO devices (depends on interface, see corresponding interface specification) can be plugged in while the system is running, without requiring extra commands
+
+	[IO:DISCOVERY]
+		Catalyst version 0 does not support discovery of IO
+		Instead, all available IO devices have statically assigned ID
+		Exact mapping depends on the system version and should be checked there
+
+	[IO:PORTS]
+		Generally all the communication depends on specific device
+		however each device must implement 3 commands to port 0 of a device
+			command x0000 - invalid 
+			command x0001 - ID request
+				on subsequent reads from that port the device must return a packet of the form
+				 
+				string length ; string
+
+				string is identification array used to uniquely determine a device 
+				   this is to be used by OS to choose apropriate driver
+				this string has to have string length
+				therefore total packet length is string length + 1
+				subsequents parts of string are returned on subsequent reads from that port
+
+				all identification strings should be of the form
+					"manufacturer;device_name;version;unique_id"
+					with semicolons as separators, all other bytes are valid identifiers
+
+				device must
+					1. pad the string with 0 byte such that its length is multiple of 16bits
+					2. put first character in more significant byte of a word
+
+				
+				for example, if the identification string is 
+					"ex;dr;0;1"
+					the proper response to ID request is 
+						x0005 
+						"ex" = x6578 
+						";d" = x3B66 
+						"r;" = x723B
+						"0;" = x303B 
+						"1"0 = x3100
+
+				in case the device can be fully handled with predefined interface, it is valid to return string of length 0
+
+			command x0002 - Interface request
+				on subsequent read the device must return id of predefined interface provided
+				this is supposed to be used when no driver is present for specific device and lowest common denominator is to be used
+					see [IO:PREDEFINED:LIST]
+
+			command x0003 - INT acknowledge
+				acknowledges current interrupt, device must no longer assert it
+			
+
+	[IO:INTERRUPTS]
+
+		Whenever a device with ID requires attention of CPU, it asserts interrupt (specific way to do it depends on substrate version and device)
+		this interrupt is forwarded to CPU with interrupt ID = device ID + 64
+
+		to mark interrupt as handled, issue command INT acknowledge
+
+	[IO:PREDEFINED]
+		[IO:PREDEFINED:LIST]
+			x0000 - invalid/no predefined interface available
+			x0001 - led display
+			x0002 - drive
+
+		[IO:PREDEFINED:LED]
+			IO port x000 
+			commands
+				x0000 - invalid
+				x0001 - ID request
+				x0002 - interface request
+				x0003 - int acknowledge
+
+			IO port x001
+				read : bitmask of available LEDs
+				write: bitmask of new LED status, applies only to available LEDs
+					1 - on
+					0 - off
+
+			no interrupt is ever issued
+
+		[IO:PREDEFINED:DRIVE]
+			IO port x000 
+			commands
+				x0000 - invalid
+				x0001 - ID request
+				x0002 - interface request
+				x0003 - int acknowledge
+
+			IO port x001
+				reserved
+
+			IO port x002
+				read  - read size in words
+				write - set address
+
+			IO port x003
+				read  - read word from address 
+				write - write word to address
+
+
+
+[COMMANDS]	
+	[COMMANDS:OVERVIEW]
+		All commands are sent to P[x0000]
+		High byte is command
+		low byte is potential argument
+		 if command takes no argument, it should be set to 0
+
+
+	[COMMANDS:LIST]
+		x00 - invalid
+		x01 - info fetch
+			on next read returns different data based on argument 
+				x00 - invalid
+				x01 - catalyst version id
+					high byte - major version
+					low byte  - minor version
+				x02 - physical memory size in pages
+		x02 - ERR id 
+			displays error with id 
+		x03 - IO_INIT
+			initialize the IO 
+
+
+[ERROR_CODES]
+
+	b000000 - no power or complete failure
+	b000001 - self check error
+	b000010 - no CPU present
+	b000011 - no memory present
+	b000100 - memory RW error
+	b000101 - no primary drive present
+	b000110 - primary drive read error
+	b000111 - no partition table
+	b001000 - no bootable partition
+	b001001 - 
+	b001010 - 
+	b001011 - 
+	b001100 - 
+	b001101 - 
+	b001110 - 
+	b001111 - 
+	b010000 - 
+	b010001 - 
+	b010010 - 
+	b010011 - 
+	b010100 - 
+	b010101 - 
+	b010110 - 
+	b010111 - 
+	b011000 - 
+	b011001 - 
+	b011010 - 
+	b011011 - 
+	b011100 - 
+	b011101 - 
+	b011110 - 
+	b011111 - 

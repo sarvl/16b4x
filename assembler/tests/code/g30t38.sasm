@@ -1,2 +1,2 @@
-shr R0, 0
-shr R0, R1
+shl R0, 1
+shl R0, R1

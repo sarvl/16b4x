@@ -1,0 +1,10 @@
+;this test checks whether reading from drive is possible
+
+	; check if catalyst works 
+	mov 	R0, 0x00
+	pwr 	0x0E, R0
+	prd 	R0, 0x0F
+
+	mwr 	20, R0
+
+	hlt
