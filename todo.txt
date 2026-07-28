@@ -1,0 +1,44 @@
+this branch will improve expierience of using sasm by providing many QoL features that are missing
+
+todo.txt things done with this branch:
+H H snippet of code in error messages
+H M pseudoinstruction support
+H M instr {expr} reg highlights incorrectly
+H M syntax specification
+H L strings should support escaped characters
+H L anon labels should be more visible
+H L err about '>>' being invalid syntax, specifically
+H L tests for %org
+H L fix sasm help, incorrect options
+M M attribute to turn off warning for instruction and region
+M M dw support for strings
+M M dw support for many values
+M L vim syntax highlight labels with no :
+L M read settings from file
+L L assembler needs a toggle to encode wrx UI automatically
+L L rename define to constant
+L L ., and .. should require or at least allow :
+
+at the end:
+	update documentation
+
+current progress:
+not yet started
+
+pseudoinstructions:
+	nand A B -> and A B ; not A
+	nxor A B -> xor A B ; not A
+	nor  A B -> orr A B ; not A
+	jmp  R   -> xwr IP R
+	hcf      -> mov R7, 0 ; cwr 0x0E, R7; hlt
+	mwi  A B -> mwr A B ; add A 1
+	mwd  A B -> mwr A B ; sub A 1
+	mri  A B -> mrd A B ; add B 1
+	mrd  A B -> mrd A B ; sub B 1
+
+
+additionally:
+	support for ' inside numbers (as separator)
+	lower() and higher() - or some equivalent operatoin
+	verify that using xyz.abc works in expressions
+	very simple implementation of include directive -> dumb paste
