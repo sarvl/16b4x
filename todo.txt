@@ -1,0 +1,7 @@
+this branch is about gathering requirements and eventually implementing compilation of C into sasm using LLVM
+
+todo.txt things done with this branch:
+
+current progress:
+not yet started
+
