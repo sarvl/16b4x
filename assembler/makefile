@@ -1,5 +1,6 @@
 CD := '\033[0m'    #color default 
 CR := '\033[0;31m' #color red
+CC := '\033[0;36m' #color cyan
 CY := '\033[0;33m' #color yellow 
 
 FILES_CMD     := ./out/command_line/input.o ./out/command_line/string_help.o
@@ -10,6 +11,7 @@ FILES_UTIL    := ../utility/out/log.o ../utility/out/file.o
 FILES := ${FILES_LOCAL} ${FILES_UTIL}
 
 debug :=
+noclear :=
 SAN := $(if ${debug}, -g -fsanitize=undefined -fsanitize=address,                  )
 OPT := $(if ${debug}, -Og                                       , -O3 -march=native)
 LTO := $(if ${debug},                                           , -flto            )
@@ -35,8 +37,16 @@ ctags:
 	@ctags src/*.cpp src/*.h src/*/*.cpp src/*/*.h
 
 #              misspell
-assembler sasm sams: clear link
+assembler sasm sams: $(if ${noclear}, ,clear) link
 remake: clean refresh sasm
+
+init:
+	@echo -e ${CC}creating directories${CD}
+	@mkdir -p out/command_line out/process out/types 
+	
+fullclean:
+	@echo -e ${CC}removing all artifacts${CD}
+	@rm -fr out sasm
 
 link: ${FILES}
 	@echo -e ${CR}linking${CD}

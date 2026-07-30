@@ -1,11 +1,13 @@
 CD := '\033[0m'    #color default 
 CR := '\033[0;31m' #color red
+CC := '\033[0;36m' #color cyan
 CY := '\033[0;33m' #color yellow 
 
 FILES_UTIL  := ../../utility/out/log.o ../../utility/out/file.o
 FILES := gen.cpp ${FILES_UTIL}
 
 debug :=
+noclear :=
 SAN := $(if ${debug}, -g -fsanitize=undefined -fsanitize=address,                  )
 OPT := $(if ${debug}, -Og                                       , -O3 -march=native)
 LTO := $(if ${debug},                                           , -flto            )
@@ -26,7 +28,13 @@ refresh:
 clear:
 	@clear
 
-gen: clear link
+init:
+	@true #nothing to do
+	
+fullclean:
+	@rm -f gen
+
+gen: $(if {noclear}, ,clear) link
 	@true # I dont know why but without dummy some bulshit is invoked
 
 remake: clean refresh gen
