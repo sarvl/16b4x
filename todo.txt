@@ -1,4 +1,4 @@
-this branch is about gathering requirements and eventually implementing compilation of C into sasm using LLVM
+Seems like everything is detailed in https://llvm.org/docs/WritingAnLLVMBackend.html
 
 todo.txt things done with this branch:
 
