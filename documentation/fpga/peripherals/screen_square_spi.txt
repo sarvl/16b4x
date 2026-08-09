@@ -39,3 +39,23 @@
 	[INTERRUPTS]
 		The video controller never issues any interrupts
 		
+[INTERNAL]
+	[HIGH_LEVEL]
+		High level driver is implemented as VRAM
+		Whenever low level driver is ready, it forwards data there
+		Due to clocked behavior of change state, it only sends data when driver turns ready
+		Otherwise it accepts input to the VRAM
+
+		It keeps pointers to row and column that are used to retrieve appropriate data
+		They go from all ones to all zeros due to how screen ordering works
+
+	[LOW_LEVEL]
+		Low level driver is implemented as state machine which (in order)
+		1. initializes screen via reset pin
+		2. sends commands with spi-like interface
+		3. waits for data
+		4. sends 8 bits to the screen, goes back to 3
+
+		to reduce number of states in looping, counters like bit_ind and cmd_index are used 
+
+		the delays might be able to get shorter, they were set somewhat by trial and failure
