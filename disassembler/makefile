@@ -24,7 +24,7 @@ clean:
 	@rm -frv out/*.o 
 
 refresh:
-	@touch src/*.cpp src/*.h
+	@touch src/*.cpp 
 
 clear:
 	@clear
