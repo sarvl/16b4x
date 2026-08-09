@@ -157,10 +157,11 @@
 	[IO:PREDEFINED]
 		[IO:PREDEFINED:LIST]
 			x0000 - invalid/no predefined interface available
-			x0001 - led display
-			x0002 - drive
+			x0100 - led display
+			x0101 - vram screen
+			x0200 - drive
 
-		[IO:PREDEFINED:LED]
+		[IO:PREDEFINED:LED_DISPLAY]
 			IO port x000 
 			commands
 				x0000 - invalid
@@ -173,6 +174,45 @@
 				write: bitmask of new LED status, applies only to available LEDs
 					1 - on
 					0 - off
+
+			no interrupt is ever issued
+
+		[IO:PREDEFINED:VRAM_SCREEN]
+			IO port x000 
+			commands
+				x0000 - invalid
+				x0001 - ID request
+				x0002 - interface request
+				x0003 - int acknowledge
+
+			IO port x001
+				read  - read current mode
+				write - set current mode
+					
+					bit meaning:
+					    0 - autoincrement
+						
+						the rest is undefined and should be set to 0
+
+			IO port x002
+				read  - read pixel count
+				        MSB - vertical
+				        LSB - horizontal
+				write - invalid
+
+			IO port x003
+			    read  - read current address from top left
+				        MSB - vertical, is always multiple of 8
+				        LSB - horizontal
+				write - set current address from top left
+				        MSB - vertical, must always be multiple of 8
+				        LSB - horizontal
+
+			IO port x004
+				read  - invalid
+				write - write data 
+				        depending on mode bits, might autoincrement address
+
 
 			no interrupt is ever issued
 
@@ -194,6 +234,7 @@
 			IO port x003
 				read  - read word from address 
 				write - write word to address
+
 
 
 

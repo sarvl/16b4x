@@ -27,6 +27,8 @@ tests/toadd
 
 #impl files in fpga
 fpga/*/impl
+fpga/peripherals/*/impl
+*gprj.user
 
 #on halt, will be rewritten
 fpga/helium/*

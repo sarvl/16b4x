@@ -1,0 +1,41 @@
+[TABLE_OF_CONTENTS]
+	[OVERVIEW]
+	[EXTERNAL]
+		[INTERFACE]
+			[SOFTWARE]
+			[HARDWARE]
+		[INTERUPTS]
+	[INTERNAL]
+		[HIGH_LEVEL]
+		[LOW_LEVEL]
+
+	To navigate to particular section concatenate sections to one long tag with colons as separators
+	for example to move to internal organization of high level controller search for [INTERNAL:HIGH_LEVEL]
+	
+
+[OVERVIEW]
+	This manual describes the interface and internal behavior of video controller
+
+[EXTERNAL]
+	[INTERFACE]
+		[SOFWTARE]
+			The device should use interface from VRAM screen [IO:PREDEFINED:VRAM_SCREEN] 
+			The hardware interface should be adjusted by Catalyst
+
+		[HARDWARE]
+			Hardware interface is composed out of:
+				- input  address      (16bit)
+				- input  data         ( 8bit)
+				- input  write enable ( 1bit)
+				- output ready        ( 1bit)
+				
+			Data is read ONLY when ready is 0 and write enable is 1, otherwise there is NO change in state
+
+			Upper 8 bits of address determine vertical   position, they must always be multiple of 8
+			Lower 8 bits of address determine horizontal position
+
+			Position is counted from top left corner of the screen
+
+	[INTERRUPTS]
+		The video controller never issues any interrupts
+		
