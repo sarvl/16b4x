@@ -1,0 +1,37 @@
+#ignore executables
+cosi
+dasm
+fost
+sasm
+autotest
+gen
+gen_test
+
+#ignore all output directories
+*/out/*
+
+#ignore symbols from assembly
+symbols.txt
+
+#ignore binaries and output in tests
+tests/bin
+tests/out
+assembler/tests/fout
+assembler/tests/sout
+
+#tags
+*tags
+
+#impl files in fpga
+fpga/*/impl
+
+#on halt, will be rewritten
+fpga/helium/*
+operating_system/*
+
+#irrelevant files in pcb
+pcb/*/fab
+pcb/*/*zip
+pcb/*/*backup*
+pcb/*/*lck
+pcb/*/*cache
