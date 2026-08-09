@@ -19,6 +19,9 @@ tests/out
 assembler/tests/fout
 assembler/tests/sout
 
+#local stuff that still has to be looked thru
+tests/toadd
+
 #tags
 *tags
 
@@ -35,3 +38,7 @@ pcb/*/*zip
 pcb/*/*backup*
 pcb/*/*lck
 pcb/*/*cache
+pcb/*/proj
+
+#local org files
+*txt
