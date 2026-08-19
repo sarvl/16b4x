@@ -41,6 +41,3 @@ pcb/*/*backup*
 pcb/*/*lck
 pcb/*/*cache
 pcb/*/proj
-
-#local org files
-*txt
