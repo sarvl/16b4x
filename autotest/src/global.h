@@ -13,3 +13,6 @@ extern int  count_total;
 
 int test_sim();
 int test_sasm();
+
+int gen_sim();
+int gen_sasm();

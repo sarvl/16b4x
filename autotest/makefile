@@ -3,8 +3,9 @@ CR := '\033[0;31m' #color red
 CC := '\033[0;36m' #color cyan
 CY := '\033[0;33m' #color yellow 
 
+FILES_GEN     := out/gen/sim.o out/gen/sasm.o
 FILES_TEST    := out/test/sim.o out/test/sasm.o
-FILES_LOCAL   := out/main.o ${FILES_TEST}
+FILES_LOCAL   := out/main.o ${FILES_GEN} ${FILES_TEST} 
 FILES_UTIL    := ../utility/out/log.o
 FILES := ${FILES_LOCAL} ${FILES_UTIL}
 
@@ -33,7 +34,7 @@ clear:
 
 init:
 	@echo -e ${CC}creating directories${CD}
-	@mkdir -p out/test 
+	@mkdir -p out/test out/gen
 	
 fullclean:
 	@echo -e ${CC}removing all artifacts${CD}

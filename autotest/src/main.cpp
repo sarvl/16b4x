@@ -19,6 +19,21 @@ int  count_total  = 0;
 
 int main(int argc, char* argv[])
 {
+	bool generate = false;
+	{
+		char* ptr  = argv[0];
+		char* find = argv[0];
+		while(*find != '\0')
+		{
+			if(*find == '/')
+				ptr = find + 1;
+
+			find++;
+		}
+
+		generate = !strcmp("fgen", ptr);
+	}
+
 	for(int ii = 1; ii < argc; ii++)
 	{
 		char const* const arg = argv[ii];
@@ -64,43 +79,77 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	//argv[1] always exists, at worst it is nullptr
-	auto const time0 = std::chrono::high_resolution_clock::now();
-
-	int retcode = 1;
-	     if(argc < 2) 
+	if(generate)
 	{
-		printf("invalid target, see -h\n"); 
-		return 10;
+		auto const time0 = std::chrono::high_resolution_clock::now();
+
+			 if(argc < 2) 
+		{
+			printf("invalid target, see -h\n"); 
+			return 10;
+		}
+		else if(0 == strcmp(argv[1], "sim" )) gen_sim();
+		else if(0 == strcmp(argv[1], "sasm")) gen_sasm();
+		else 
+		{
+			printf("invalid target, see -h\n"); 
+			return 10;
+		}
+
+		auto const time1 = std::chrono::high_resolution_clock::now();
+
+		if(print_summary_pretty)
+		{
+			printf("gen %s complete\n", argv[1]);
+			printf("\033[0;36mtotal  tests : %d\033[0m\n",   count_total);
+			printf("\033[0;33mtime taken   : %ldms\033[0m\n", std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count());
+		}
+		else if(print_summary)
+		{
+			printf("\033[0;36mgenerated %d\n\033[0m", count_total);
+		}
+
+		return 0;
 	}
-	else if(0 == strcmp(argv[1], "sim" )) retcode = test_sim();
-	else if(0 == strcmp(argv[1], "sasm")) retcode = test_sasm();
-	else 
+	else
 	{
-		printf("invalid target, see -h\n"); 
-		return 10;
+		auto const time0 = std::chrono::high_resolution_clock::now();
+
+		int retcode = 1;
+			 if(argc < 2) 
+		{
+			printf("invalid target, see -h\n"); 
+			return 10;
+		}
+		else if(0 == strcmp(argv[1], "sim" )) retcode = test_sim();
+		else if(0 == strcmp(argv[1], "sasm")) retcode = test_sasm();
+		else 
+		{
+			printf("invalid target, see -h\n"); 
+			return 10;
+		}
+
+		auto const time1 = std::chrono::high_resolution_clock::now();
+
+		if(print_summary_pretty)
+		{
+			int const count_failed = count_total - count_passed;
+
+			printf("test %s complete\n", argv[1]);
+			printf("\033[0;36mtotal  tests : %d\033[0m\n",   count_total);
+
+			if(count_failed > 0)	
+				printf("\033[0;31mfailed tests : %d\033[0m\n", count_failed);
+			else
+				printf("\033[0;32mfailed tests : %d\033[0m\n", count_failed);
+
+			printf("\033[0;33mtime taken   : %ldms\033[0m\n", std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count());
+		}
+		else if(print_summary)
+		{
+			printf("\033[0;36mtotal %d/%d\n\033[0m", count_passed, count_total);
+		}
+
+		return retcode;
 	}
-
-	auto const time1 = std::chrono::high_resolution_clock::now();
-
-	if(print_summary_pretty)
-	{
-		int const count_failed = count_total - count_passed;
-
-		printf("test %s complete\n", argv[1]);
-		printf("\033[0;36mtotal  tests : %d\033[0m\n",   count_total);
-
-		if(count_failed > 0)	
-			printf("\033[0;31mfailed tests : %d\033[0m\n", count_failed);
-		else
-			printf("\033[0;32mfailed tests : %d\033[0m\n", count_failed);
-
-		printf("\033[0;33mtime taken   : %ldms\033[0m\n", std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count());
-	}
-	else if(print_summary)
-	{
-		printf("\033[0;36mtotal %d/%d\n\033[0m", count_passed, count_total);
-	}
-
-	return retcode;
 }
