@@ -21,14 +21,13 @@ fost: bogus
 gen: bogus 
 	@$(MAKE) -C ./tests/generator/ $(if ${remake}, remake, gen)
 
-
-testgen: bogus
-	@echo -e ${CC}=== GENERATING TESTS ===${CD}
+testgensim: bogus
+	@echo -e ${CC}=== GENERATING TESTS - CPU ===${CD}
 	@./tests/generator/gen
 
-testrun: bogus
-	@echo -e ${CC}=== RUNNING TESTS ===${CD}
-	@./fost
+testsim: bogus
+	@echo -e ${CC}=== RUNNING TESTS - SIMULATOR ===${CD}
+	@./fost -fS
 
 init:
 	@clear
@@ -74,5 +73,8 @@ initfull: init testgen
 
 reinit: clean init
 reinitfull: clean init initfull
+
+testgen: testgensim
+testrun: testsim
 	
 bogus:
