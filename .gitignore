@@ -3,7 +3,6 @@ cosi
 dasm
 fost
 sasm
-autotest
 gen
 gen_test
 
@@ -14,13 +13,13 @@ gen_test
 symbols.txt
 
 #ignore binaries and output in tests
-tests/bin
-tests/out
-assembler/tests/fout
-assembler/tests/sout
+tests/cpu/bin
+tests/cpu/out
+tests/sasm/tests/fout
+tests/sasm/tests/sout
 
 #local stuff that still has to be looked thru
-tests/toadd
+tests/cpu/toadd
 
 #tags
 *tags

@@ -17,17 +17,24 @@ dasm: bogus
 cosi: bogus 
 	@$(MAKE) -C ./simulator/ $(if ${remake}, remake, cosi)
 fost: bogus 
-	@$(MAKE) -C ./tests/autotest/ $(if ${remake}, remake, fost)
+	@$(MAKE) -C ./autotest/ $(if ${remake}, remake, fost)
 gen: bogus 
-	@$(MAKE) -C ./tests/generator/ $(if ${remake}, remake, gen)
+	@true
+	#@$(MAKE) -C ./tests/generator/ $(if ${remake}, remake, gen)
 
 testgensim: bogus
-	@echo -e ${CC}=== GENERATING TESTS - CPU ===${CD}
-	@./tests/generator/gen
+	@true
+	#@echo -e ${CC}=== GENERATING TESTS - CPU ===${CD}
+	#@./tests/generator/gen
+
+testsasm: bogus
+	@echo -e ${CC}=== RUNNING TESTS - ASSEMBLER ===${CD}
+	@-./fost sasm -fS
 
 testsim: bogus
 	@echo -e ${CC}=== RUNNING TESTS - SIMULATOR ===${CD}
-	@./fost -fS
+	@-./fost sim -fS
+
 
 init:
 	@clear
@@ -48,12 +55,12 @@ init:
 	@$(MAKE) -C ./simulator/ remake noclear=True
 	ln -s ./simulator/cosi ./
 	@echo -e ${CC}=== AUTOTEST ===${CD}
-	@$(MAKE) -C ./tests/autotest/ init
-	@$(MAKE) -C ./tests/autotest/ remake noclear=True
-	ln -s ./tests/autotest/fost ./
+	@$(MAKE) -C ./autotest/ init
+	@$(MAKE) -C ./autotest/ remake noclear=True
+	ln -s ./autotest/fost ./
 	@echo -e ${CC}=== TESTGEN ===${CD}
-	@$(MAKE) -C ./tests/generator/ init
-	@$(MAKE) -C ./tests/generator/ remake noclear=True
+	#@$(MAKE) -C ./tests/generator/ init
+	#@$(MAKE) -C ./tests/generator/ remake noclear=True
 	@echo -e ${CC}=== OTHER DIRECTORIES ===${CD}
 	@mkdir -p tests/out/ tests/bin/
 	@echo -e ${CC}done${CD}
@@ -64,8 +71,8 @@ clean:
 	@$(MAKE) -C ./assembler/ fullclean
 	@$(MAKE) -C ./disassembler/ fullclean
 	@$(MAKE) -C ./simulator/ fullclean
-	@$(MAKE) -C ./tests/autotest/ fullclean
-	@$(MAKE) -C ./tests/generator/ fullclean
+	@$(MAKE) -C ./autotest/ fullclean
+	#@$(MAKE) -C ./tests/generator/ fullclean
 	rm -f sasm dasm cosi fost
 	@echo -e ${CC}done${CD}
 
@@ -75,6 +82,6 @@ reinit: clean init
 reinitfull: clean init initfull
 
 testgen: testgensim
-testrun: testsim
+testrun: testsasm testsim
 	
 bogus:

@@ -24,7 +24,7 @@ default:
 	@echo -e no option specified
 
 clean:
-	@rm -frv out/*.o 
+	@rm -fv out/*.o out/*/*.o
 
 refresh:
 	@touch src/*.cpp src/*.h
