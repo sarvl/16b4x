@@ -48,19 +48,19 @@ fgen fost: bogus
 
 testgencpu: bogus
 	@echo -e ${CC}=== GENERATING TESTS - CPU ===${CD}
-	@./fgen sim -fS
+	@./fgen sim -a
 
 testgensasm: bogus
 	@echo -e ${CC}=== GENERATING TESTS - SASM ===${CD}
-	@./fgen sasm -fS
+	@./fgen sasm -a
 
 testsasm: bogus
 	@echo -e ${CC}=== RUNNING TESTS - ASSEMBLER ===${CD}
-	@-./fost sasm -fS
+	@-./fost sasm -a
 
 testsim: bogus
 	@echo -e ${CC}=== RUNNING TESTS - SIMULATOR ===${CD}
-	@-./fost sim -fS
+	@-./fost sim -a
 
 
 init:

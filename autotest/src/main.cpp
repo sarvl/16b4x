@@ -52,6 +52,10 @@ int main(int argc, char* argv[])
 		case 'p': print_passed         = true; break;
 		case 'a': 
 			print_summary_pretty = true;
+			print_failed         = true;
+			break;
+		case 'A': 
+			print_summary_pretty = true;
 			print_group          = true;
 			print_failed         = true;
 			print_passed         = true;
@@ -61,7 +65,23 @@ int main(int argc, char* argv[])
 
 	if(print_help)
 	{
-		printf(
+		if(generate)
+			printf(
+			"fgen - fast generator\n"
+			"usage: fgen target [args]\n"
+			"\t target is one of {sim, sasm}\n"
+			"\n"
+			"by default, nothing is printed\n"
+			"\n"
+			"\t-h - print this help\n"
+			"\t-a - equivalent to -S\n"
+			"\t-A - print everything\n"
+			"\t-s - print summary\n"
+			"\t-S - print summary pretty, overwrites -s\n"
+			"\t-g - print group under test\n"
+			);
+		else
+			printf(
 			"fost - forensic tester\n"
 			"usage: fost target [args]\n"
 			"\t target is one of {sim, sasm}\n"
@@ -69,7 +89,8 @@ int main(int argc, char* argv[])
 			"by default, nothing is printed, only return code is set\n"
 			"\n"
 			"\t-h - print this help\n"
-			"\t-a - print everything\n"
+			"\t-a - equivalent to -fS\n"
+			"\t-A - print everything\n"
 			"\t-s - print summary\n"
 			"\t-S - print summary pretty, overwrites -s\n"
 			"\t-g - print group under test\n"
