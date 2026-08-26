@@ -6,6 +6,8 @@
 #include "top/gen_utils/log.h"
 #include "top/utils.h"
 
+#include "top/instruction_info.h"
+
 using namespace std::literals;
 
 void         strings_add(std::string const& str);
@@ -590,39 +592,6 @@ void verify(
 			 * for convenience, each entry is 3 chars
 			 * but ' ' indicates that no more need to be parsed
 			 */
-			constexpr static char const* const pattern_table[] = {
-			//	add, and, ann, cal, cmp, crd, cwr, dvs,
-				"ro","ro","rr","o ","ro","ra","ar","rr",
-			//  dvu, hlt, int, irt, jmp, lop, mlu, mls, 
-				"rr","  ","i ","  ","v ","v ","ro","ro",
-			//  mov, mrd, mwr, neg, nop, not, orr, pop, 
-				"ro","ro","or","r ","  ","r ","ro","r ",
-			//	prd, prf, psh, pwr, ret, rng, shl, shr, 
-				"ra","r ","r ","ar","  ","r ","ro","ro",
-			//	srd, sub, swr, tst, xor, xrd, xwr,
-				"ri","ro","ir","ro","ro","rx","xo",
-
-			//	jaa, jbe, jbz, jcc, jae, jaz, jge, jgz, 
-				"v ","v ","v ","v ","v ","v ","v ","v ",
-			//	jgg, jle, jlz, jll, jnc, jbb, jno, jns, 
-				"v ","v ","v ","v ","v ","v ","v ","v ",
-			//	jnz, jne, joo, jss, jzz, jee,
-				"v ","v ","v ","v ","v ","v ",
-
-			//	maa, mbe, mbz, mcc, mae, maz, mge, mgz, 
-				"rr","rr","rr","rr","rr","rr","rr","rr",
-			//	mgg, mle, mlz, mll, mnc, mbb, mno, mns, 
-				"rr","rr","rr","rr","rr","rr","rr","rr",
-			//	mnz, mne, moo, mss, mzz, mee,
-				"rr","rr","rr","rr","rr","rr",
-
-			//	saa, sbe, sbz, scc, sae, saz, sge, sgz, 
-				"r ","r ","r ","r ","r ","r ","r ","r ",
-			//	sgg, sle, slz, sll, snc, sbb, sno, sns, 
-				"r ","r ","r ","r ","r ","r ","r ","r ",
-			//	snz, sne, soo, sss, szz, see,
-				"r ","r ","r ","r ","r ","r "
-				};
 			
 			auto const ins = static_cast<t_Instruction_Id::Type>(tokens[tid].val);
 			const char* pattern = pattern_table[tokens[tid].val];

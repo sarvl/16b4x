@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "top/instruction_info.h"
+
 void         strings_add(std::string const& str);
 std::string& strings_get(int const ind);
 std::string& strings_back();
@@ -54,31 +56,7 @@ std::string to_string(t_Token::Type          const  type)
 }
 std::string to_string(t_Instruction_Id::Type const  instr)
 {
-	return (char const* const[]) {
-		"add", "and", "ann", "cal", "cmp", "crd", 
-		"cwr", "dvs", "dvu", "hlt", "int", "irt", 
-		"jmp", "lop", "mov", "mrd", "mlu", "mls", 
-		"mwr", "neg", "nop", "not", "orr", "pop", 
-		"prd", "prf", "psh", "pwr", "ret", "rng", 
-		"shl", "shr", "srd", "sub", "swr", "tst", 
-		"xor", "xrd", "xwr",
-
-
-		"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
-		"jge", "jgz", "jgg", "jle", "jlz", "jll",
-		"jnc", "jbb", "jno", "jns", "jnz", "jne",
-		"joo", "jss", "jzz", "jee", 
-
-		"maa", "mbe", "mbz", "mcc", "mae", "maz",
-		"mge", "mgz", "mgg", "mle", "mlz", "mll",
-		"mnc", "mbb", "mno", "mns", "mnz", "mne",
-		"moo", "mss", "mzz", "mee", 
-
-		"saa", "sbe", "sbz", "scc", "sae", "saz",
-		"sge", "sgz", "sgg", "sle", "slz", "sll",
-		"snc", "sbb", "sno", "sns", "snz", "sne",
-		"soo", "sss", "szz", "see"
-		} [instr & 0xFF];
+	return instr_strings[instr & 0xFF];
 }
 std::string to_string(t_Directive::Type      const  dir)
 {
@@ -104,31 +82,7 @@ std::ostream&  operator<<(std::ostream& os, t_Token::Type const type)
 std::ostream&  operator<<(std::ostream& os, t_Instruction_Id::Type const instr)
 {
 	return
-	os << (char const* const[]) {
-		"add", "and", "ann", "cal", "cmp", "crd", 
-		"cwr", "dvs", "dvu", "hlt", "int", "irt", 
-		"jmp", "lop", "mov", "mrd", "mlu", "mls",
-		"mwr", "neg", "nop", "not", "orr", "pop", 
-		"prd", "prf", "psh", "pwr", "ret", "rng", 
-		"shl", "shr", "srd", "sub", "swr", "tst", 
-		"xor", "xrd", "xwr",
-
-
-		"jaa", "jbe", "jbz", "jcc", "jae", "jaz",
-		"jge", "jgz", "jgg", "jle", "jlz", "jll",
-		"jnc", "jbb", "jno", "jns", "jnz", "jne",
-		"joo", "jss", "jzz", "jee", 
-
-		"maa", "mbe", "mbz", "mcc", "mae", "maz",
-		"mge", "mgz", "mgg", "mle", "mlz", "mll",
-		"mnc", "mbb", "mno", "mns", "mnz", "mne",
-		"moo", "mss", "mzz", "mee", 
-
-		"saa", "sbe", "sbz", "scc", "sae", "saz",
-		"sge", "sgz", "sgg", "sle", "slz", "sll",
-		"snc", "sbb", "sno", "sns", "snz", "sne",
-		"soo", "sss", "szz", "see"
-		} [instr & 0xFF];
+	os << instr_strings [instr & 0xFF];
 }
 
 std::ostream&  operator<<(std::ostream& os, t_Directive::Type const dir)
