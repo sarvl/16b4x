@@ -4,8 +4,6 @@ dasm
 fost
 fgen
 sasm
-gen
-gen_test
 
 #ignore all output directories
 */out/*

@@ -57,7 +57,7 @@ int gen_sasm()
 		int const test_limit = (data[beg +  9] - '0') * 10
 		                     + (data[beg + 10] - '0');
 							 
-		count_total += test_limit;
+		count_total += test_limit * 2;
 
 		while(test_num < test_limit)
 		{

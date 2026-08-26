@@ -5,8 +5,35 @@ CY := '\033[0;33m' #color yellow
 
 default:
 	@echo -e no option specified
+	@echo -e use make help     to get more detailed help
 	@echo -e use make init     to create and compile all programs
 	@echo -e use make initfull to create and compile all programs, and then to generate tests
+
+help:
+	@echo -e "16b4x - Sarvelian System"
+	@echo -e "For documentation, see files in documentation/"
+	@echo -e ""
+	@echo -e "This Makefile provides convienient ways to run most common commands"
+	@echo -e ""
+	@echo -e "  'init'      -                       initialize all necessary stuff"
+	@echo -e "  'initfull'  -                       initialize all necessary stuff, generate tests"
+	@echo -e "'reinit'      - clear existing stuff, initialize all necessary stuff"
+	@echo -e "'reinitfull'  - clear existing stuff, initialize all necessary stuff, generate tests"
+	@echo -e ""
+	@echo -e "'testgencpu'  - generate tests for cpu and simulator"
+	@echo -e "'testgensasm' - generate tests for assembler"
+	@echo -e "'testgenall'  - generate all tests"
+	@echo -e ""
+	@echo -e "'testcpu'     - run tests for cpu and simulator"
+	@echo -e "'testsasm'    - run tests for assembler"
+	@echo -e "'testall'     - run all tests"
+	@echo -e ""
+	@echo -e "'sasm'        - build assembler"
+	@echo -e "'dasm'        - build disassembler"
+	@echo -e "'cosi'        - build simulator"
+	@echo -e "'fost'        - build autotester"
+	@echo -e "'fgen'        - build test generator"
+	@echo -e "By adding 'remake=true' it is possible to rebuild some stuff mentioned above"
 	
 remake := 
 
@@ -16,11 +43,8 @@ dasm: bogus
 	@$(MAKE) -C ./disassembler/ $(if ${remake}, remake, dasm)
 cosi: bogus 
 	@$(MAKE) -C ./simulator/ $(if ${remake}, remake, cosi)
-fost: bogus 
+fgen fost: bogus 
 	@$(MAKE) -C ./autotest/ $(if ${remake}, remake, fost)
-gen: bogus 
-	@true
-	#@$(MAKE) -C ./tests/generator/ $(if ${remake}, remake, gen)
 
 testgencpu: bogus
 	@echo -e ${CC}=== GENERATING TESTS - CPU ===${CD}
@@ -83,6 +107,6 @@ reinit: clean init
 reinitfull: clean init initfull
 
 testgen: testgencpu testgensasm
-testrun: testsasm testsim
+testall: testsasm testsim
 	
 bogus:
