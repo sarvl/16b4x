@@ -3,56 +3,61 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.all;
 
+USE work.pkg_types.ALL;
+
 ENTITY memory_controller IS 
 	PORT(
-		clk        : IN    std_ulogic;
-		nres       : IN    std_ulogic;
+		i_clk            : IN    std_ulogic;
+		i_nres           : IN    std_ulogic;
 
-		mem_bus        : INOUT std_ulogic_vector(15 DOWNTO 0);
-		mem_addr_load  :   OUT std_ulogic;
-		mem_nwe        :   OUT std_ulogic;
-		mem_ncs        :   OUT std_ulogic;
-		mem_noe        :   OUT std_ulogic;
+		eio_mem_bus      : INOUT std_ulogic_vector(15 DOWNTO 0);
+		eo_mem_addr_load :   OUT std_ulogic;
+		eo_mem_nwe       :   OUT std_ulogic;
+		eo_mem_ncs       :   OUT std_ulogic;
+		eo_mem_noe       :   OUT std_ulogic;
 
-		address        : IN    std_ulogic_vector(15 DOWNTO 0);
-		io_data        : INOUT std_ulogic_vector(15 DOWNTO 0);
+		i_addr           : IN    t_memaddr;
+		io_data          : INOUT t_rword;
 
-		read           : IN    std_ulogic;
-		write          : IN    std_ulogic;
-		ready          :   OUT std_ulogic;
-		output         :   OUT std_ulogic);
+		i_read           : IN    std_ulogic;
+		i_write          : IN    std_ulogic;
+		o_ready          :   OUT std_ulogic;
+		o_output         :   OUT std_ulogic);
 END ENTITY memory_controller;
 
 ARCHITECTURE arch of memory_controller IS 
 	COMPONENT mem_driver_low_level IS 
 		PORT(
-			p_mem_bus        : INOUT std_ulogic_vector(15 DOWNTO 0);
-			p_mem_addr_load  :   OUT std_ulogic;
-			p_mem_nwe        :   OUT std_ulogic;
-			p_mem_ncs        :   OUT std_ulogic;
-			p_mem_noe        :   OUT std_ulogic;
+			eio_mem_bus      : INOUT std_ulogic_vector(15 DOWNTO 0);
+			eo_mem_addr_load :   OUT std_ulogic;
+			eo_mem_nwe       :   OUT std_ulogic;
+			eo_mem_ncs       :   OUT std_ulogic;
+			eo_mem_noe       :   OUT std_ulogic;
 
-			clk              : IN    std_ulogic;
-			nres             : IN    std_ulogic;
+			i_clk            : IN    std_ulogic;
+			i_nres           : IN    std_ulogic;
 
-			address          : IN    std_ulogic_vector(15 DOWNTO 0);
-			io_data          : INOUT std_ulogic_vector(15 DOWNTO 0);
-			write            : IN    std_ulogic;
-			read             : IN    std_ulogic;
-			ready            :   OUT std_ulogic);
+			i_addr           : IN    t_memaddr;
+			io_data          : INOUT t_word;
+			i_write          : IN    std_ulogic;
+			i_read           : IN    std_ulogic;
+			o_ready          :   OUT std_ulogic);
 	END COMPONENT mem_driver_low_level;
 
 	COMPONENT cache IS 
+		GENERIC(
+			g_enabled    : boolean := False;
+			g_size_log_2 : integer RANGE 1 TO 15 := 1);
 		PORT(
-			clk              : IN    std_ulogic;
-			nres             : IN    std_ulogic;
+			i_clk   : IN    std_ulogic;
+			i_nres  : IN    std_ulogic;
 
-			address          : IN    std_ulogic_vector(15 DOWNTO 0);
-			io_data          : INOUT std_ulogic_vector(15 DOWNTO 0);
-			write            : IN    std_ulogic;
-			read             : IN    std_ulogic;
-			hit              :   OUT std_ulogic;
-			init             :   OUT std_ulogic);
+			i_addr  : IN    t_memaddr;
+			io_data : INOUT t_word;
+			i_write : IN    std_ulogic;
+			i_read  : IN    std_ulogic;
+			o_hit   :   OUT std_ulogic;
+			o_init  :   OUT std_ulogic);
 	END COMPONENT cache;
 
 	TYPE t_state IS (
@@ -64,58 +69,63 @@ ARCHITECTURE arch of memory_controller IS
 
 	SIGNAL state, state_in : t_state := init;
 
-	SIGNAL cache_addr  : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL cache_data  : std_logic_vector(15 DOWNTO 0);
+	SIGNAL cache_addr  : t_memaddr;
+	SIGNAL cache_data  : t_rword;
 	SIGNAL cache_write : std_ulogic;
 	SIGNAL cache_read  : std_ulogic;
 	SIGNAL cache_hit   : std_ulogic;
 	SIGNAL cache_init  : std_ulogic;
 
-	SIGNAL ll_addr     : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL ll_data     : std_logic_vector(15 DOWNTO 0);
+	SIGNAL ll_addr     : t_memaddr;
+	SIGNAL ll_data     : t_rword;
 	SIGNAL ll_write    : std_ulogic;
 	SIGNAL ll_read     : std_ulogic;
 	SIGNAL ll_ready    : std_ulogic;
 
 BEGIN
-	u_mdll: mem_driver_low_level PORT MAP(
-			p_mem_bus       => mem_bus,
-			p_mem_addr_load => mem_addr_load,
-			p_mem_nwe       => mem_nwe, 
-			p_mem_ncs       => mem_ncs,
-			p_mem_noe       => mem_noe,
+	u_mdll: mem_driver_low_level 
+		PORT MAP(
+			eio_mem_bus      => eio_mem_bus,
+			eo_mem_addr_load => eo_mem_addr_load,
+			eo_mem_nwe       => eo_mem_nwe, 
+			eo_mem_ncs       => eo_mem_ncs,
+			eo_mem_noe       => eo_mem_noe,
 
-			clk             => clk,
-			nres            => nres,
+			i_clk            => i_clk,
+			i_nres           => i_nres,
 
-			address         => ll_addr,
-			io_data         => ll_data, 
-			write           => ll_write,
-			read            => ll_read,
-			ready           => ll_ready);
+			i_addr           => ll_addr,
+			io_data          => ll_data, 
+			i_write          => ll_write,
+			i_read           => ll_read,
+			o_ready          => ll_ready);
 
 	--write through cache only
-	u_cache: cache PORT MAP(
-			clk             => clk,
-			nres            => nres,
+	u_cache: cache 
+		GENERIC MAP(
+			g_enabled    => True,
+			g_size_log_2 => 5)
+		PORT MAP(
+			i_clk        => i_clk,
+			i_nres       => i_nres,
 
-			address         => cache_addr,
-			io_data         => cache_data, 
-			write           => cache_write,
-			read            => cache_read,
-			hit             => cache_hit,
-			init            => cache_init);
+			i_addr       => cache_addr,
+			io_data      => cache_data, 
+			i_write      => cache_write,
+			i_read       => cache_read,
+			o_hit        => cache_hit,
+			o_init       => cache_init);
 
-	cache_addr <= address;
-	ll_addr    <= address;
+	cache_addr <= i_addr;
+	ll_addr    <= i_addr;
 
 	PROCESS(ALL) IS 
 	BEGIN
 		CASE state IS 
 		when init =>
 			io_data      <= x"ZZZZ";
-			ready        <= '0';
-			output       <= '0';
+			o_ready      <= '0';
+			o_output     <= '0';
 
 			cache_data   <= x"ZZZZ";
 			cache_read   <= '0';
@@ -131,10 +141,10 @@ BEGIN
 				state_in <= state;
 			END IF;
 		WHEN idle =>
-			IF write THEN
+			IF i_write THEN
 				io_data      <= x"ZZZZ";
-				ready        <= '1';
-				output       <= '0';
+				o_ready      <= '1';
+				o_output     <= '0';
 
 				cache_data   <= io_data;
 				cache_read   <= '0';
@@ -146,11 +156,11 @@ BEGIN
 
 				state_in     <= mem_write_0;
 			-- cache read has to be single cycle 
-			ELSIF read THEN
+			ELSIF i_read THEN
 				IF    cache_hit THEN 
 					io_data      <= cache_data;
-					ready        <= '1';
-					output       <= '1';
+					o_ready      <= '1';
+					o_output     <= '1';
 
 					cache_data   <= x"ZZZZ";
 					cache_read   <= '1';
@@ -163,8 +173,8 @@ BEGIN
 					state_in     <= idle;
 				ELSE
 					io_data      <= x"ZZZZ";
-					ready        <= '1';
-					output       <= '0';
+					o_ready      <= '1';
+					o_output     <= '0';
 
 					cache_data   <= x"ZZZZ";
 					cache_read   <= '0';
@@ -178,8 +188,8 @@ BEGIN
 				END IF;
 			ELSE
 				io_data      <= x"ZZZZ";
-				ready        <= '1';
-				output       <= '0';
+				o_ready      <= '1';
+				o_output     <= '0';
 
 				cache_data   <= x"ZZZZ";
 				cache_read   <= '0';
@@ -194,8 +204,8 @@ BEGIN
 
 		WHEN mem_read_0 => 
 			io_data      <= x"ZZZZ";
-			ready        <= '0';
-			output       <= '0';
+			o_ready      <= '0';
+			o_output     <= '0';
 
 			cache_data   <= x"ZZZZ";
 			cache_read   <= '0';
@@ -210,8 +220,8 @@ BEGIN
 		WHEN mem_read_1 => 
 			IF ll_ready THEN
 				io_data      <= ll_data;
-				ready        <= '0';
-				output       <= '1';
+				o_ready      <= '0';
+				o_output     <= '1';
 
 				cache_data   <= ll_data;
 				cache_read   <= '0';
@@ -224,8 +234,8 @@ BEGIN
 				state_in     <= idle;
 			ELSE
 				io_data      <= x"ZZZZ";
-				ready        <= '0';
-				output       <= '0';
+				o_ready      <= '0';
+				o_output     <= '0';
 
 				cache_data   <= x"ZZZZ";
 				cache_read   <= '0';
@@ -240,8 +250,8 @@ BEGIN
 
 		WHEN mem_write_0 => 
 			io_data      <= x"ZZZZ";
-			ready        <= '0';
-			output       <= '0';
+			o_ready      <= '0';
+			o_output     <= '0';
 
 			cache_data   <= x"ZZZZ";
 			cache_read   <= '0';
@@ -255,8 +265,8 @@ BEGIN
 
 		WHEN mem_write_1 => 
 			io_data      <= x"ZZZZ";
-			ready        <= '0';
-			output       <= '0';
+			o_ready      <= '0';
+			o_output     <= '0';
 
 			cache_data   <= x"ZZZZ";
 			cache_read   <= '0';
@@ -270,8 +280,8 @@ BEGIN
 
 		WHEN mem_write_2 => 
 			io_data      <= x"ZZZZ";
-			ready        <= '0';
-			output       <= '1';
+			o_ready      <= '0';
+			o_output     <= '1';
 
 			cache_data   <= x"ZZZZ";
 			cache_read   <= '0';
@@ -289,10 +299,10 @@ BEGIN
 		END CASE;
 	END PROCESS;
 
-	PROCESS(clk) IS 
+	PROCESS(i_clk) IS 
 	BEGIN
-		IF rising_edge(clk) THEN 
-			IF NOT nres THEN
+		IF rising_edge(i_clk) THEN 
+			IF NOT i_nres THEN
 				state <= init;
 			ELSE
 				state <= state_in;

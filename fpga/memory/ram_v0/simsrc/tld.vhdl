@@ -5,6 +5,8 @@ USE ieee.numeric_std.ALL;
 USE std.textio.ALL;
 USE ieee.std_logic_textio.ALL;
 
+USE work.pkg_types.ALL;
+
 ENTITY tld IS 
 END ENTITY tld;
 
@@ -21,31 +23,29 @@ ARCHITECTURE arch of tld IS
 
 	COMPONENT memory_controller IS 
 		PORT(
-			clk        : IN    std_ulogic;
-			nres       : IN    std_ulogic;
+			i_clk            : IN    std_ulogic;
+			i_nres           : IN    std_ulogic;
 
-			mem_bus        : INOUT std_ulogic_vector(15 DOWNTO 0);
-			mem_addr_load  :   OUT std_ulogic;
-			mem_nwe        :   OUT std_ulogic;
-			mem_ncs        :   OUT std_ulogic;
-			mem_noe        :   OUT std_ulogic;
+			eio_mem_bus      : INOUT std_ulogic_vector(15 DOWNTO 0);
+			eo_mem_addr_load :   OUT std_ulogic;
+			eo_mem_nwe       :   OUT std_ulogic;
+			eo_mem_ncs       :   OUT std_ulogic;
+			eo_mem_noe       :   OUT std_ulogic;
 
-			address        : IN    std_ulogic_vector(15 DOWNTO 0);
-			io_data        : INOUT std_ulogic_vector(15 DOWNTO 0);
+			i_addr           : IN    t_memaddr;
+			io_data          : INOUT t_rword;
 
-			read           : IN    std_ulogic;
-			write          : IN    std_ulogic;
-			ready          :   OUT std_ulogic;
-			output         :   OUT std_ulogic);
+			i_read           : IN    std_ulogic;
+			i_write          : IN    std_ulogic;
+			o_ready          :   OUT std_ulogic;
+			o_output         :   OUT std_ulogic);
 	END COMPONENT memory_controller;
 
 	CONSTANT frequency : real := 27.0E6; 
 	CONSTANT cycle     : real := 1.0 / frequency;
 
-	SIGNAL clk : std_ulogic := '0';
-	SIGNAL nres : std_ulogic := '1';
-
-	SIGNAL state, state_in : unsigned(4 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL clk   : std_ulogic := '0';
+	SIGNAL nres  : std_ulogic := '1';
 
 	SIGNAL mem_bus       : std_logic_vector(15 DOWNTO 0);
 	SIGNAL mem_addr_load : std_ulogic;
@@ -53,8 +53,8 @@ ARCHITECTURE arch of tld IS
 	SIGNAL mem_ncs       : std_ulogic;
 	SIGNAL mem_noe       : std_ulogic;
 
-	SIGNAL c_addr        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL c_data        : std_logic_vector(15 DOWNTO 0); 
+	SIGNAL c_addr        : t_memaddr;
+	SIGNAL c_data        : t_rword;
 	SIGNAL c_write       : std_ulogic;
 	SIGNAL c_read        : std_ulogic;
 	SIGNAL c_ready       : std_ulogic;
@@ -69,21 +69,21 @@ BEGIN
 			mem_noe        => mem_noe);
 
 	mdll: memory_controller PORT MAP(
-			mem_bus        => mem_bus,
-			mem_addr_load  => mem_addr_load,
-			mem_nwe        => mem_nwe, 
-			mem_ncs        => mem_ncs,
-			mem_noe        => mem_noe,
+			eio_mem_bus      => mem_bus,
+			eo_mem_addr_load => mem_addr_load,
+			eo_mem_nwe       => mem_nwe, 
+			eo_mem_ncs       => mem_ncs,
+			eo_mem_noe       => mem_noe,
 
-			clk              => clk,
-			nres             => nres,
+			i_clk            => clk,
+			i_nres           => nres,
 
-			address          => c_addr,
+			i_addr           => c_addr,
 			io_data          => c_data, 
-			write            => c_write,
-			read             => c_read,
-			ready            => c_ready,
-			output           => c_output);
+			i_write          => c_write,
+			i_read           => c_read,
+			o_ready          => c_ready,
+			o_output         => c_output);
 
 	PROCESS IS
 		-- Convert string to std_logic_vector, assuming characters in '0' to '9',
@@ -251,7 +251,7 @@ BEGIN
 
 		IF failed THEN
 			REPORT "";
-			REPORT "SIMULATION FAILED";
+			REPORT "SIMULATION FAILED" SEVERITY ERROR;
 		END IF;
 
 		finish;
