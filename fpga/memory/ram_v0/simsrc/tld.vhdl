@@ -23,6 +23,9 @@ ARCHITECTURE arch of tld IS
 	END COMPONENT simram;
 
 	COMPONENT memory_controller IS 
+		GENERIC(
+			g_cache_enabled    : boolean := False;
+			g_cache_size_log_2 : integer RANGE 1 TO 15 := 1);
 		PORT(
 			i_clk            : IN    std_ulogic;
 			i_nres           : IN    std_ulogic;
@@ -62,14 +65,19 @@ ARCHITECTURE arch of tld IS
 	SIGNAL c_output      : std_ulogic;
 
 BEGIN
-	u_sr: simram PORT MAP(
+	u_sr: simram
+		PORT MAP(
 			mem_bus        => mem_bus,
 			mem_addr_load  => mem_addr_load,
 			mem_nwe        => mem_nwe, 
 			mem_ncs        => mem_ncs,
 			mem_noe        => mem_noe);
 
-	mdll: memory_controller PORT MAP(
+	mdll: memory_controller 
+		GENERIC MAP(
+			g_cache_enabled    => True,
+			g_cache_size_log_2 => 5)
+		PORT MAP(
 			eio_mem_bus      => mem_bus,
 			eo_mem_addr_load => mem_addr_load,
 			eo_mem_nwe       => mem_nwe, 
@@ -104,12 +112,22 @@ BEGIN
 		VARIABLE cycle_count_init  : integer := 0;
 		VARIABLE cycle_count       : integer := 0;
 
-		PROCEDURE clock_tick IS
+		PROCEDURE clock_low IS
 		BEGIN
 			clk <= '0';
 			WAIT FOR cycle / 2.0 * 1000 MS;
+		END PROCEDURE clock_low;
+
+		PROCEDURE clock_high IS
+		BEGIN
 			clk <= '1';
 			WAIT FOR cycle / 2.0 * 1000 MS;
+		END PROCEDURE clock_high;
+
+		PROCEDURE clock_tick IS
+		BEGIN
+			clock_low;
+			clock_high;
 
 			cycle_count       := cycle_count + 1;
 		END PROCEDURE clock_tick;
@@ -200,10 +218,8 @@ BEGIN
 					clock_tick_read;
 				END LOOP;
 
-				c_addr  <= addr;
-				c_data  <= x"ZZZZ";
-				c_write <= '0';
-				c_read  <= '0';
+				--propagate changes
+				clock_low;
 
 				IF c_data /= data THEN
 					REPORT "MISMATCH, RECEIVED: "  & slv_to_str(c_data);
@@ -211,7 +227,8 @@ BEGIN
 					failed := True;
 				END IF;
 
-				clock_tick_read;
+				clock_high;
+				cycle_count_read := cycle_count_read + 1;
 
 			END IF;
 		

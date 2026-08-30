@@ -6,23 +6,26 @@ USE ieee.numeric_std.all;
 USE work.pkg_types.ALL;
 
 ENTITY memory_controller IS 
+	GENERIC(
+		g_cache_enabled    : boolean := False;
+		g_cache_size_log_2 : integer RANGE 1 TO 15 := 1);
 	PORT(
-		i_clk            : IN    std_ulogic;
-		i_nres           : IN    std_ulogic;
+		i_clk              : IN    std_ulogic;
+		i_nres             : IN    std_ulogic;
 
-		eio_mem_bus      : INOUT std_ulogic_vector(15 DOWNTO 0);
-		eo_mem_addr_load :   OUT std_ulogic;
-		eo_mem_nwe       :   OUT std_ulogic;
-		eo_mem_ncs       :   OUT std_ulogic;
-		eo_mem_noe       :   OUT std_ulogic;
+		eio_mem_bus        : INOUT std_ulogic_vector(15 DOWNTO 0);
+		eo_mem_addr_load   :   OUT std_ulogic;
+		eo_mem_nwe         :   OUT std_ulogic;
+		eo_mem_ncs         :   OUT std_ulogic;
+		eo_mem_noe         :   OUT std_ulogic;
 
-		i_addr           : IN    t_memaddr;
-		io_data          : INOUT t_rword;
+		i_addr             : IN    t_memaddr;
+		io_data            : INOUT t_rword;
 
-		i_read           : IN    std_ulogic;
-		i_write          : IN    std_ulogic;
-		o_ready          :   OUT std_ulogic;
-		o_output         :   OUT std_ulogic);
+		i_read             : IN    std_ulogic;
+		i_write            : IN    std_ulogic;
+		o_ready            :   OUT std_ulogic;
+		o_output           :   OUT std_ulogic);
 END ENTITY memory_controller;
 
 ARCHITECTURE arch of memory_controller IS 
@@ -103,8 +106,8 @@ BEGIN
 	--write through cache only
 	u_cache: cache 
 		GENERIC MAP(
-			g_enabled    => True,
-			g_size_log_2 => 5)
+			g_enabled    => g_cache_enabled,
+			g_size_log_2 => g_cache_size_log_2)
 		PORT MAP(
 			i_clk        => i_clk,
 			i_nres       => i_nres,
