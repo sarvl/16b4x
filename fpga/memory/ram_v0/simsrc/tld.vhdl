@@ -46,7 +46,7 @@ ARCHITECTURE arch of tld IS
 	CONSTANT cycle     : real := 1.0 / frequency;
 
 	SIGNAL clk   : std_ulogic := '0';
-	SIGNAL nres  : std_ulogic := '1';
+	SIGNAL nres  : std_ulogic := '0';
 
 	SIGNAL mem_bus       : std_logic_vector(15 DOWNTO 0);
 	SIGNAL mem_addr_load : std_ulogic;
@@ -54,10 +54,10 @@ ARCHITECTURE arch of tld IS
 	SIGNAL mem_ncs       : std_ulogic;
 	SIGNAL mem_noe       : std_ulogic;
 
-	SIGNAL c_addr        : t_memaddr;
-	SIGNAL c_data        : t_rword;
-	SIGNAL c_write       : std_ulogic;
-	SIGNAL c_read        : std_ulogic;
+	SIGNAL c_addr        : t_memaddr := x"0000";
+	SIGNAL c_data        : t_rword := x"0000";
+	SIGNAL c_write       : std_ulogic := '0';
+	SIGNAL c_read        : std_ulogic := '0';
 	SIGNAL c_ready       : std_ulogic;
 	SIGNAL c_output      : std_ulogic;
 
@@ -99,7 +99,10 @@ BEGIN
 		VARIABLE is_write : boolean;
 		VARIABLE failed   : boolean := False;
 
-		VARIABLE cycle_count : integer := 0;
+		VARIABLE cycle_count_write : integer := 0;
+		VARIABLE cycle_count_read  : integer := 0;
+		VARIABLE cycle_count_init  : integer := 0;
+		VARIABLE cycle_count       : integer := 0;
 
 		PROCEDURE clock_tick IS
 		BEGIN
@@ -108,16 +111,42 @@ BEGIN
 			clk <= '1';
 			WAIT FOR cycle / 2.0 * 1000 MS;
 
-			cycle_count := cycle_count + 1;
+			cycle_count       := cycle_count + 1;
 		END PROCEDURE clock_tick;
+
+		PROCEDURE clock_tick_write IS
+		BEGIN
+			clock_tick; 
+
+			cycle_count_write := cycle_count_write + 1;
+		END PROCEDURE clock_tick_write;
+
+		PROCEDURE clock_tick_read IS
+		BEGIN
+			clock_tick; 
+
+			cycle_count_read := cycle_count_read + 1;
+		END PROCEDURE clock_tick_read;
+
+		PROCEDURE clock_tick_init IS
+		BEGIN
+			clock_tick; 
+
+			cycle_count_init := cycle_count_init + 1;
+		END PROCEDURE clock_tick_init;
+
 	BEGIN
 		file_open(instr, "mem_trace.txt");
 
 		nres <= '0';
-		
-		clock_tick;
+
+		clock_tick_init;
 
 		nres <= '1';
+		
+		WHILE NOT c_ready LOOP
+			clock_tick_init;
+		END LOOP;
 
 		WHILE NOT endfile(instr) LOOP
 			read(instr, temp_storage, size);
@@ -139,7 +168,7 @@ BEGIN
 				c_write <= '1';
 				c_read  <= '0';
 					
-				clock_tick;
+				clock_tick_write;
 
 				c_addr  <= addr;
 				c_data  <= data;
@@ -147,7 +176,16 @@ BEGIN
 				c_read  <= '0';
 
 				WHILE NOT c_output LOOP
-					clock_tick;
+					clock_tick_write;
+				END LOOP;
+
+				c_addr  <= x"0000";
+				c_data  <= x"0000";
+				c_write <= '0';
+				c_read  <= '0';
+
+				WHILE NOT c_ready LOOP
+					clock_tick_write;
 				END LOOP;
 
 			ELSE
@@ -159,7 +197,7 @@ BEGIN
 				c_read  <= '1';
 
 				WHILE NOT c_output LOOP
-					clock_tick;
+					clock_tick_read;
 				END LOOP;
 
 				c_addr  <= addr;
@@ -173,7 +211,7 @@ BEGIN
 					failed := True;
 				END IF;
 
-				clock_tick;
+				clock_tick_read;
 
 			END IF;
 		
@@ -182,8 +220,13 @@ BEGIN
 
 		REPORT "";
 		REPORT "end of sim";
-		REPORT "took " & integer'image(cycle_count) & " cycles";
-		REPORT "or   " & to_string(real(cycle_count) * cycle) & " s";
+		REPORT "";
+		REPORT "init : " & integer'image(cycle_count_init) & " cycles";
+		REPORT "write: " & integer'image(cycle_count_write) & " cycles";
+		REPORT "read : " & integer'image(cycle_count_read) & " cycles";
+		REPORT "";
+		REPORT "total: " & integer'image(cycle_count) & " cycles";
+		REPORT "or   " & real'image(real(cycle_count) * cycle) & " s";
 
 		IF failed THEN
 			REPORT "";
