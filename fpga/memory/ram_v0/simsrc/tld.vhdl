@@ -75,7 +75,7 @@ BEGIN
 
 	mdll: memory_controller 
 		GENERIC MAP(
-			g_cache_enabled    => True,
+			g_cache_enabled    => False,
 			g_cache_size_log_2 => 5)
 		PORT MAP(
 			eio_mem_bus      => mem_bus,
@@ -228,6 +228,7 @@ BEGIN
 				END IF;
 
 				clock_high;
+				cycle_count      := cycle_count + 1;
 				cycle_count_read := cycle_count_read + 1;
 
 			END IF;

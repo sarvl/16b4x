@@ -41,13 +41,16 @@ ARCHITECTURE arch of cache IS
 
 	SIGNAL addr_tag  : std_ulogic_vector(c_addr_high - g_size_log_2 DOWNTO 0);
 	SIGNAL entry_id  : std_ulogic_vector(g_size_log_2          - 1  DOWNTO 0);
+
+	SIGNAL is_init   : std_ulogic := '0';
+	SIGNAL init_addr : integer RANGE 0 TO ram'high := 0;
 	
 BEGIN
 	addr_tag  <= i_addr(c_addr_high      DOWNTO g_size_log_2);
 	entry_id  <= i_addr(g_size_log_2 - 1 DOWNTO            0);
 
 	g0: IF g_enabled GENERATE 
-		o_init <= '1';
+		o_init <= NOT is_init;
 		o_hit  <= (cur_entry.tag ?= addr_tag) AND cur_entry.valid;
 	ELSE GENERATE
 		o_init <= '1';
@@ -62,7 +65,21 @@ BEGIN
 	PROCESS(i_clk) IS 
 	BEGIN
 		IF rising_edge(i_clk) THEN
-			IF i_write THEN
+			IF NOT i_nres THEN
+				IF g_enabled THEN
+					is_init  <= '1';
+					init_addr <= 0;
+				END IF;
+			ELSIF is_init THEN
+				IF init_addr = ram'high THEN 
+					is_init <= '0';
+				ELSE
+					init_addr <= init_addr + 1;
+				END IF;
+
+				ram(init_addr) <= entry_empty;
+
+			ELSIF i_write THEN
 				ram(to_integer(unsigned(entry_id))) <= (valid => '1', tag => addr_tag, data => io_data);
 			END IF;
 		END IF;
