@@ -1,0 +1,128 @@
+[TABLE_OF_CONTENTS]
+	[OVERVIEW]
+	[INTERFACE]
+		[SOFTWARE]
+		[HARDWARE]
+		[MEMORY]
+		[CONTROL]
+	[INTERNAL_BEHAVIOR]
+	[HARDWARE]
+
+	To navigate to particular section concatenate sections to one long tag with colons as separators
+	for example to move to MEMORY search for [INTERFACE:MEMORY]
+
+[OVERVIEW]
+	last doc revision: 2026-09-05 
+	
+	This manual describes interface and internal behavior of memory module
+
+[INTERFACE]
+	[INTERFACE:SOFTWARE]
+		The CPU should be able to interface with this component directly via memory based instructions
+		Any possible configuration should take place via port based IO 
+
+		Memory controller must never issue any interrupts
+
+		There is no 1:1 correspondence betewen CPU memory operations and what memory controller sees
+		CPU is allowed to cache data internally or to issue several operations for single instruction
+	
+	[INTERFACE:HARDWARE]
+		Memory controller interface is composed out of two interfaces 
+			Memory
+				- inout data    (word)
+				- in    address (memaddr)
+				- in    write   (bit)
+				- in    read    (bit)
+				-   out ready   (bit)
+				-   out output  (bit)
+			Control
+				- inout data    (word)
+				- in    address (word)
+				- in    write   (bit)
+				- in    read    (bit)
+				-   out ready   (bit)
+
+		Control interface is used to configure the RAM and read info about it, see [INTERFACE:CONTROL]
+
+		Memory interface is used for reading and writing to memory, see [INTERFACE:MEMORY]
+
+	[INTERFACE:MEMORY]
+		Memory can be either read to or written from
+
+		All operations start during cycle only if ready signal is high
+		All operations are done during cycle only if output signal gets high
+
+		Read operation requires setting read signal to high
+		Write operation requires setting write signal to high
+
+		Read, Write, address, and input data have to be stable for all the cycles from start of operation until and when output signal is high
+
+		It is possible that output signal is high in the same cycle that read or write signals are set
+		 in that case operation finishes on the next clock edge
+		
+		output high does NOT mean that memory will be ready to accept operation on next cycle
+
+		write takes precedence over read
+
+		Read requires:
+			1. not driven iodata
+			2. address set 
+			3. read set
+			4. write not set 
+			5. ready high
+
+		Write requires:
+			1. iodata set
+			2. address set 
+			3. write not set 
+			4. ready high
+
+		Read completion:
+			1. output is high for one cycle
+			2. iodata is driven by memory controller for one cycle
+
+		Write completion:
+			1. output is high for one cycle
+
+	[INTERFACE:CONTROL]
+		All operations take exactly one cycle but happen only when ready or write is high, and ready is high
+		Generally, control operations can be accepted in parallel to memory operations, if this is not possible then ready is not set
+
+		Any change introduced by control operation is committed from the next cycle that ready is high
+
+		Registers:
+		x000 
+			read only
+			available memory in frames (1 frame = 2kiW = 4kiB)
+
+			write has no effect
+
+[INTERNAL_BEHAVIOR]
+	Internally, memory controller is simple state machine that 
+		1. initializes components
+		2. waits for inputs
+		3. forwards data to internal modules 
+
+	It is composed out of cache and low level memory driver
+
+	Cache MUST be write through and MUST respond in single cycle to both reads and writes, no other requirement is set on it 
+	On access, controller tries to see whether cache has the data, and if so, immediattely responds 
+	Otherwise, it enters longer process of interacting with low level driver 
+
+	Low level driver is the one that handles physical interface
+	It is also implemented as state machine
+	It has a 1 cycle delay between write operation init and accepting data, it is handled appropriately
+
+	Currently, cache is simple configurable direct mapped one
+		
+[HARDWARE]
+	Hardware consists of 3 chips - 1 memory module and 2 address latches 
+	Memory module is fully asynchronous, particular actions require asserting particular pin
+
+	There is a single 16bit bus that is used to read/write data and to set address
+
+	While addr_load is high, address is read from bus into latches 
+
+	While noe is low and ncs is low, the memory outputs data located at memory stored in latches
+
+	While ncs is low, on nwe going low, data is read from bus into memory 
