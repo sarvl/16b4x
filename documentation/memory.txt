@@ -3,13 +3,11 @@
 	[INTERFACE]
 		[SOFTWARE]
 		[HARDWARE]
-		[MEMORY]
-		[CONTROL]
 	[INTERNAL_BEHAVIOR]
 	[HARDWARE]
 
 	To navigate to particular section concatenate sections to one long tag with colons as separators
-	for example to move to MEMORY search for [INTERFACE:MEMORY]
+	for example to move to HARDWARE search for [INTERFACE:HARDWARE]
 
 [OVERVIEW]
 	last doc revision: 2026-09-05 
@@ -35,18 +33,7 @@
 				- in    read    (bit)
 				-   out ready   (bit)
 				-   out output  (bit)
-			Control
-				- inout data    (word)
-				- in    address (word)
-				- in    write   (bit)
-				- in    read    (bit)
-				-   out ready   (bit)
 
-		Control interface is used to configure the RAM and read info about it, see [INTERFACE:CONTROL]
-
-		Memory interface is used for reading and writing to memory, see [INTERFACE:MEMORY]
-
-	[INTERFACE:MEMORY]
 		Memory can be either read to or written from
 
 		All operations start during cycle only if ready signal is high
