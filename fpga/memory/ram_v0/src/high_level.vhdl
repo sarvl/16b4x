@@ -67,7 +67,7 @@ ARCHITECTURE arch of memory_controller IS
 		init,
 		idle,
 		mem_read_0,  mem_read_1,
-		mem_write_0, mem_write_1, mem_write_2
+		mem_write_0, mem_write_1, mem_write_2, mem_write_3
 		);
 
 	SIGNAL state, state_in : t_state := init;
@@ -285,6 +285,25 @@ BEGIN
 			io_data      <= x"ZZZZ";
 			o_ready      <= '0';
 			o_output     <= '1';
+
+			cache_data   <= x"ZZZZ";
+			cache_read   <= '0';
+			cache_write  <= '0';
+
+			ll_data      <= x"ZZZZ";
+			ll_read      <= '0';
+			ll_write     <= '0';
+
+			IF ll_ready THEN
+				state_in     <= idle;
+			ELSE
+				state_in     <= mem_write_3;
+			END IF;
+
+		WHEN mem_write_3 => 
+			io_data      <= x"ZZZZ";
+			o_ready      <= '0';
+			o_output     <= '0';
 
 			cache_data   <= x"ZZZZ";
 			cache_read   <= '0';
