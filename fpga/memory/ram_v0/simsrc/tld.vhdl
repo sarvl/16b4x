@@ -5,6 +5,9 @@ USE ieee.numeric_std.ALL;
 USE std.textio.ALL;
 USE ieee.std_logic_textio.ALL;
 
+USE work.pkg_types.ALL;
+USE work.pkg_string_conv.ALL;
+
 ENTITY tld IS 
 END ENTITY tld;
 
@@ -20,32 +23,33 @@ ARCHITECTURE arch of tld IS
 	END COMPONENT simram;
 
 	COMPONENT memory_controller IS 
+		GENERIC(
+			g_cache_enabled    : boolean := False;
+			g_cache_size_log_2 : integer RANGE 1 TO 15 := 1);
 		PORT(
-			clk        : IN    std_ulogic;
-			nres       : IN    std_ulogic;
+			i_clk            : IN    std_ulogic;
+			i_nres           : IN    std_ulogic;
 
-			mem_bus        : INOUT std_ulogic_vector(15 DOWNTO 0);
-			mem_addr_load  :   OUT std_ulogic;
-			mem_nwe        :   OUT std_ulogic;
-			mem_ncs        :   OUT std_ulogic;
-			mem_noe        :   OUT std_ulogic;
+			eio_mem_bus      : INOUT std_ulogic_vector(15 DOWNTO 0);
+			eo_mem_addr_load :   OUT std_ulogic;
+			eo_mem_nwe       :   OUT std_ulogic;
+			eo_mem_ncs       :   OUT std_ulogic;
+			eo_mem_noe       :   OUT std_ulogic;
 
-			address        : IN    std_ulogic_vector(15 DOWNTO 0);
-			io_data        : INOUT std_ulogic_vector(15 DOWNTO 0);
+			i_addr           : IN    t_memaddr;
+			io_data          : INOUT t_rword;
 
-			read           : IN    std_ulogic;
-			write          : IN    std_ulogic;
-			ready          :   OUT std_ulogic;
-			output         :   OUT std_ulogic);
+			i_read           : IN    std_ulogic;
+			i_write          : IN    std_ulogic;
+			o_ready          :   OUT std_ulogic;
+			o_output         :   OUT std_ulogic);
 	END COMPONENT memory_controller;
 
 	CONSTANT frequency : real := 27.0E6; 
 	CONSTANT cycle     : real := 1.0 / frequency;
 
-	SIGNAL clk : std_ulogic := '0';
-	SIGNAL nres : std_ulogic := '1';
-
-	SIGNAL state, state_in : unsigned(4 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL clk   : std_ulogic := '0';
+	SIGNAL nres  : std_ulogic := '0';
 
 	SIGNAL mem_bus       : std_logic_vector(15 DOWNTO 0);
 	SIGNAL mem_addr_load : std_ulogic;
@@ -53,104 +57,44 @@ ARCHITECTURE arch of tld IS
 	SIGNAL mem_ncs       : std_ulogic;
 	SIGNAL mem_noe       : std_ulogic;
 
-	SIGNAL c_addr        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL c_data        : std_logic_vector(15 DOWNTO 0); 
-	SIGNAL c_write       : std_ulogic;
-	SIGNAL c_read        : std_ulogic;
+	SIGNAL c_addr        : t_memaddr := x"0000";
+	SIGNAL c_data        : t_rword := x"0000";
+	SIGNAL c_write       : std_ulogic := '0';
+	SIGNAL c_read        : std_ulogic := '0';
 	SIGNAL c_ready       : std_ulogic;
 	SIGNAL c_output      : std_ulogic;
 
 BEGIN
-	u_sr: simram PORT MAP(
+	u_sr: simram
+		PORT MAP(
 			mem_bus        => mem_bus,
 			mem_addr_load  => mem_addr_load,
 			mem_nwe        => mem_nwe, 
 			mem_ncs        => mem_ncs,
 			mem_noe        => mem_noe);
 
-	mdll: memory_controller PORT MAP(
-			mem_bus        => mem_bus,
-			mem_addr_load  => mem_addr_load,
-			mem_nwe        => mem_nwe, 
-			mem_ncs        => mem_ncs,
-			mem_noe        => mem_noe,
+	mdll: memory_controller 
+		GENERIC MAP(
+			g_cache_enabled    => False,
+			g_cache_size_log_2 => 5)
+		PORT MAP(
+			eio_mem_bus      => mem_bus,
+			eo_mem_addr_load => mem_addr_load,
+			eo_mem_nwe       => mem_nwe, 
+			eo_mem_ncs       => mem_ncs,
+			eo_mem_noe       => mem_noe,
 
-			clk              => clk,
-			nres             => nres,
+			i_clk            => clk,
+			i_nres           => nres,
 
-			address          => c_addr,
+			i_addr           => c_addr,
 			io_data          => c_data, 
-			write            => c_write,
-			read             => c_read,
-			ready            => c_ready,
-			output           => c_output);
+			i_write          => c_write,
+			i_read           => c_read,
+			o_ready          => c_ready,
+			o_output         => c_output);
 
 	PROCESS IS
-		-- Convert string to std_logic_vector, assuming characters in '0' to '9',
-		-- 'A' to 'F', or 'a' to 'f'.
-		FUNCTION str_to_slv(str : string) RETURN std_logic_vector IS
-		  ALIAS str_norm : string(1 TO str'length) IS str;
-		  VARIABLE char_v : character := ' ';
-		  VARIABLE val_of_char_v : natural := 0;
-		  VARIABLE res_v : std_logic_vector(4 * str'length - 1 DOWNTO 0) := (OTHERS => '0');
-		BEGIN
-		  FOR str_norm_idx IN str_norm'range LOOP
-		    char_v := str_norm(str_norm_idx);
-		    CASE char_v IS
-		      WHEN '0' TO '9' => val_of_char_v := character'pos(char_v) - character'pos('0');
-		      WHEN 'A' TO 'F' => val_of_char_v := character'pos(char_v) - character'pos('A') + 10;
-		      WHEN 'a' TO 'f' => val_of_char_v := character'pos(char_v) - character'pos('a') + 10;
-		      WHEN OTHERS => REPORT "str_to_slv: Invalid characters for convert" SEVERITY ERROR;
-		    END CASE;
-		    res_v(res_v'left - 4 * str_norm_idx + 4 DOWNTO res_v'left - 4 * str_norm_idx + 1) :=
-		      std_logic_vector(to_unsigned(val_of_char_v, 4));
-		  END LOOP;
-
-		  RETURN res_v;
-
-		END FUNCTION;
-
-		FUNCTION slv_to_str(slv : std_ulogic_vector(15 DOWNTO 0)) RETURN string IS
-			VARIABLE index : natural;
-			VARIABLE str   : string(8 DOWNTO 1);
-			VARIABLE sub   : std_ulogic_vector(3 DOWNTO 0);
-		BEGIN
-			index := 0;
-	
-			WHILE index < 4 LOOP
-				sub(3) := slv(4 * index + 3);
-				sub(2) := slv(4 * index + 2);
-				sub(1) := slv(4 * index + 1);
-				sub(0) := slv(4 * index + 0);
-	
-				CASE sub IS 
-					WHEN x"0"   => str(index + 1) := '0';
-					WHEN x"1"   => str(index + 1) := '1';
-					WHEN x"2"   => str(index + 1) := '2';
-					WHEN x"3"   => str(index + 1) := '3';
-					WHEN x"4"   => str(index + 1) := '4';
-					WHEN x"5"   => str(index + 1) := '5';
-					WHEN x"6"   => str(index + 1) := '6';
-					WHEN x"7"   => str(index + 1) := '7';
-					WHEN x"8"   => str(index + 1) := '8';
-					WHEN x"9"   => str(index + 1) := '9';
-					WHEN x"A"   => str(index + 1) := 'A';
-					WHEN x"B"   => str(index + 1) := 'B';
-					WHEN x"C"   => str(index + 1) := 'C';
-					WHEN x"D"   => str(index + 1) := 'D';
-					WHEN x"E"   => str(index + 1) := 'E';
-					WHEN x"F"   => str(index + 1) := 'F';
-					WHEN x"Z"   => str(index + 1) := '_';
-					WHEN OTHERS => str(index + 1) := 'X';
-				END CASE;
-	
-				index := index + 1;
-			END LOOP;
-			
-			RETURN str;
-	
-		END FUNCTION slv_to_str;
-
 		FILE instr : text; 
 
 		VARIABLE index : unsigned(15 DOWNTO 0) := x"0000";
@@ -163,25 +107,64 @@ BEGIN
 		VARIABLE is_write : boolean;
 		VARIABLE failed   : boolean := False;
 
-		VARIABLE cycle_count : integer := 0;
+		VARIABLE cycle_count_write : integer := 0;
+		VARIABLE cycle_count_read  : integer := 0;
+		VARIABLE cycle_count_init  : integer := 0;
+		VARIABLE cycle_count       : integer := 0;
 
-		PROCEDURE clock_tick IS
+		PROCEDURE clock_low IS
 		BEGIN
 			clk <= '0';
 			WAIT FOR cycle / 2.0 * 1000 MS;
+		END PROCEDURE clock_low;
+
+		PROCEDURE clock_high IS
+		BEGIN
 			clk <= '1';
 			WAIT FOR cycle / 2.0 * 1000 MS;
+		END PROCEDURE clock_high;
 
-			cycle_count := cycle_count + 1;
+		PROCEDURE clock_tick IS
+		BEGIN
+			clock_low;
+			clock_high;
+
+			cycle_count       := cycle_count + 1;
 		END PROCEDURE clock_tick;
+
+		PROCEDURE clock_tick_write IS
+		BEGIN
+			clock_tick; 
+
+			cycle_count_write := cycle_count_write + 1;
+		END PROCEDURE clock_tick_write;
+
+		PROCEDURE clock_tick_read IS
+		BEGIN
+			clock_tick; 
+
+			cycle_count_read := cycle_count_read + 1;
+		END PROCEDURE clock_tick_read;
+
+		PROCEDURE clock_tick_init IS
+		BEGIN
+			clock_tick; 
+
+			cycle_count_init := cycle_count_init + 1;
+		END PROCEDURE clock_tick_init;
+
 	BEGIN
 		file_open(instr, "mem_trace.txt");
 
 		nres <= '0';
-		
-		clock_tick;
+
+		clock_tick_init;
 
 		nres <= '1';
+		
+		WHILE NOT c_ready LOOP
+			clock_tick_init;
+		END LOOP;
 
 		WHILE NOT endfile(instr) LOOP
 			read(instr, temp_storage, size);
@@ -203,7 +186,7 @@ BEGIN
 				c_write <= '1';
 				c_read  <= '0';
 					
-				clock_tick;
+				clock_tick_write;
 
 				c_addr  <= addr;
 				c_data  <= data;
@@ -211,7 +194,16 @@ BEGIN
 				c_read  <= '0';
 
 				WHILE NOT c_output LOOP
-					clock_tick;
+					clock_tick_write;
+				END LOOP;
+
+				c_addr  <= x"0000";
+				c_data  <= x"0000";
+				c_write <= '0';
+				c_read  <= '0';
+
+				WHILE NOT c_ready LOOP
+					clock_tick_write;
 				END LOOP;
 
 			ELSE
@@ -223,13 +215,11 @@ BEGIN
 				c_read  <= '1';
 
 				WHILE NOT c_output LOOP
-					clock_tick;
+					clock_tick_read;
 				END LOOP;
 
-				c_addr  <= addr;
-				c_data  <= x"ZZZZ";
-				c_write <= '0';
-				c_read  <= '0';
+				--propagate changes
+				clock_low;
 
 				IF c_data /= data THEN
 					REPORT "MISMATCH, RECEIVED: "  & slv_to_str(c_data);
@@ -237,7 +227,9 @@ BEGIN
 					failed := True;
 				END IF;
 
-				clock_tick;
+				clock_high;
+				cycle_count      := cycle_count + 1;
+				cycle_count_read := cycle_count_read + 1;
 
 			END IF;
 		
@@ -246,12 +238,17 @@ BEGIN
 
 		REPORT "";
 		REPORT "end of sim";
-		REPORT "took " & integer'image(cycle_count) & " cycles";
-		REPORT "or   " & to_string(real(cycle_count) * cycle) & " s";
+		REPORT "";
+		REPORT "init : " & integer'image(cycle_count_init) & " cycles";
+		REPORT "write: " & integer'image(cycle_count_write) & " cycles";
+		REPORT "read : " & integer'image(cycle_count_read) & " cycles";
+		REPORT "";
+		REPORT "total: " & integer'image(cycle_count) & " cycles";
+		REPORT "or   " & real'image(real(cycle_count) * cycle) & " s";
 
 		IF failed THEN
 			REPORT "";
-			REPORT "SIMULATION FAILED";
+			REPORT "SIMULATION FAILED" SEVERITY ERROR;
 		END IF;
 
 		finish;
