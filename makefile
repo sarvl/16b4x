@@ -24,7 +24,7 @@ help:
 	@echo -e "'testgensasm' - generate tests for assembler"
 	@echo -e "'testgenall'  - generate all tests"
 	@echo -e ""
-	@echo -e "'testcpu'     - run tests for cpu and simulator"
+	@echo -e "'testsim'     - run tests for simulator"
 	@echo -e "'testsasm'    - run tests for assembler"
 	@echo -e "'testall'     - run all tests"
 	@echo -e ""
